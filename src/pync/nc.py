@@ -138,16 +138,6 @@ connect = NetCat.connect
 listen = NetCat.listen
 
 
-try:
-    # py3
-    class _ConnRefusedError(ConnectionRefusedError):
-        pass
-except NameError:
-    # py2
-    class _ConnRefusedError(Exception):
-        pass
-
-
 def nc(argv):
     prog_name = 'pync'
     parser = argparse.ArgumentParser(prog_name,
