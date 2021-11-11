@@ -149,11 +149,12 @@ except NameError:
 
 
 def nc(argv):
-    parser = argparse.ArgumentParser('pync',
+    prog_name = 'pync'
+    parser = argparse.ArgumentParser(prog_name,
             usage='''
        {name} HOST PORT
        {name} -l [HOST] PORT
-'''.lstrip().format(name='pync'),
+'''.lstrip().format(name=prog_name),
     )
     parser.add_argument('host',
             help='The host name or ip to connect or bind to.',
