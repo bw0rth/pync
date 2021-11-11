@@ -7,8 +7,7 @@ try:
     _WINDOWS = True
 except ImportError:
     _WINDOWS = False
-
-if _WINDOWS:
+else:
     from ctypes import windll, byref, GetLastError, WinError, POINTER
     from ctypes.wintypes import HANDLE, DWORD, BOOL
     LPDWORD = POINTER(DWORD)
