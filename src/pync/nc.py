@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import argparse
 import select
+import shlex
 import socket
 import subprocess
 import sys
@@ -138,7 +139,7 @@ connect = NetCat.connect
 listen = NetCat.listen
 
 
-def nc(argv):
+def nc(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     prog_name = 'pync'
     parser = argparse.ArgumentParser(prog_name,
             usage='''
@@ -170,7 +171,13 @@ def nc(argv):
             metavar='CMD',
     )
 
-    args = parser.parse_args(argv)
+    try:
+        # If args is a string, try and split it.
+        args = shlex.split(args)
+    except AttributeError:
+        # args is not a string, assume it's a list.
+        pass
+    args = parser.parse_args(args)
     conin = ConsoleInput(blocking=not args.non_interactive)
 
     if args.listen:
