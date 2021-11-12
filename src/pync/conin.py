@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import msvcrt
-import platform
+try:
+    import msvcrt
+    _WINDOWS = True
+except ImportError:
+    _WINDOWS = False
 import sys
 
 
@@ -66,7 +69,7 @@ class UnixConsoleInput(BaseConsoleInput):
                 return sys.stdin.readline()
 
 
-if platform.system() == 'Windows':
+if _WINDOWS:
     ConsoleInput = WinConsoleInput
 else:
     ConsoleInput = UnixConsoleInput
