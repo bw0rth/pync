@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from .nc import nc
+from .nc import pync
 
 
 def main():
     argv = sys.argv[1:]
-    exit_code = nc(argv)
-    sys.exit(exit_code)
+    with pync(argv) as nc:
+        nc.run()
 
 
 if __name__ == '__main__':
-    main()
+    status = main()
+    sys.exit(status)
 
