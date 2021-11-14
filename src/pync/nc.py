@@ -12,10 +12,47 @@ from .pipe import Pipe
 from .conin import ConsoleInput
 
 
-class NetCat:
+if sys.version_info.major == 2:
+    from socket import error as ConnectionRefusedError
 
-    def __init__(self, sock):
+
+class NetCat:
+    name = 'pync'
+    parser = argparse.ArgumentParser(name,
+            usage='''
+       {name} HOST PORT
+       {name} -l [HOST] PORT
+'''.lstrip().format(name=name),
+    )
+    parser.add_argument('host',
+            help='The host name or ip to connect or bind to.',
+            nargs='?',
+            default='',
+            metavar='HOST',
+    )
+    parser.add_argument('port',
+            help='The port number to connect or bind to.',
+            type=int,
+            metavar='PORT',
+    )
+    parser.add_argument('--listen', '-l',
+            help='Listen for a connection on the given port.',
+            action='store_true',
+    )
+    parser.add_argument('--non-interactive', '-I',
+            help='Do not accept user input.',
+            action='store_true',
+    )
+    parser.add_argument('--execute', '-e',
+            help='Execute a command over the connection.',
+            metavar='CMD',
+    )
+
+    def __init__(self, sock, cmd=None, fin=sys.stdin, fout=sys.stdout,
+            ferr=sys.stderr):
         self.socket = sock
+        self.command = cmd
+        self.fin, self.fout, self.ferr = fin, fout, ferr
 
     def __enter__(self):
         return self
@@ -24,12 +61,33 @@ class NetCat:
         self.socket.close()
 
     @classmethod
-    def connect(cls, host, port):
-        sock = socket.create_connection((host, port))
-        return cls(sock)
+    def from_args(cls, args):
+        try:
+            # Assume args is a string and try and split it.
+            args = shlex.split(args)
+        except AttributeError:
+            # args is not a string, assume it's a list.
+            pass
+        args = cls.parser.parse_args(args)
+
+        if args.listen:
+            nc = cls.listen(args.host, args.port,
+                    cmd=args.execute,
+            )
+        else:
+            nc = cls.connect(args.host, args.port,
+                    cmd=args.execute,
+            )
+
+        return nc
 
     @classmethod
-    def listen(cls, host, port):
+    def connect(cls, host, port, *args, **kwargs):
+        sock = socket.create_connection((host, port))
+        return cls(sock, *args, **kwargs)
+
+    @classmethod
+    def listen(cls, host, port, *args, **kwargs):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((host, port))
@@ -44,15 +102,21 @@ class NetCat:
                 break
 
         server.close()
-        return cls(sock)
+        return cls(sock, *args, **kwargs)
 
-    def sendline(self):
-        raise NotImplementedError
+    def run(self, fin=sys.stdin, fout=sys.stdout, ferr=sys.stderr):
+        if self.command:
+            return self.execute(self.command)
+        self.readwrite(fin, fout, ferr)
 
-    def readlines(self):
-        raise NotImplementedError
+    def readwrite(self, fin=None, fout=None, ferr=None, until_eof=False):
+        fin = fin or self.fin
+        fout = fout or self.fout
+        ferr = ferr or self.ferr
 
-    def run(self, fin, fout=sys.stdout):
+        if fin is sys.__stdin__ and fin.isatty():
+            fin = ConsoleInput()
+
         while True:
             readables, _, _ = select.select([self.socket], [], [], .002)
 
@@ -63,15 +127,14 @@ class NetCat:
                 data = data.decode()
                 fout.write(data)
 
-            data = fin.readline()
+            # If None returned, non-blocking read got nothing.
+            data = fin.read(1024)
             if data:
-                try:
-                    self.socket.sendall(data)
-                except TypeError:
-                    self.socket.sendall(data.encode())
-
-    def run_until_eof(self):
-        raise NotImplementedError
+                self.write(data)
+            else:
+                if data is not None and until_eof:
+                    # All input data is read (EOF).
+                    break
 
     def execute(self, cmd):
         # setup the non-blocking pipe.
@@ -134,79 +197,17 @@ class NetCat:
                     # process has terminated and we have read all the data.
                     break
 
+    def read(self, n, blocking=True):
+        raise NotImplementedError
 
+    def write(self, data):
+        try:
+            self.socket.sendall(data)
+        except TypeError:
+            self.socket.sendall(data.encode())
+
+
+pync = NetCat.from_args
 connect = NetCat.connect
 listen = NetCat.listen
-
-
-def nc(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
-    prog_name = 'pync'
-    parser = argparse.ArgumentParser(prog_name,
-            usage='''
-       {name} HOST PORT
-       {name} -l [HOST] PORT
-'''.lstrip().format(name=prog_name),
-    )
-    parser.add_argument('host',
-            help='The host name or ip to connect or bind to.',
-            nargs='?',
-            default='',
-            metavar='HOST',
-    )
-    parser.add_argument('port',
-            help='The port number to connect or bind to.',
-            type=int,
-            metavar='PORT',
-    )
-    parser.add_argument('--listen', '-l',
-            help='Listen for a connection on the given port.',
-            action='store_true',
-    )
-    parser.add_argument('--non-interactive', '-I',
-            help='Do not accept user input.',
-            action='store_true',
-    )
-    parser.add_argument('--execute', '-e',
-            help='Execute a command over the connection.',
-            metavar='CMD',
-    )
-
-    try:
-        # If args is a string, try and split it.
-        args = shlex.split(args)
-    except AttributeError:
-        # args is not a string, assume it's a list.
-        pass
-    args = parser.parse_args(args)
-    conin = ConsoleInput(blocking=not args.non_interactive)
-
-    if args.listen:
-        # listen for connection.
-        # nc.py -l [HOST] PORT
-        try:
-            with listen(args.host, args.port) as nc:
-                nc.run(conin)
-        except socket.error:
-            pass
-        except KeyboardInterrupt:
-            pass
-    else:
-        # connect to server.
-        # nc.py HOST PORT
-        if not args.host:
-            parser.print_help(sys.stderr)
-            return 1
-
-        try:
-            with connect(args.host, args.port) as nc:
-                cmd = args.execute
-                if cmd:
-                    nc.execute(cmd)
-                else:
-                    nc.run(conin)
-        except ConnectionRefusedError:
-            parser.error('connection refused')
-            return 1
-        except KeyboardInterrupt:
-            pass
 
