@@ -16,7 +16,7 @@ if sys.version_info.major == 2:
     from socket import error as ConnectionRefusedError
 
 
-class NetCat:
+class Netcat:
     name = 'pync'
     parser = argparse.ArgumentParser(name,
             usage='''
@@ -207,7 +207,7 @@ class NetCat:
             self.socket.sendall(data.encode())
 
 
-pync = NetCat.from_args
-connect = NetCat.connect
-listen = NetCat.listen
+pync = Netcat.from_args
+connect = Netcat.connect
+listen = Netcat.listen
 
