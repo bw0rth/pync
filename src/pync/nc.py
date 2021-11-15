@@ -118,21 +118,19 @@ class Netcat:
             fin = ConsoleInput()
 
         while True:
-            readables, _, _ = select.select([self.socket], [], [], .002)
-
-            if self.socket in readables:
-                data = self.socket.recv(1024)
-                if not data:
-                    break
-                data = data.decode()
-                fout.write(data)
-
-            # If None returned, non-blocking read got nothing.
-            data = fin.read(1024)
-            if data:
-                self.write(data)
+            net_data = self.recv(1024, blocking=False)
+            if net_data:
+                fout.write(net_data.decode())
             else:
-                if data is not None and until_eof:
+                if net_data is not None:
+                    # connection lost.
+                    break
+
+            fin_data = fin.read(1024)
+            if fin_data:
+                self.send(fin_data)
+            else:
+                if fin_data is not None and until_eof:
                     # All input data is read (EOF).
                     break
 
@@ -162,34 +160,25 @@ class Netcat:
         # (     )
         #   O O
         while(1<2):
-            readables, _, _ = select.select([self.socket], [], [], .002)
-
-            if self.socket in readables:
-                # incoming socket data is available.
-                data = self.socket.recv(1024)
-                if not data:
-                    # connection closed.
-                    break
+            net_data = self.recv(1024, blocking=False)
+            if net_data:
                 try:
                     # write the data to the commands input.
                     try:
-                        proc.stdin.write(data)
+                        proc.stdin.write(net_data)
                     except TypeError:
-                        proc.stdin.write(data.encode())
+                        proc.stdin.write(net_data.encode())
                     proc.stdin.flush()
                 except OSError:
                     # process terminated.
                     break
 
             # Check if the command has written data to our pipe.
-            data = pipe.pin.read(1024)
-            if data:
+            proc_data = pipe.pin.read(1024)
+            if proc_data:
                 # Got data from the pipe.
                 # Send it over the network.
-                try:
-                    self.socket.sendall(data)
-                except TypeError:
-                    self.socket.sendall(data.encode())
+                self.send(proc_data)
             else:
                 # No data in the pipe.
                 # Check process is still alive.
@@ -197,10 +186,15 @@ class Netcat:
                     # process has terminated and we have read all the data.
                     break
 
-    def read(self, n, blocking=True):
-        raise NotImplementedError
+    def recv(self, n, blocking=True):
+        if blocking:
+            return self.socket.recv(n)
+        readables, _, _ = select.select([self.socket], [], [], .002)
 
-    def write(self, data):
+        if self.socket in readables:
+            return self.socket.recv(1024)
+
+    def send(self, data):
         try:
             self.socket.sendall(data)
         except TypeError:
