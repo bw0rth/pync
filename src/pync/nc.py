@@ -9,6 +9,7 @@ import subprocess
 import sys
 
 from .pipe import Pipe
+from .process import Process, ProcessTerminated
 from .conin import ConsoleInput
 
 
@@ -48,11 +49,11 @@ class Netcat:
             metavar='CMD',
     )
 
-    def __init__(self, sock, cmd=None, fin=sys.stdin, fout=sys.stdout,
-            ferr=sys.stderr):
+    def __init__(self, sock, cmd=None, stdin=sys.stdin, stdout=sys.stdout,
+            stderr=sys.stderr):
         self.socket = sock
         self.command = cmd
-        self.fin, self.fout, self.ferr = fin, fout, ferr
+        self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
     def __enter__(self):
         return self
@@ -104,87 +105,10 @@ class Netcat:
         server.close()
         return cls(sock, *args, **kwargs)
 
-    def run(self, fin=sys.stdin, fout=sys.stdout, ferr=sys.stderr):
+    def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
         if self.command:
             return self.execute(self.command)
-        self.readwrite(fin, fout, ferr)
-
-    def readwrite(self, fin=None, fout=None, ferr=None, until_eof=False):
-        fin = fin or self.fin
-        fout = fout or self.fout
-        ferr = ferr or self.ferr
-
-        if fin is sys.__stdin__ and fin.isatty():
-            fin = ConsoleInput()
-
-        while True:
-            net_data = self.recv(1024, blocking=False)
-            if net_data:
-                fout.write(net_data.decode())
-            else:
-                if net_data is not None:
-                    # connection lost.
-                    break
-
-            fin_data = fin.read(1024)
-            if fin_data:
-                self.send(fin_data)
-            else:
-                if fin_data is not None and until_eof:
-                    # All input data is read (EOF).
-                    break
-
-    def execute(self, cmd):
-        # setup the non-blocking pipe.
-        # We don't want it to wait when there's nothing to read.
-        pipe = Pipe()
-        if not pipe.pin.set_nowait():
-            raise RuntimeError('Unable to create non-blocking pipe.')
-
-        proc = subprocess.Popen(cmd, shell=True,
-                stdin=subprocess.PIPE,
-                stdout=pipe.pout.fileno(),
-                stderr=subprocess.STDOUT,
-        )
-
-        # Any incoming socket data goes to the commands standard input.
-        # socket -> proc.stdin
-
-        # The command writes all its output to our pipe's output.
-        # (proc.stderr | proc.stdout) -> pipe.pout
-
-        # Any data that the command has written to our pipe's output
-        # will be read from our pipe's input and sent over the socket.
-        # pipe.pin -> socket
-
-        # (     )
-        #   O O
-        while(1<2):
-            net_data = self.recv(1024, blocking=False)
-            if net_data:
-                try:
-                    # write the data to the commands input.
-                    try:
-                        proc.stdin.write(net_data)
-                    except TypeError:
-                        proc.stdin.write(net_data.encode())
-                    proc.stdin.flush()
-                except OSError:
-                    # process terminated.
-                    break
-
-            # Check if the command has written data to our pipe.
-            proc_data = pipe.pin.read(1024)
-            if proc_data:
-                # Got data from the pipe.
-                # Send it over the network.
-                self.send(proc_data)
-            else:
-                # No data in the pipe.
-                # Check process is still alive.
-                if proc.poll() is not None:
-                    # process has terminated and we have read all the data.
-                    break
+        self.readwrite(stdin, stdout, stderr)
 
     def recv(self, n, blocking=True):
         if blocking:
@@ -199,6 +123,52 @@ class Netcat:
             self.socket.sendall(data)
         except TypeError:
             self.socket.sendall(data.encode())
+
+    def readwrite(self, stdin=None, stdout=None, stderr=None, until_eof=False):
+        stdin = stdin or self.stdin
+        stdout = stdout or self.stdout
+        stderr = stderr or self.stderr
+
+        if stdin is sys.__stdin__ and stdin.isatty():
+            stdin = ConsoleInput()
+
+        # (     )
+        #   O O
+        while(1<2):
+            net_data = self.recv(1024, blocking=False)
+            if net_data:
+                try:
+                    try:
+                        stdout.write(net_data)
+                    except TypeError:
+                        try:
+                            stdout.write(net_data.encode())
+                        except AttributeError:
+                            stdout.write(net_data.decode())
+                    stdout.flush()
+                except OSError:
+                    # process terminated.
+                    break
+            else:
+                if net_data is not None:
+                    # connection lost.
+                    break
+
+            try:
+                stdin_data = stdin.read(1024)
+            except ProcessTerminated:
+                break
+
+            if stdin_data:
+                self.send(stdin_data)
+            else:
+                if stdin_data is not None and until_eof:
+                    # All input data is read (EOF).
+                    break
+
+    def execute(self, cmd):
+        proc = Process(cmd)
+        self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
 
 
 pync = Netcat.from_args
