@@ -19,13 +19,13 @@ import select
 import sys
 
 
-class BaseConsoleInput:
+class _BaseConsoleInput:
 
     def read(self, n):
         return self.readline()
 
 
-class WinConsoleInput(BaseConsoleInput):
+class _WinConsoleInput(_BaseConsoleInput):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -45,7 +45,7 @@ class WinConsoleInput(BaseConsoleInput):
                 return line
 
 
-class UnixConsoleInput(BaseConsoleInput):
+class _UnixConsoleInput(_BaseConsoleInput):
 
     def readline(self):
         # Non-blocking console input for *nix.
@@ -55,7 +55,7 @@ class UnixConsoleInput(BaseConsoleInput):
 
 
 if _WINDOWS:
-    ConsoleInput = WinConsoleInput
+    NonBlockingConsoleInput = _WinConsoleInput
 else:
-    ConsoleInput = UnixConsoleInput
+    NonBlockingConsoleInput = _UnixConsoleInput
 
