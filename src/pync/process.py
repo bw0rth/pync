@@ -5,7 +5,7 @@ import subprocess
 from .pipe import Pipe
 
 
-class Process:
+class NonBlockingProcess:
 
     def __init__(self, cmd):
         pipe = Pipe()
@@ -23,6 +23,10 @@ class Process:
         return getattr(self._proc, name)
 
 
+class ProcessTerminated(Exception):
+    pass
+
+
 class _ProcStdout:
 
     def __init__(self, proc, stdout):
@@ -38,8 +42,4 @@ class _ProcStdout:
             return data
         if self._proc.poll() is not None:
             raise ProcessTerminated
-
-
-class ProcessTerminated(Exception):
-    pass
 
