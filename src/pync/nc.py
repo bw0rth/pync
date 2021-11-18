@@ -8,9 +8,8 @@ import socket
 import subprocess
 import sys
 
-from .pipe import Pipe
-from .process import Process, ProcessTerminated
-from .conin import ConsoleInput
+from .process import NonBlockingProcess, ProcessTerminated
+from .conin import NonBlockingConsoleInput
 
 
 if sys.version_info.major == 2:
@@ -130,45 +129,58 @@ class Netcat:
         stderr = stderr or self.stderr
 
         if stdin is sys.__stdin__ and stdin.isatty():
-            stdin = ConsoleInput()
+            stdin = NonBlockingConsoleInput()
 
         # (     )
         #   O O
         while(1<2):
-            net_data = self.recv(1024, blocking=False)
-            if net_data:
-                try:
-                    try:
-                        stdout.write(net_data)
-                    except TypeError:
-                        try:
-                            stdout.write(net_data.encode())
-                        except AttributeError:
-                            stdout.write(net_data.decode())
-                    stdout.flush()
-                except OSError:
-                    # process terminated.
-                    break
-            else:
-                if net_data is not None:
-                    # connection lost.
-                    break
-
             try:
-                stdin_data = stdin.read(1024)
-            except ProcessTerminated:
-                break
+                net_data = self.recv(1024, blocking=False)
+                if net_data:
+                    try:
+                        try:
+                            stdout.write(net_data)
+                        except TypeError:
+                            try:
+                                stdout.write(net_data.encode())
+                            except AttributeError:
+                                stdout.write(net_data.decode())
+                        stdout.flush()
+                    except OSError:
+                        # process terminated.
+                        break
+                else:
+                    if net_data is not None:
+                        # connection lost.
+                        break
 
-            if stdin_data:
-                self.send(stdin_data)
-            else:
-                if stdin_data is not None and until_eof:
-                    # All input data is read (EOF).
-                    break
+                stdin_data = stdin.read(1024)
+                if stdin_data:
+                    self.send(stdin_data)
+                else:
+                    if stdin_data is not None and until_eof:
+                        # All input data is read (EOF).
+                        break
+            except StopNetcat:
+                # IO has requested to stop the readwrite loop.
+                break
 
     def execute(self, cmd):
         proc = Process(cmd)
         self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
+
+
+class StopNetcat(Exception):
+    pass
+
+
+class Process(NonBlockingProcess):
+
+    def read(self, *args, **kwargs):
+        try:
+            super().read(*args, **kwargs)
+        except ProcessTerminated:
+            raise StopNetcat
 
 
 pync = Netcat.from_args
