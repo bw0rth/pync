@@ -2,15 +2,13 @@
 
 import subprocess
 
-from .pipe import Pipe
+from .pipe import NonBlockingPipe
 
 
 class NonBlockingProcess:
 
     def __init__(self, cmd):
-        pipe = Pipe()
-        if not pipe.pin.set_nowait():
-            raise RuntimeError('Unable to create non-blocking process pipe.')
+        pipe = NonBlockingPipe()
 
         self._proc = subprocess.Popen(cmd, shell=True,
                 stdin=subprocess.PIPE,
