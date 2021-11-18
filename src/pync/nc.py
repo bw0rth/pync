@@ -112,9 +112,9 @@ class Netcat:
     def recv(self, n, blocking=True):
         if blocking:
             return self.socket.recv(n)
-        readables, _, _ = select.select([self.socket], [], [], .002)
+        can_read, _, _ = select.select([self.socket], [], [], .002)
 
-        if self.socket in readables:
+        if self.socket in can_read:
             return self.socket.recv(1024)
 
     def send(self, data):
@@ -176,9 +176,22 @@ class StopNetcat(Exception):
 
 class Process(NonBlockingProcess):
 
-    def read(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.stdout = _ProcStdout(self.stdout)
+
+
+class _ProcStdout:
+
+    def __init__(self, stdout):
+        self._stdout = stdout
+
+    def __getattr__(self, name):
+        return getattr(self._stdout, name)
+
+    def read(self, n):
         try:
-            super().read(*args, **kwargs)
+            return self._stdout.read(n)
         except ProcessTerminated:
             raise StopNetcat
 
