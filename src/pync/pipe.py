@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import select
 
 try:
     import msvcrt
@@ -15,10 +16,12 @@ else:
     ERROR_NO_DATA = 232
 
 
-class Pipe:
+class NonBlockingPipe:
 
     def __init__(self):
         self.pin, self.pout = self._create_pipe()
+        if not self.pin.set_nowait():
+            raise RuntimeError('Unable to create non-blocking pipe')
 
     def _create_pipe(self):
         rfd, wfd = os.pipe()
@@ -69,10 +72,12 @@ class _WinPipeInput(_PipeIO):
 class _UnixPipeInput(_PipeIO):
 
     def read(self, n):
-        raise NotImplementedError
+        can_read, _, _ = select.select([self._fd], [], [], .002)
+        if self._fd in can_read:
+            return os.read(self._fd, n)
 
     def set_nowait(self):
-        raise NotImplementedError
+        return True
 
 
 if _WINDOWS:
