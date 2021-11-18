@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .nc import pync, connect, listen, Netcat
+from .nc import (
+        pync, connect, listen, Netcat,
+        Process, StopNetcat,
+)
 
