@@ -22,10 +22,10 @@ class Pipe:
 
     def _create_pipe(self):
         rfd, wfd = os.pipe()
-        return PipeInput(rfd), PipeOutput(wfd)
+        return _PipeInput(rfd), _PipeOutput(wfd)
 
 
-class PipeIO:
+class _PipeIO:
 
     def __init__(self, fd):
         self._fd = fd
@@ -34,7 +34,7 @@ class PipeIO:
         return self._fd
 
 
-class WinPipeInput(PipeIO):
+class _WinPipeInput(_PipeIO):
 
     def read(self, n):
         # https://stackoverflow.com/a/34504971/11106801
@@ -66,7 +66,7 @@ class WinPipeInput(PipeIO):
         return not (res == 0)
 
 
-class UnixPipeInput(PipeIO):
+class _UnixPipeInput(_PipeIO):
 
     def read(self, n):
         raise NotImplementedError
@@ -76,12 +76,12 @@ class UnixPipeInput(PipeIO):
 
 
 if _WINDOWS:
-    PipeInput = WinPipeInput
+    _PipeInput = _WinPipeInput
 else:
-    PipeInput = UnixPipeInput
+    _PipeInput = _UnixPipeInput
 
 
-class PipeOutput(PipeIO):
+class _PipeOutput(_PipeIO):
 
     def write(self, data):
         return os.write(self._fd, data)
