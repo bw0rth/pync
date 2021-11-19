@@ -39,10 +39,6 @@ class Netcat:
             help='Listen for a connection on the given port.',
             action='store_true',
     )
-    parser.add_argument('--non-interactive', '-I',
-            help='Do not accept user input.',
-            action='store_true',
-    )
     parser.add_argument('--execute', '-e',
             help='Execute a command over the connection.',
             metavar='CMD',
