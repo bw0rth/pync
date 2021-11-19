@@ -48,10 +48,10 @@ class Netcat:
             metavar='CMD',
     )
 
-    def __init__(self, sock, cmd=None, stdin=sys.stdin, stdout=sys.stdout,
+    def __init__(self, sock, execute=None, stdin=sys.stdin, stdout=sys.stdout,
             stderr=sys.stderr):
         self.socket = sock
-        self.command = cmd
+        self.command = execute
         self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
     def __enter__(self):
@@ -72,11 +72,11 @@ class Netcat:
 
         if args.listen:
             nc = cls.listen(args.host, args.port,
-                    cmd=args.execute,
+                    execute=args.execute,
             )
         else:
             nc = cls.connect(args.host, args.port,
-                    cmd=args.execute,
+                    execute=args.execute,
             )
 
         return nc
