@@ -12,7 +12,7 @@ Run this, then connect to it with Netcat.'''
 
 
 def main():
-    parser = argparse.ArgumentParser('rshell',
+    parser = argparse.ArgumentParser('bshell',
             formatter_class=argparse.RawTextHelpFormatter,
             description=DESCRIPTION,
     )
