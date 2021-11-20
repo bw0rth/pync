@@ -44,11 +44,18 @@ class Netcat:
             help='Execute a command over the connection.',
             metavar='CMD',
     )
+    parser.add_argument('-q',
+            help='quit after EOF on stdin and delay of secs',
+            metavar='SECS',
+    )
 
-    def __init__(self, sock, execute=None, stdin=sys.stdin, stdout=sys.stdout,
-            stderr=sys.stderr):
+    def __init__(self, sock,
+            execute=None,
+            q=0,
+            stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
         self.socket = sock
         self.command = execute
+        self.q = q
         self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
     def __enter__(self):
@@ -70,10 +77,12 @@ class Netcat:
         if args.listen:
             nc = cls.listen(args.host, args.port,
                     execute=args.execute,
+                    q=args.q,
             )
         else:
             nc = cls.connect(args.host, args.port,
                     execute=args.execute,
+                    q=args.q,
             )
 
         return nc
@@ -120,7 +129,8 @@ class Netcat:
         except TypeError:
             self.socket.sendall(data.encode())
 
-    def readwrite(self, stdin=None, stdout=None, stderr=None, q=0):
+    def readwrite(self, stdin=None, stdout=None, stderr=None, q=None):
+        q = self.q if q is None else q
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
         stderr = stderr or self.stderr
