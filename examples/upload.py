@@ -1,4 +1,47 @@
 # -*- coding: utf-8 -*-
+'''
+Upload a file to a client or server using pync.
+'''
 
-raise NotImplementedError
+import argparse
+
+import pync
+
+
+def main():
+    parser = argparse.ArgumentParser('upload.py',
+            description=__doc__,
+    )
+    parser.add_argument('host',
+            help='Hostname or ip to connect or bind to',
+            nargs='?',
+            default='',
+            metavar='HOST',
+    )
+    parser.add_argument('port',
+            help='Port to connect or bind to',
+            metavar='PORT',
+            type=int,
+    )
+    parser.add_argument('filename',
+            help='Filename to save the data to',
+            metavar='FILENAME',
+    )
+    parser.add_argument('--listen', '-l',
+            help='Listen mode, for inbound connects',
+            action='store_true',
+    )
+    args = parser.parse_args()
+
+    mode = pync.connect
+    if args.listen:
+        mode = pync.listen
+
+    with mode(args.host, args.port) as nc:
+        with open(args.filename, 'rb') as f:
+            nc.readwrite(stdin=f)
+
+
+if __name__ == '__main__':
+    main()
 
