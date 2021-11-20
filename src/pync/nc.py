@@ -7,6 +7,7 @@ import shlex
 import socket
 import subprocess
 import sys
+import time
 
 from .process import NonBlockingProcess, ProcessTerminated
 from .conin import NonBlockingConsoleInput
@@ -119,13 +120,16 @@ class Netcat:
         except TypeError:
             self.socket.sendall(data.encode())
 
-    def readwrite(self, stdin=None, stdout=None, stderr=None, until_eof=False):
+    def readwrite(self, stdin=None, stdout=None, stderr=None, q=0):
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
         stderr = stderr or self.stderr
 
         if stdin is sys.__stdin__ and stdin.isatty():
             stdin = NonBlockingConsoleInput()
+
+        eof_reached = None
+        eof_elapsed = None
 
         # (     )
         #   O O
@@ -150,12 +154,20 @@ class Netcat:
                         # connection lost.
                         break
 
-                stdin_data = stdin.read(1024)
-                if stdin_data:
-                    self.send(stdin_data)
-                else:
-                    if stdin_data is not None and until_eof:
-                        # All input data is read (EOF).
+                if not eof_reached:
+                    stdin_data = stdin.read(1024)
+                    if stdin_data:
+                        self.send(stdin_data)
+                    else:
+                        if stdin_data is not None:
+                            # EOF reached on stdin.
+                            # Store the time to calculate time elapsed.
+                            eof_reached = time.time()
+                # if q is a negative value, ignore EOF.
+                elif q >= 0:
+                    eof_elapsed = time.time() - eof_reached
+                    if eof_elapsed >= q:
+                        # quit after elapsed eof time.
                         break
             except StopNetcat:
                 # IO has requested to stop the readwrite loop.
