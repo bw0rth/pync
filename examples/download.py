@@ -4,6 +4,7 @@ Download client or server data to a file using pync.
 '''
 
 import argparse
+import os
 
 import pync
 
@@ -37,7 +38,11 @@ def main():
         mode = pync.listen
 
     with mode(args.host, args.port) as nc:
-        with open(args.filename, 'wb') as f:
+        if not os.path.exists('downloads'):
+            os.makedirs('downloads')
+
+        filepath = os.path.join('downloads', args.filename)
+        with open(filepath, 'wb') as f:
             nc.readwrite(stdout=f)
 
 
