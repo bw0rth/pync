@@ -23,6 +23,7 @@ def main():
     parser.add_argument('port',
             help='Port number to connect to',
             metavar='PORT',
+            type=int,
     )
     parser.add_argument('--listen', '-l',
             help='Listen mode, for inbound connects',
