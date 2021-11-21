@@ -37,9 +37,9 @@ def main():
     if args.listen:
         mode = pync.listen
 
-    with mode(args.host, args.port) as nc:
+    with mode(args.host, args.port) as conn:
         with open(args.filename, 'rb') as f:
-            nc.readwrite(stdin=f)
+            conn.readwrite(stdin=f)
 
 
 if __name__ == '__main__':

@@ -37,13 +37,13 @@ def main():
     if args.listen:
         mode = pync.listen
 
-    with mode(args.host, args.port) as nc:
+    with mode(args.host, args.port) as conn:
         if not os.path.exists('downloads'):
             os.makedirs('downloads')
 
         filepath = os.path.join('downloads', args.filename)
         with open(filepath, 'wb') as f:
-            nc.readwrite(stdout=f)
+            conn.readwrite(stdout=f)
 
 
 if __name__ == '__main__':
