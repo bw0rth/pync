@@ -276,7 +276,7 @@ class NetcatTCPServer:
             can_read, _, _ = select.select([self.sock], [], [], .002)
             if self.sock in can_read:
                 cli_sock, _ = self.sock.accept()
-                return cli_sock
+                return NetcatTCPConnection(cli_sock, **self._kwargs)
 
 
 class StopNetcat(Exception):
