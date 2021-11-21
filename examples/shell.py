@@ -40,8 +40,8 @@ def main():
     if args.listen:
         mode = pync.listen
 
-    with mode(args.host, args.port) as nc:
-        nc.execute(command)
+    with mode(args.host, args.port) as conn:
+        conn.execute(command)
 
 
 if __name__ == '__main__':
