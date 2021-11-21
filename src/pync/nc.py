@@ -21,31 +21,31 @@ class Netcat:
     name = 'pync'
     parser = argparse.ArgumentParser(name,
             usage='''
-       {name} DEST PORT
-       {name} -l [DEST] PORT
+       {name} [OPTIONS] DEST PORT
+       {name} [OPTIONS] -l [DEST] PORT
 '''.lstrip().format(name=name),
     )
-    parser.add_argument('destination',
-            help='The host name or ip to connect or bind to.',
+    parser.add_argument('dest',
+            help='The host name or ip to connect or bind to',
             nargs='?',
             default='',
             metavar='DEST',
     )
     parser.add_argument('port',
-            help='The port number to connect or bind to.',
+            help='The port number to connect or bind to',
             type=int,
             metavar='PORT',
     )
-    parser.add_argument('--listen', '-l',
-            help='Listen for a connection on the given port.',
+    parser.add_argument('-l',
+            help='Listen mode, for inbound connects',
             action='store_true',
     )
-    parser.add_argument('--execute', '-e',
-            help='Execute a command over the connection.',
+    parser.add_argument('-e',
+            help='Execute a command over the connection',
             metavar='CMD',
     )
     parser.add_argument('-q',
-            help='quit after EOF on stdin and delay of secs',
+            help='quit after EOF on stdin and delay of SECS',
             metavar='SECS',
     )
 
@@ -92,7 +92,11 @@ class Netcat:
             pass
         args = cls.parser.parse_args(args)
 
-        return cls(**args)
+        return cls(**vars(args))
+
+    def run(self):
+        for conn in self:
+            conn.run()
 
 
 class NetcatTCPConnection:
