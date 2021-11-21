@@ -48,13 +48,19 @@ class Netcat:
             help='quit after EOF on stdin and delay of SECS',
             metavar='SECS',
     )
+    parser.add_argument('-z',
+            help='Zero-I/O mode [used for scanning]',
+            action='store_true',
+    )
 
     def __init__(self, port,    # Port number or range.
             dest='',            # Destination hostname or ip.
             e=None,             # Command to execute through connection.
-            q=0,                # Quit after EOF with delay.
-            l=False,            # Listen mode.
             k=False,            # Keep the server sock open in listen mode.
+            l=False,            # Listen mode.
+            q=0,                # Quit after EOF with delay.
+            v=False,            # Verbose
+            z=False,            # Zero IO mode.
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
 
         if l:
@@ -63,12 +69,15 @@ class Netcat:
                     k=k,
                     e=e,
                     q=q,
+                    v=v,
                     stdin=stdin, stdout=stdout, stderr=stderr,
             )
         else:
             self._connection_iter = NetcatTCPClient(dest, port,
                     e=e,
                     q=q,
+                    v=v,
+                    z=z,
                     stdin=stdin, stdout=stdout, stderr=stderr,
             )
 
@@ -222,42 +231,60 @@ class NetcatTCPConnection:
 
 class NetcatTCPClient:
 
-    def __init__(self, dest, port, **kwargs):
+    def __init__(self, dest, port, v=False, z=False,
+            stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr,
+            **kwargs):
         self.dest, self.port = dest, port
+        self.v = v
+        self.z = z
         self._kwargs = kwargs
+        self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
     def __iter__(self):
-        '''
-        Multiple client connects may occur when port range
-        is given.
-        '''
+        conn_success = 'Connection to {} port {} [tcp/*] succeeded!'
+        conn_fail = 'pync: connect to {} port {} (tcp) failed'
         for p in self.port:
-            nc_conn = self.next_connection()
             try:
-                yield nc_conn
+                sock = socket.create_connection((self.dest, p))
+            except ConnectionRefusedError:
+                if self.v:
+                    msg = conn_fail.format(self.dest, p)
+                    msg += ': Connection refused'
+                    self.stderr.write(msg+'\n')
+                continue
+
+            if self.v:
+                msg = conn_success.format(self.dest, p)
+                self.stderr.write(msg+'\n')
+
+            nc_conn = NetcatTCPConnection(sock, **self._kwargs)
+            try:
+                if not self.z:
+                    yield nc_conn
             finally:
                 nc_conn.close()
-
-    def next_connection(self):
-        sock = socket.create_connection((self.dest, self.port))
-        return NetcatTCPConnection(sock, **self._kwargs)
 
 
 class NetcatTCPServer:
 
-    def __init__(self, port, dest='', k=False, **kwargs):
+    def __init__(self, port, dest='', k=False, v=False, **kwargs):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((dest, port))
         self.sock.listen(1)
         self.k = k
+        self.v = v
         self._kwargs = kwargs
 
     def __iter__(self):
-        '''
-        Multiple client connects may occur when the "k" option
-        is given.
-        '''
+
+        def next_connection():
+            while True:
+                can_read, _, _ = select.select([self.sock], [], [], .002)
+                if self.sock in can_read:
+                    cli_sock, _ = self.sock.accept()
+                    return NetcatTCPConnection(cli_sock, **self._kwargs)
+
         nc_conn = self.next_connection()
         try:
             yield nc_conn
@@ -274,13 +301,6 @@ class NetcatTCPServer:
                 yield nc_conn
             finally:
                 nc_conn.close()
-
-    def next_connection(self):
-        while True:
-            can_read, _, _ = select.select([self.sock], [], [], .002)
-            if self.sock in can_read:
-                cli_sock, _ = self.sock.accept()
-                return NetcatTCPConnection(cli_sock, **self._kwargs)
 
 
 class StopNetcat(Exception):
