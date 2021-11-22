@@ -24,10 +24,9 @@ def main():
     )
     args = parser.parse_args()
 
-    #print(args.port)
-    #return
-
-    with pync.Netcat(args.port, dest='localhost', v=True, z=True) as nc:
+    # The "v" option is to turn verbose on, and "z" for
+    # Zero-I/O mode (connect then close).
+    with pync.Netcat(args.port, dest=args.dest, v=True, z=True) as nc:
         nc.run()
 
 
