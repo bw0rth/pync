@@ -10,7 +10,7 @@ import pync
 
 
 def main():
-    parser = argparse.ArgumentParser('www.py',
+    parser = argparse.ArgumentParser('msg.py',
             formatter_class=argparse.RawTextHelpFormatter,
             description=__doc__,
     )
