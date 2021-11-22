@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import argparse
+import itertools
 import select
 import shlex
 import socket
@@ -15,6 +16,51 @@ from .conin import NonBlockingConsoleInput
 
 if sys.version_info.major == 2:
     from socket import error as ConnectionRefusedError
+
+
+def PORT(value):
+    # This should always return a range of ports.
+    invalid_msg = 'Given value is not a valid port number'
+    def valid_port(p):
+        return 1 <= p <= 65535
+
+    try:
+        # assume port value is a range.
+        start_port, end_port = [int(x) for x in value.split('-')]
+    except ValueError:
+        # port value is not a range.
+        value = int(value)
+        if not valid_port(value):
+            raise ValueError(invalid_msg)
+        return range(value, value+1)
+
+    if start_port > end_port:
+        start_port, end_port = end_port, start_port
+
+    for p in [start_port, end_port]:
+        if not valid_port(p):
+            raise ValueError(invalid_msg)
+
+    return range(start_port, end_port+1)
+
+
+class PortAction(argparse.Action):
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        # If one port is given on the command line, set that as value.
+        # If more that one is given, set as port iterator.
+
+        if len(values) == 1 and values[0].start == (values[0].stop - 1):
+            # Only one port given.
+            setattr(namespace, self.dest, values[0].start)
+            return
+
+        # sort the list of port ranges.
+        sorted_values = sorted(values, key=lambda r: r.start)
+        # chain the port ranges into one iter.
+        chained_values = itertools.chain(*sorted_values)
+        setattr(namespace, self.dest, chained_values)
+        return
 
 
 class Netcat:
@@ -33,8 +79,10 @@ class Netcat:
     )
     parser.add_argument('port',
             help='The port number to connect or bind to',
-            type=int,
+            type=PORT,
             metavar='PORT',
+            nargs='+',
+            action=PortAction,
     )
     parser.add_argument('-l',
             help='Listen mode, for inbound connects',
@@ -47,6 +95,10 @@ class Netcat:
     parser.add_argument('-q',
             help='quit after EOF on stdin and delay of SECS',
             metavar='SECS',
+    )
+    parser.add_argument('-v',
+            help='Verbose',
+            action='store_true',
     )
     parser.add_argument('-z',
             help='Zero-I/O mode [used for scanning]',
@@ -64,6 +116,7 @@ class Netcat:
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
 
         if l:
+            # NetcatTCPServer allows only one port to be given.
             self._connection_iter = NetcatTCPServer(port,
                     dest=dest,
                     k=k,
@@ -73,6 +126,8 @@ class Netcat:
                     stdin=stdin, stdout=stdout, stderr=stderr,
             )
         else:
+            # The NetcatClient allows one port or a range of ports
+            # to be passed.
             self._connection_iter = NetcatTCPClient(dest, port,
                     e=e,
                     q=q,
@@ -85,7 +140,7 @@ class Netcat:
         return self
 
     def __exit__(self, *args, **kwargs):
-        pass
+        self._connection_iter.close()
 
     def __iter__(self):
         '''Yield NetcatConnection objects'''
@@ -235,6 +290,12 @@ class NetcatTCPClient:
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr,
             **kwargs):
         self.dest, self.port = dest, port
+        
+        if isinstance(self.port, int):
+            # Only one port passed, wrap it in a list
+            # for the __iter__ function.
+            self.port = [self.port]
+
         self.v = v
         self.z = z
         self._kwargs = kwargs
@@ -264,6 +325,9 @@ class NetcatTCPClient:
             finally:
                 nc_conn.close()
 
+    def close(self):
+        pass
+
 
 class NetcatTCPServer:
 
@@ -285,7 +349,7 @@ class NetcatTCPServer:
                     cli_sock, _ = self.sock.accept()
                     return NetcatTCPConnection(cli_sock, **self._kwargs)
 
-        nc_conn = self.next_connection()
+        nc_conn = next_connection()
         try:
             yield nc_conn
         finally:
@@ -296,11 +360,14 @@ class NetcatTCPServer:
             return
 
         while True:
-            nc_conn = self.next_connection()
+            nc_conn = next_connection()
             try:
                 yield nc_conn
             finally:
                 nc_conn.close()
+
+    def close(self):
+        self.sock.close()
 
 
 class StopNetcat(Exception):
