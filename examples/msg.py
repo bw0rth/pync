@@ -34,6 +34,9 @@ def main():
 
     # The l option is for listen mode and k for keeping the server open
     # between each client connection.
+    #
+    # We use the "pync.makefile" helper function to turn a string into
+    # a file-like object ready for the "conn.readwrite" method.
     with pync.Netcat(args.port, dest=args.dest, l=True, k=True) as nc:
         for conn in nc:
             response = pync.makefile("{}\r\n".format(args.m))
