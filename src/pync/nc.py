@@ -13,13 +13,14 @@ import time
 from .process import NonBlockingProcess, ProcessTerminated
 from .conin import NonBlockingConsoleInput
 
-
 if sys.version_info.major == 2:
     from socket import error as ConnectionRefusedError
 
 
 def PORT(value):
     # This should always return a range of ports.
+    # Even if only one port is given.
+
     invalid_msg = 'Given value is not a valid port number'
     def valid_port(p):
         return 1 <= p <= 65535
@@ -116,7 +117,7 @@ class Netcat:
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
 
         if l:
-            # NetcatTCPServer allows only one port to be given.
+            # The NetcatTCPServer allows only one port to be given.
             self._connection_iter = NetcatTCPServer(port,
                     dest=dest,
                     k=k,
@@ -154,13 +155,18 @@ class Netcat:
         except AttributeError:
             # args is not a string, assume it's a list.
             pass
-        args = cls.parser.parse_args(args)
 
-        return cls(**vars(args))
+        args = cls.parser.parse_args(args)
+        kwargs = vars(args)
+
+        return cls(**kwargs)
 
     def run(self):
         for conn in self:
             conn.run()
+
+    def next_connection(self):
+        raise NotImplementedError
 
 
 class NetcatTCPConnection:
@@ -253,6 +259,9 @@ class NetcatTCPConnection:
                                 stdout.write(net_data.decode())
                         stdout.flush()
                     except OSError:
+                        # TODO: Could I move this into the custom Process
+                        #       write method? raise StopNetcat
+                        #
                         # process terminated.
                         break
                 else:
