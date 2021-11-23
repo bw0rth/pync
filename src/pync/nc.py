@@ -332,6 +332,18 @@ class NetcatTCPClient:
 class NetcatTCPServer:
 
     def __init__(self, port, dest='', k=False, v=False, **kwargs):
+        # First, use "getaddrinfo" to raise a socket error if
+        # there are any problems with the given dest and port.
+        if dest == '':
+            # getaddrinfo doesn't accept an empty string.
+            # listen on all interfaces.
+            dest = '0.0.0.0'
+        if not isinstance(port, int) or not isinstance(port, str):
+            # getaddrinfo expects an int or string.
+            # All objects have __repr__ so call repr to get string.
+            port = repr(port)
+        socket.getaddrinfo(dest, port)
+
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((dest, port))
