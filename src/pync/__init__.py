@@ -3,6 +3,6 @@
 from .helpers import makefile
 from .nc import (
         pync, connect, listen, Netcat,
-        Process, StopNetcat,
+        Process, StopNetcat, ConnectionRefused
 )
 
