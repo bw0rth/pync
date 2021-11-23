@@ -335,6 +335,7 @@ class ConnectionRefused(ConnectionRefusedError):
 
 class NetcatTCPClient:
     name = 'pync'
+    conn_succeeded = 'connection successful!'
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
     def __init__(self, dest, port, v=False, z=False,
@@ -379,7 +380,15 @@ class NetcatTCPClient:
                         dest=e.dest, port=e.port,
                     ))
                 continue
-            conn.run()
+            if self.v:
+                self.error(self.conn_succeeded)
+            if self.z:
+                # do nothing when zero io mode.
+                continue
+            try:
+                conn.run()
+            finally:
+                conn.close()
 
     def next_connection(self):
         # This will raise StopIteration when no more ports.
@@ -388,7 +397,11 @@ class NetcatTCPClient:
             sock = socket.create_connection((self.dest, port))
         except ConnectionRefusedError:
             raise ConnectionRefused(self.dest, port)
-        return NetcatTCPConnection(sock, **self._kwargs)
+        nc_conn = NetcatTCPConnection(sock, **self._kwargs)
+        if self.z:
+            # If zero io mode, close the connection.
+            nc_conn.close()
+        return nc_conn
 
     def error(self, msg):
         msg = '{}: {}\n'.format(self.name, msg)
