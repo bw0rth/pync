@@ -64,6 +64,22 @@ class PortAction(argparse.Action):
         return
 
 
+class _NullConnIter:
+    '''
+    Netcat may encounter an error while creating the NetcatTCPServer.
+    In that case this null connection iterator will be used instead.
+    '''
+
+    def __getattr__(self, name):
+        return self._null_method
+
+    def __iter__(self):
+        raise StopIteration
+
+    def _null_method(self, *args, **kwargs):
+        pass
+
+
 class Netcat:
     name = 'pync'
     parser = argparse.ArgumentParser(name,
@@ -116,20 +132,26 @@ class Netcat:
             z=False,            # Zero IO mode.
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
 
+        self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
+
+        self._conn_iter = _NullConnIter()
         if l:
             # The NetcatTCPServer allows only one port to be given.
-            self._connection_iter = NetcatTCPServer(port,
-                    dest=dest,
-                    k=k,
-                    e=e,
-                    q=q,
-                    v=v,
-                    stdin=stdin, stdout=stdout, stderr=stderr,
-            )
+            try:
+                self._conn_iter = NetcatTCPServer(port,
+                        dest=dest,
+                        k=k,
+                        e=e,
+                        q=q,
+                        v=v,
+                        stdin=stdin, stdout=stdout, stderr=stderr,
+                )
+            except socket.gaierror as e:
+                self.error(str(e))
         else:
             # The NetcatClient allows one port or a range of ports
             # to be passed.
-            self._connection_iter = NetcatTCPClient(dest, port,
+            self._conn_iter = NetcatTCPClient(dest, port,
                     e=e,
                     q=q,
                     v=v,
@@ -141,11 +163,11 @@ class Netcat:
         return self
 
     def __exit__(self, *args, **kwargs):
-        self._connection_iter.close()
+        self._conn_iter.close()
 
     def __iter__(self):
         '''Yield NetcatConnection objects'''
-        return iter(self._connection_iter)
+        return iter(self._conn_iter)
 
     @classmethod
     def from_args(cls, args):
@@ -162,11 +184,14 @@ class Netcat:
         return cls(**kwargs)
 
     def run(self):
-        for conn in self:
-            conn.run()
+        return self._conn_iter.run()
 
     def next_connection(self):
-        raise NotImplementedError
+        return self._conn_iter.next_connection()
+
+    def error(self, msg):
+        msg = '{}: {}\n'.format(self.name, msg)
+        self.stderr.write(msg)
 
 
 class NetcatTCPConnection:
@@ -288,12 +313,29 @@ class NetcatTCPConnection:
                 # IO has requested to stop the readwrite loop.
                 break
 
+    def error(self, msg):
+        msg = '{}: {}\n'.format(self.name, msg)
+        self.stderr.write(msg)
+
     def execute(self, cmd):
         proc = Process(cmd)
         self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
 
 
+class ConnectionRefused(ConnectionRefusedError):
+    '''
+    Same as ConnectionRefusedError but passes back the
+    dest and port of the refused connection.
+    '''
+
+    def __init__(self, dest, port):
+        self.dest = dest
+        self.port = port
+
+
 class NetcatTCPClient:
+    name = 'pync'
+    conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
     def __init__(self, dest, port, v=False, z=False,
             stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr,
@@ -321,10 +363,36 @@ class NetcatTCPClient:
             finally:
                 nc_conn.close()
 
+    def run(self):
+        # Handle any errors and write them to stderr if "v"erbose
+        # option is True.
+        while True:
+            try:
+                conn = self.next_connection()
+            except StopIteration:
+                # No more ports to connect to.
+                # Exit loop
+                break
+            except ConnectionRefused as e:
+                if self.v:
+                    self.error(self.conn_refused.format(
+                        dest=e.dest, port=e.port,
+                    ))
+                continue
+            conn.run()
+
     def next_connection(self):
+        # This will raise StopIteration when no more ports.
         port = next(self._iterports)
-        sock = socket.create_connection((self.dest, port))
+        try:
+            sock = socket.create_connection((self.dest, port))
+        except ConnectionRefusedError:
+            raise ConnectionRefused(self.dest, port)
         return NetcatTCPConnection(sock, **self._kwargs)
+
+    def error(self, msg):
+        msg = '{}: {}\n'.format(self.name, msg)
+        self.stderr.write(msg)
 
     def close(self):
         pass
@@ -362,12 +430,23 @@ class NetcatTCPServer:
             finally:
                 nc_conn.close()
 
+    def run(self):
+        while True:
+            try:
+                conn = self.next_connection()
+            except StopIteration:
+                # Server can't accept any more connections.
+                break
+            conn.run()
+
     def next_connection(self):
         while True:
             try:
                 can_read, _, _ = select.select([self.sock], [], [], .002)
             except ValueError:
-                # Bad socket.
+                # Bad / closed socket.
+                # This can occur when the "k" option is not set to
+                # keep the server running.
                 raise StopIteration
             if self.sock in can_read:
                 cli_sock, _ = self.sock.accept()
@@ -378,6 +457,10 @@ class NetcatTCPServer:
             # In this case, "k" is set to False so close the server.
             self.close()
         return nc_conn
+
+    def error(self, msg):
+        msg = '{}: {}\n'.format(self.name, msg)
+        self.stderr.write(msg)
 
     def close(self):
         self.sock.close()
