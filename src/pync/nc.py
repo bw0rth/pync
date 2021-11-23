@@ -305,34 +305,26 @@ class NetcatTCPClient:
             # for the __iter__ function.
             self.port = [self.port]
 
+        self._iterports = iter(self.port)
+
         self.v = v
         self.z = z
         self._kwargs = kwargs
         self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
     def __iter__(self):
-        conn_success = 'Connection to {} port {} [tcp/*] succeeded!'
-        conn_fail = 'pync: connect to {} port {} (tcp) failed'
-        for p in self.port:
-            try:
-                sock = socket.create_connection((self.dest, p))
-            except ConnectionRefusedError:
-                if self.v:
-                    msg = conn_fail.format(self.dest, p)
-                    msg += ': Connection refused'
-                    self.stderr.write(msg+'\n')
-                continue
-
-            if self.v:
-                msg = conn_success.format(self.dest, p)
-                self.stderr.write(msg+'\n')
-
-            nc_conn = NetcatTCPConnection(sock, **self._kwargs)
+        while True:
+            nc_conn = self.next_connection()
             try:
                 if not self.z:
                     yield nc_conn
             finally:
                 nc_conn.close()
+
+    def next_connection(self):
+        port = next(self._iterports)
+        sock = socket.create_connection((self.dest, port))
+        return NetcatTCPConnection(sock, **self._kwargs)
 
     def close(self):
         pass
@@ -347,7 +339,7 @@ class NetcatTCPServer:
             # getaddrinfo doesn't accept an empty string.
             # set to 0.0.0.0 to listen on all interfaces.
             dest = '0.0.0.0'
-        if not isinstance(port, int) or not isinstance(port, str):
+        if not isinstance(port, int) and not isinstance(port, str):
             # port is not an int or a string.
             # getaddrinfo expects an int or string.
             # All objects have __repr__ so call repr to get string.
@@ -363,30 +355,29 @@ class NetcatTCPServer:
         self._kwargs = kwargs
 
     def __iter__(self):
-
-        def next_connection():
-            while True:
-                can_read, _, _ = select.select([self.sock], [], [], .002)
-                if self.sock in can_read:
-                    cli_sock, _ = self.sock.accept()
-                    return NetcatTCPConnection(cli_sock, **self._kwargs)
-
-        nc_conn = next_connection()
-        try:
-            yield nc_conn
-        finally:
-            nc_conn.close()
-
-        if not self.k:
-            self.sock.close()
-            return
-
         while True:
-            nc_conn = next_connection()
+            nc_conn = self.next_connection()
             try:
                 yield nc_conn
             finally:
                 nc_conn.close()
+
+    def next_connection(self):
+        while True:
+            try:
+                can_read, _, _ = select.select([self.sock], [], [], .002)
+            except ValueError:
+                # Bad socket.
+                raise StopIteration
+            if self.sock in can_read:
+                cli_sock, _ = self.sock.accept()
+                nc_conn = NetcatTCPConnection(cli_sock, **self._kwargs)
+                break
+        if not self.k:
+            # The "k" option keeps the server open.
+            # In this case, "k" is set to False so close the server.
+            self.close()
+        return nc_conn
 
     def close(self):
         self.sock.close()
