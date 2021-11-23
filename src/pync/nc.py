@@ -345,9 +345,10 @@ class NetcatTCPServer:
         # there are any problems with the given dest and port.
         if dest == '':
             # getaddrinfo doesn't accept an empty string.
-            # listen on all interfaces.
+            # set to 0.0.0.0 to listen on all interfaces.
             dest = '0.0.0.0'
         if not isinstance(port, int) or not isinstance(port, str):
+            # port is not an int or a string.
             # getaddrinfo expects an int or string.
             # All objects have __repr__ so call repr to get string.
             port = repr(port)
