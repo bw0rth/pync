@@ -20,13 +20,19 @@ if sys.version_info.major == 2:
 def PORT(value):
     # This should always return a range of ports.
     # Even if only one port is given.
+    #
+    # The port action then turns it into a single port
+    # if one port is given or a chain of sorted port
+    # ranges if more than one port is given.
 
     invalid_msg = 'Given value is not a valid port number'
     def valid_port(p):
+        # check if port is actually a valid port number.
         return 1 <= p <= 65535
 
     try:
         # assume port value is a range.
+        # e.g 8000-8005
         start_port, end_port = [int(x) for x in value.split('-')]
     except ValueError:
         # port value is not a range.
@@ -49,7 +55,7 @@ class PortAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         # If one port is given on the command line, set that as value.
-        # If more that one is given, set as port iterator.
+        # If more that one is given, sort and chain as one iterator.
 
         if len(values) == 1 and values[0].start == (values[0].stop - 1):
             # Only one port given.
@@ -62,22 +68,6 @@ class PortAction(argparse.Action):
         chained_values = itertools.chain(*sorted_values)
         setattr(namespace, self.dest, chained_values)
         return
-
-
-class _NullConnIter:
-    '''
-    Netcat may encounter an error while creating the NetcatTCPServer.
-    In that case this null connection iterator will be used instead.
-    '''
-
-    def __getattr__(self, name):
-        return self._null_method
-
-    def __iter__(self):
-        raise StopIteration
-
-    def _null_method(self, *args, **kwargs):
-        pass
 
 
 class Netcat:
@@ -134,20 +124,16 @@ class Netcat:
 
         self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
-        self._conn_iter = _NullConnIter()
         if l:
             # The NetcatTCPServer allows only one port to be given.
-            try:
-                self._conn_iter = NetcatTCPServer(port,
-                        dest=dest,
-                        k=k,
-                        e=e,
-                        q=q,
-                        v=v,
-                        stdin=stdin, stdout=stdout, stderr=stderr,
-                )
-            except socket.gaierror as e:
-                self.error(str(e))
+            self._conn_iter = NetcatTCPServer(port,
+                    dest=dest,
+                    k=k,
+                    e=e,
+                    q=q,
+                    v=v,
+                    stdin=stdin, stdout=stdout, stderr=stderr,
+            )
         else:
             # The NetcatClient allows one port or a range of ports
             # to be passed.
@@ -204,6 +190,8 @@ class NetcatTCPConnection:
         self.command = e
         self.q = q
         self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
+        self.dest, self.port = sock.getpeername()
+        self.proto = '*'
 
     def __enter__(self):
         return self
@@ -335,7 +323,7 @@ class ConnectionRefused(ConnectionRefusedError):
 
 class NetcatTCPClient:
     name = 'pync'
-    conn_succeeded = 'connection successful!'
+    conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
     def __init__(self, dest, port, v=False, z=False,
@@ -381,7 +369,11 @@ class NetcatTCPClient:
                     ))
                 continue
             if self.v:
-                self.error(self.conn_succeeded)
+                self.error(self.conn_succeeded.format(
+                    dest=conn.dest,
+                    port=conn.port,
+                    proto=conn.proto
+                ))
             if self.z:
                 # do nothing when zero io mode.
                 continue
