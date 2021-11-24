@@ -175,10 +175,6 @@ class Netcat:
     def next_connection(self):
         return self._conn_iter.next_connection()
 
-    def error(self, msg):
-        msg = '{}: {}\n'.format(self.name, msg)
-        self.stderr.write(msg)
-
 
 class NetcatTCPConnection:
 
@@ -191,6 +187,8 @@ class NetcatTCPConnection:
         self.q = q
         self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
         self.dest, self.port = sock.getpeername()
+        if self.dest == '127.0.0.1':
+            self.dest = 'localhost'
         self.proto = '*'
 
     def __enter__(self):
@@ -301,10 +299,6 @@ class NetcatTCPConnection:
                 # IO has requested to stop the readwrite loop.
                 break
 
-    def error(self, msg):
-        msg = '{}: {}\n'.format(self.name, msg)
-        self.stderr.write(msg)
-
     def execute(self, cmd):
         proc = Process(cmd)
         self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
@@ -363,17 +357,25 @@ class NetcatTCPClient:
                 # Exit loop
                 break
             except ConnectionRefused as e:
-                if self.v:
-                    self.error(self.conn_refused.format(
-                        dest=e.dest, port=e.port,
-                    ))
+                self.log(
+                        self.conn_refused.format(
+                            dest=e.dest, port=e.port,
+                        ),
+                )
                 continue
-            if self.v:
-                self.error(self.conn_succeeded.format(
-                    dest=conn.dest,
-                    port=conn.port,
-                    proto=conn.proto
-                ))
+            except socket.error as e:
+                self.log(str(e))
+                continue
+
+            self.log(
+                    self.conn_succeeded.format(
+                        dest=conn.dest,
+                        port=conn.port,
+                        proto=conn.proto,
+                    ),
+                    prefix='',
+            )
+
             if self.z:
                 # do nothing when zero io mode.
                 continue
@@ -395,15 +397,28 @@ class NetcatTCPClient:
             nc_conn.close()
         return nc_conn
 
-    def error(self, msg):
-        msg = '{}: {}\n'.format(self.name, msg)
-        self.stderr.write(msg)
+    def log(self, message, prefix=None):
+        if not self.v:
+            return
+
+        if prefix is None:
+            prefix = self.name
+
+        if prefix:
+            message = '{}: {}\n'.format(prefix, message)
+        else:
+            message += '\n'
+
+        f = self.stderr
+        f.write(message)
 
     def close(self):
         pass
 
 
 class NetcatTCPServer:
+    listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
+    conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
 
     def __init__(self, port, dest='', k=False, v=False, **kwargs):
         # First, use "getaddrinfo" to raise a socket error if
@@ -462,10 +477,6 @@ class NetcatTCPServer:
             # In this case, "k" is set to False so close the server.
             self.close()
         return nc_conn
-
-    def error(self, msg):
-        msg = '{}: {}\n'.format(self.name, msg)
-        self.stderr.write(msg)
 
     def close(self):
         self.sock.close()
