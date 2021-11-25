@@ -155,6 +155,9 @@ class Netcat:
         '''Yield NetcatConnection objects'''
         return iter(self._conn_iter)
 
+    def __getattr__(self, name):
+        return getattr(self._conn_iter, name)
+
     @classmethod
     def from_args(cls, args):
         try:
@@ -168,12 +171,6 @@ class Netcat:
         kwargs = vars(args)
 
         return cls(**kwargs)
-
-    def run(self):
-        return self._conn_iter.run()
-
-    def next_connection(self):
-        return self._conn_iter.next_connection()
 
 
 class NetcatTCPConnection:
