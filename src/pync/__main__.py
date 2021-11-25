@@ -20,10 +20,11 @@ def main():
         return 1
 
     try:
-        with nc:
-            nc.run()
+        nc.run()
     except KeyboardInterrupt:
         sys.stderr.write('\n')
+    finally:
+        nc.close()
 
 
 if __name__ == '__main__':
