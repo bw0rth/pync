@@ -126,22 +126,15 @@ class Netcat:
 
         if l:
             # The NetcatTCPServer allows only one port to be given.
-            self._conn_iter = NetcatTCPServer(port,
-                    dest=dest,
-                    k=k,
-                    e=e,
-                    q=q,
-                    v=v,
+            self._conn_iter = NetcatTCPServer(port, dest=dest,
+                    k=k, e=e, q=q, v=v,
                     stdin=stdin, stdout=stdout, stderr=stderr,
             )
         else:
             # The NetcatClient allows one port or a range of ports
             # to be passed.
             self._conn_iter = NetcatTCPClient(dest, port,
-                    e=e,
-                    q=q,
-                    v=v,
-                    z=z,
+                    e=e, q=q, v=v, z=z,
                     stdin=stdin, stdout=stdout, stderr=stderr,
             )
 
@@ -414,6 +407,7 @@ class NetcatTCPClient:
 
 
 class NetcatTCPServer:
+    name = 'pync'
     listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
     conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
 
@@ -462,8 +456,7 @@ class NetcatTCPServer:
                 can_read, _, _ = select.select([self.sock], [], [], .002)
             except ValueError:
                 # Bad / closed socket.
-                # This can occur when the "k" option is not set to
-                # keep the server running.
+                # This can occur when the server is closed.
                 raise StopIteration
             if self.sock in can_read:
                 cli_sock, _ = self.sock.accept()
@@ -474,6 +467,21 @@ class NetcatTCPServer:
             # In this case, "k" is set to False so close the server.
             self.close()
         return nc_conn
+
+    def log(self, message, prefix=None):
+        if not self.v:
+            return
+
+        if prefix is None:
+            prefix = self.name
+
+        if prefix:
+            message = '{}: {}\n'.format(prefix, message)
+        else:
+            message += '\n'
+
+        f = self.stderr
+        f.write(message)
 
     def close(self):
         self.sock.close()
