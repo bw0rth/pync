@@ -70,47 +70,50 @@ class PortAction(argparse.Action):
         return
 
 
-class Netcat:
+class NetcatBase:
     name = 'pync'
-    parser = argparse.ArgumentParser(name,
-            usage='''
-       {name} [OPTIONS] DEST PORT
-       {name} [OPTIONS] -l [DEST] PORT
-'''.lstrip().format(name=name),
-    )
-    parser.add_argument('dest',
-            help='The host name or ip to connect or bind to',
-            nargs='?',
-            default='',
-            metavar='DEST',
-    )
-    parser.add_argument('port',
-            help='The port number to connect or bind to',
-            type=PORT,
-            metavar='PORT',
-            nargs='+',
-            action=PortAction,
-    )
-    parser.add_argument('-l',
-            help='Listen mode, for inbound connects',
-            action='store_true',
-    )
-    parser.add_argument('-e',
-            help='Execute a command over the connection',
-            metavar='CMD',
-    )
-    parser.add_argument('-q',
-            help='quit after EOF on stdin and delay of SECS',
-            metavar='SECS',
-    )
-    parser.add_argument('-v',
-            help='Verbose',
-            action='store_true',
-    )
-    parser.add_argument('-z',
-            help='Zero-I/O mode [used for scanning]',
-            action='store_true',
-    )
+    stdin, stdout, stderr = sys.stdin, sys.stdout, sys.stderr
+
+    def __init__(self, stdin=None, stdout=None, stderr=None, **kwargs):
+        if stdin is not None:
+            self.stdin = stdin
+        if stdout is not None:
+            self.stdout = stdout
+        if stderr is not None:
+            self.stderr = stderr
+        # point self.log from the class log method to the
+        # instance log method.
+        self.log = self._log
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        self.close()
+
+    @classmethod
+    def log(cls, message, prefix=None, file=None):
+        if prefix is None:
+            prefix = '{}: '.format(cls.name)
+        if file is None:
+            file = cls.stderr
+        message = '{}{}\n'.format(prefix, message)
+        cls.stderr.write(message)
+
+    def _log(self, *args, **kwargs):
+        if not self.v:
+            return
+        return self.__class__.log(*args,
+                prefix='{}: '.format(self.name),
+                file=self.stderr,
+                **kwargs,
+        )
+
+    def close(self):
+        pass
+
+
+class Netcat(NetcatBase):
 
     def __init__(self, port,    # Port number or range.
             dest='',            # Destination hostname or ip.
@@ -120,29 +123,22 @@ class Netcat:
             q=0,                # Quit after EOF with delay.
             v=False,            # Verbose
             z=False,            # Zero IO mode.
-            stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
-
-        self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
+            **kwargs):
+        super().__init__(**kwargs)
 
         if l:
             # The NetcatTCPServer allows only one port to be given.
             self._conn_iter = NetcatTCPServer(port, dest=dest,
                     k=k, e=e, q=q, v=v,
-                    stdin=stdin, stdout=stdout, stderr=stderr,
+                    stdin=self.stdin, stdout=self.stdout, stderr=self.stderr,
             )
         else:
             # The NetcatClient allows one port or a range of ports
             # to be passed.
             self._conn_iter = NetcatTCPClient(dest, port,
                     e=e, q=q, v=v, z=z,
-                    stdin=stdin, stdout=stdout, stderr=stderr,
+                    stdin=self.stdin, stdout=self.stdout, stderr=self.stderr,
             )
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args, **kwargs):
-        self._conn_iter.close()
 
     def __iter__(self):
         '''Yield NetcatConnection objects'''
@@ -160,32 +156,75 @@ class Netcat:
             # args is not a string, assume it's a list.
             pass
 
-        args = cls.parser.parse_args(args)
+        parser = cls.makeparser()
+        args = parser.parse_args(args)
         kwargs = vars(args)
 
         return cls(**kwargs)
 
+    @classmethod
+    def makeparser(cls):
+        parser = argparse.ArgumentParser(cls.name,
+                usage='''
+       {name} [OPTIONS] DEST PORT
+       {name} [OPTIONS] -l [DEST] PORT
+    '''.lstrip().format(name=cls.name),
+        )
+        parser.add_argument('dest',
+                help='The host name or ip to connect or bind to',
+                nargs='?',
+                default='',
+                metavar='DEST',
+        )
+        parser.add_argument('port',
+                help='The port number to connect or bind to',
+                type=PORT,
+                metavar='PORT',
+                nargs='+',
+                action=PortAction,
+        )
+        parser.add_argument('-l',
+                help='Listen mode, for inbound connects',
+                action='store_true',
+        )
+        parser.add_argument('-e',
+                help='Execute a command over the connection',
+                metavar='CMD',
+        )
+        parser.add_argument('-q',
+                help='quit after EOF on stdin and delay of SECS',
+                metavar='SECS',
+        )
+        parser.add_argument('-v',
+                help='Verbose',
+                action='store_true',
+        )
+        parser.add_argument('-z',
+                help='Zero-I/O mode [used for scanning]',
+                action='store_true',
+        )
+        return parser
 
-class NetcatTCPConnection:
+    def close(self):
+        return self._conn_iter.close()
+
+
+class NetcatTCPConnection(NetcatBase):
 
     def __init__(self, sock,
             e=None,
             q=0,
-            stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
+            **kwargs):
+        super().__init__(**kwargs)
+
         self.sock = sock
         self.command = e
         self.q = q
-        self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
         self.dest, self.port = sock.getpeername()
+
         if self.dest == '127.0.0.1':
             self.dest = 'localhost'
         self.proto = '*'
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args, **kwargs):
-        self.close()
 
     @classmethod
     def connect(cls, host, port, **kwargs):
@@ -305,14 +344,13 @@ class ConnectionRefused(ConnectionRefusedError):
         self.port = port
 
 
-class NetcatTCPClient:
-    name = 'pync'
+class NetcatTCPClient(NetcatBase):
     conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
-    def __init__(self, dest, port, v=False, z=False,
-            stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr,
-            **kwargs):
+    def __init__(self, dest, port, v=False, z=False, **kwargs):
+        super().__init__(**kwargs)
+
         self.dest, self.port = dest, port
         
         if isinstance(self.port, int):
@@ -325,7 +363,6 @@ class NetcatTCPClient:
         self.v = v
         self.z = z
         self._kwargs = kwargs
-        self.stdin, self.stdout, self.stderr = stdin, stdout, stderr
 
     def __iter__(self):
         while True:
@@ -387,31 +424,14 @@ class NetcatTCPClient:
             nc_conn.close()
         return nc_conn
 
-    def log(self, message, prefix=None):
-        if not self.v:
-            return
 
-        if prefix is None:
-            prefix = self.name
-
-        if prefix:
-            message = '{}: {}\n'.format(prefix, message)
-        else:
-            message += '\n'
-
-        f = self.stderr
-        f.write(message)
-
-    def close(self):
-        pass
-
-
-class NetcatTCPServer:
-    name = 'pync'
+class NetcatTCPServer(NetcatBase):
     listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
     conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
 
     def __init__(self, port, dest='', k=False, v=False, **kwargs):
+        super().__init__(**kwargs)
+
         # First, use "getaddrinfo" to raise a socket error if
         # there are any problems with the given dest and port.
         if dest == '':
@@ -467,21 +487,6 @@ class NetcatTCPServer:
             # In this case, "k" is set to False so close the server.
             self.close()
         return nc_conn
-
-    def log(self, message, prefix=None):
-        if not self.v:
-            return
-
-        if prefix is None:
-            prefix = self.name
-
-        if prefix:
-            message = '{}: {}\n'.format(prefix, message)
-        else:
-            message += '\n'
-
-        f = self.stderr
-        f.write(message)
 
     def close(self):
         self.sock.close()
