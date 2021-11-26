@@ -2,21 +2,18 @@
 
 import socket
 import sys
-from .nc import pync, Netcat
+from .nc import Netcat
 
 
 def main():
-    argv = sys.argv[1:]
+    args = sys.argv[1:]
 
     try:
-        nc = pync(argv)
+        nc = Netcat.from_args(args)
     except socket.error as e:
         # The NetcatServer may raise a socket error if
         # an invalid port number is given.
-        sys.stderr.write('{}: {}\n'.format(
-            Netcat.name,
-            str(e),
-        ))
+        Netcat.log(str(e))
         return 1
 
     try:
