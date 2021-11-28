@@ -2,9 +2,12 @@
 arbitrary TCP and UDP connections and listens (Netcat for Python).
 
 ## Installation
-Make sure Python is installed (version 2.7 onwards should do).
+1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
 
-[Download zip](https://github.com/brenw0rth/pync/archive/refs/heads/main.zip)
+2. Use Python's pip command to install pync straight from github
+   ```sh
+   pip install https://github.com/brenw0rth/pync/archive/main.zip
+   ```
 
 ## Usage
 ...
