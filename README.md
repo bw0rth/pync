@@ -17,7 +17,7 @@ As an example, let's create a local TCP server:
    pync -l localhost 8000
    ```
 You can also run pync as a module with Python.<br/>
-Let's connect to the local TCP server:
+Run the following command to connect to the server:
    ```sh
    python -m pync localhost 8000
    ```
@@ -29,7 +29,8 @@ Here's an example that creates a local TCP server using the pync function:
    with pync('-l localhost 8000') as nc:
        nc.run()
    ```
-And now another script to connect to the server and send it a message:<br/>
+And now to connect to the server and send it a message.<br/>
+Here we create a file-like object from our message string and pass it to Netcat's stdin.
    ```py
    from pync import pync, makefile
    with pync('localhost 8000') as nc:
