@@ -1,6 +1,13 @@
 # pync
 arbitrary TCP and UDP connections and listens (Netcat for Python).
 
+Like Netcat, pync can be used for:
+* Interactive server communication
+* Remote file transfer
+* Simple network chat
+* Simple port scanning
+* Executing commands over the network
+
 ## Installation
 1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
 
