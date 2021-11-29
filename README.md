@@ -30,7 +30,7 @@ Here's an example that creates a local TCP server using the pync function:
        nc.run()
    ```
 And now to connect to the server and send it a message.<br/>
-Here we create a file-like object from our message string and pass it to Netcat's stdin.
+Here we create a file-like object from our message string and pass it to Netcat's stdin:
    ```py
    from pync import pync, makefile
    with pync('localhost 8000') as nc:
