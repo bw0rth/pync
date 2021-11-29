@@ -5,7 +5,7 @@ import subprocess
 from .pipe import NonBlockingPipe
 
 
-class NonBlockingProcess:
+class NonBlockingProcess(object):
 
     def __init__(self, cmd):
         pipe = NonBlockingPipe()
@@ -25,7 +25,7 @@ class ProcessTerminated(Exception):
     pass
 
 
-class _ProcStdout:
+class _ProcStdout(object):
 
     def __init__(self, proc, stdout):
         self._proc = proc

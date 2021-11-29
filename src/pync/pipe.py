@@ -16,7 +16,7 @@ else:
     ERROR_NO_DATA = 232
 
 
-class NonBlockingPipe:
+class NonBlockingPipe(object):
 
     def __init__(self):
         self.pin, self.pout = self._create_pipe()
@@ -28,7 +28,7 @@ class NonBlockingPipe:
         return _PipeInput(rfd), _PipeOutput(wfd)
 
 
-class _PipeIO:
+class _PipeIO(object):
 
     def __init__(self, fd):
         self._fd = fd

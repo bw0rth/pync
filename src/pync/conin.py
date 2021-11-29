@@ -19,7 +19,7 @@ import select
 import sys
 
 
-class _BaseConsoleInput:
+class _BaseConsoleInput(object):
 
     def read(self, n):
         return self.readline()

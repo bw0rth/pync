@@ -15,6 +15,19 @@ from .conin import NonBlockingConsoleInput
 
 if sys.version_info.major == 2:
     from socket import error as ConnectionRefusedError
+    
+    class range(object):
+
+        def __init__(self, start, stop, *args, **kwargs):
+            self.start = start
+            self.stop = stop
+            self._rng = xrange(start, stop, *args, **kwargs)
+
+        def __getattr__(self, name):
+            return getattr(self._rng, name)
+
+        def __iter__(self):
+            return iter(self._rng)
 
 
 def PORT(value):
@@ -70,7 +83,7 @@ class PortAction(argparse.Action):
         return
 
 
-class NetcatBase:
+class NetcatBase(object):
     name = 'pync'
     stdin, stdout, stderr = sys.stdin, sys.stdout, sys.stderr
 
@@ -106,8 +119,7 @@ class NetcatBase:
         return self.__class__.log(*args,
                 prefix='{}: '.format(self.name),
                 file=self.stderr,
-                **kwargs,
-        )
+                **kwargs)
 
     def close(self):
         pass
@@ -125,7 +137,7 @@ class Netcat(NetcatBase):
             z=False,            # Zero IO mode.
             u=False,            # UDP mode.
             **kwargs):
-        super().__init__(**kwargs)
+        super(Netcat, self).__init__(**kwargs)
 
         if l:
             # Server
@@ -240,7 +252,7 @@ class NetcatConnection(NetcatBase):
             e=None,
             q=0,
             **kwargs):
-        super().__init__(**kwargs)
+        super(NetcatConnection, self).__init__(**kwargs)
 
         self.sock = sock
         self.command = e
@@ -396,7 +408,7 @@ class NetcatUDPConnection(NetcatConnection):
 
     def recv(self, *args, **kwargs):
         try:
-            return super().recv(*args, **kwargs)
+            return super(NetcatUDPConnection, self).recv(*args, **kwargs)
         except ConnectionRefusedError:
             raise StopNetcat
 
@@ -417,7 +429,7 @@ class NetcatTCPClient(NetcatBase):
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
     def __init__(self, dest, port, v=False, z=False, **kwargs):
-        super().__init__(**kwargs)
+        super(NetcatTCPClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
         
@@ -498,7 +510,7 @@ class NetcatUDPClient(NetcatBase):
     conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
 
     def __init__(self, dest, port, v=False, z=False, **kwargs):
-        super().__init__(**kwargs)
+        super(NetcatUDPClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
         
@@ -577,7 +589,7 @@ class NetcatTCPServer(NetcatBase):
     conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
 
     def __init__(self, port, dest='', k=False, v=False, **kwargs):
-        super().__init__(**kwargs)
+        super(NetcatTCPServer, self).__init__(**kwargs)
 
         # First, use "getaddrinfo" to raise a socket error if
         # there are any problems with the given dest and port.
@@ -615,13 +627,16 @@ class NetcatTCPServer(NetcatBase):
             except StopIteration:
                 # Server can't accept any more connections.
                 break
-            conn.run()
+            try:
+                conn.run()
+            finally:
+                conn.close()
 
     def next_connection(self):
         while True:
             try:
                 can_read, _, _ = select.select([self.sock], [], [], .002)
-            except ValueError:
+            except (ValueError, socket.error):
                 # Bad / closed socket.
                 # This can occur when the server is closed.
                 raise StopIteration
@@ -642,7 +657,7 @@ class NetcatTCPServer(NetcatBase):
 class NetcatUDPServer(NetcatBase):
 
     def __init__(self, port, dest='', k=False, v=False, **kwargs):
-        super().__init__(**kwargs)
+        super(NetcatUDPServer, self).__init__(**kwargs)
         self.k = k
         self.v = v
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -664,7 +679,10 @@ class NetcatUDPServer(NetcatBase):
             except StopIteration:
                 # Server can't accept any more connections.
                 break
-            conn.run()
+            try:
+                conn.run()
+            finally:
+                conn.close()
 
     def next_connection(self):
         while True:
@@ -695,7 +713,7 @@ class StopNetcat(Exception):
 class Process(NonBlockingProcess):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(Process, self).__init__(*args, **kwargs)
         self.stdout = _ProcStdout(self.stdout)
 
 
