@@ -20,7 +20,7 @@ Like Netcat, pync can be used for:
 ## Basic Usage
 ### Using pync from the command line
 To use pync from the command line, you can use the pync command.<br/>
-Run pync with the "-l" option to listen for incoming connections:
+Create a TCP server with the "-l" option to listen for incoming connections:
    ```sh
    pync -l localhost 8000
    ```
