@@ -1,5 +1,5 @@
 # pync
-arbitrary TCP and UDP connections and listens (Netcat for Python).
+arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html) for Python).
 
 Like Netcat, pync can be used for:
 * Interactive client/server communication
