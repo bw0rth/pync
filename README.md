@@ -6,6 +6,7 @@ Like Netcat, pync can be used for:
 * Remote file transfer
 * Simple network chat
 * Simple port scanning
+* Relaying network data
 * Executing commands over the network
 
 ## Installation
