@@ -20,7 +20,7 @@ Like Netcat, pync can be used for:
 ## Usage
 ### Using pync from the command line
 To use pync from the command line, you can use the pync command.<br/>
-As an example, let's create a local TCP server:
+Run pync with the "-l" option to listen for incoming TCP connections:
    ```sh
    pync -l localhost 8000
    ```
@@ -29,19 +29,23 @@ Run the following command to connect to the server:
    ```sh
    python -m pync localhost 8000
    ```
+To list all available options for the pync command, use the "-h" option:
+   ```sh
+   pync -h
+   ```
 ### Using pync inside a Python script
-You can import pync from within your own Python scripts.<br/>
+You can import pync into your own Python scripts too.<br/>
 Here's an example that creates a local TCP server using the pync function:
    ```py
+   # server.py
    from pync import pync
    with pync('-l localhost 8000') as nc:
        nc.run()
    ```
-And now to connect to the server and send it a message.<br/>
-Here we create a file-like object from our message string and pass it to Netcat's stdin:
+In a separate script, we can use the same pync function to connect to the server:
    ```py
-   from pync import pync, makefile
+   # client.py
+   from pync import pync
    with pync('localhost 8000') as nc:
-       message = makefile('Hello, World!\n')
-       nc.run(stdin=message)
+       nc.run()
    ```
