@@ -17,15 +17,15 @@ Like Netcat, pync can be used for:
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
 
-## Usage
+## Basic Usage
 ### Using pync from the command line
 To use pync from the command line, you can use the pync command.<br/>
-Run pync with the "-l" option to listen for incoming TCP connections:
+Run pync with the "-l" option to listen for incoming connections:
    ```sh
    pync -l localhost 8000
    ```
 You can also run pync as a module with Python.<br/>
-Run the following command to connect to the server:
+Run the following command in a separate terminal window to connect to the server:
    ```sh
    python -m pync localhost 8000
    ```
