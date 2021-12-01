@@ -1,13 +1,7 @@
 # pync
 arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html) for Python).
 
-Like Netcat, pync can be used for:
-* Interactive client/server communication
-* Remote file transfer (upload/download)
-* Network chat
-* Port scanning
-* Relaying/proxying network data
-* Executing commands over the network
+See [Examples](#examples)
 
 ## Installation
 1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
@@ -17,7 +11,7 @@ Like Netcat, pync can be used for:
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
 
-## Basic Usage
+## Examples
 <details>
 <summary>Using pync from the command line</summary>
 
