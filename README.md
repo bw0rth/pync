@@ -1,7 +1,15 @@
 # pync
 arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html) for Python).
 
-See [Examples](#examples)
+## Description
+Common uses include:
+* Interactive client/server communication
+* Remote file transfer (upload/download)
+* Port scanning
+* Network chat
+* Executing commands over the network
+
+See the [Examples](#examples) section below for more.
 
 ## Installation
 1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
