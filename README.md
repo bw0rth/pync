@@ -21,6 +21,7 @@ Like Netcat, pync can be used for:
 <details>
 <summary>Using pync from the command line</summary>
 
+---
 To use pync from the command line, you can use the pync command.<br/>
 Create a TCP server with the "-l" option to listen for incoming connections:
    ```sh
@@ -40,8 +41,7 @@ To list all available options for the pync command, use the "-h" option:
 <details>
 <summary>Using pync inside a Python script</summary>
 
-<div style="margin-left: 12px">
-
+---
 You can import pync into your own Python scripts too.<br/>
 Here's an example that creates a local TCP server using the pync function:
    ```py
@@ -57,7 +57,5 @@ In a separate script, we can use the same pync function to connect to the server
    with pync('localhost 8000') as nc:
        nc.run()
    ```
-
-</div>
 
 </details>
