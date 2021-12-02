@@ -96,7 +96,7 @@ In a separate script, we can use the same pync function to connect to the server
 </details>
 
 <details>
-<summary>Reverse/bind shell</summary>
+<summary>Creating a reverse/bind backdoor shell</summary>
 </details>
 
 ## Module API
