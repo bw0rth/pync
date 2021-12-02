@@ -8,7 +8,7 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.
 * [Module API](#module-api)
 
 ## Description
-pync is based on the [nc](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html) (or [netcat](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html)) utility,
+**pync** is based on the [nc](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html) (or [netcat](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html)) utility,
 though not yet as fully featured.</br>
 It can open TCP connections, send UDP packets,
 listen on arbitrary TCP and UDP ports and even
