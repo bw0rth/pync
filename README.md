@@ -68,3 +68,27 @@ In a separate script, we can use the same pync function to connect to the server
    ```
 
 </details>
+
+<details>
+<summary>Transfering files</summary>
+</details>
+
+<details>
+<summary>Scanning for open ports</summary>
+</details>
+
+<details>
+<summary>Relaying network data</summary>
+</details>
+
+<details>
+<summary>Executing commands over the network</summary>
+</details>
+
+<details>
+<summary>Simple network chat</summary>
+</details>
+
+<details>
+<summary>Reverse/bind shell</summary>
+</details>
