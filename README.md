@@ -77,6 +77,11 @@ In a separate script, we can use the same pync function to connect to the server
 
 <details>
 <summary>Transfering files</summary>
+   
+---
+### Transfering files from the command line
+   
+### Transfering files from a script
 </details>
 
 <details>
