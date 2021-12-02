@@ -3,6 +3,9 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.
 
 ## Description
 pync is based on the nc (or netcat) utility.
+It can open TCP connections, send UDP packets,
+listen on arbitrary TCP and UDP ports and even
+perform a simple port scan.
 
 Common uses include:
 * Interactive client/server communication
