@@ -16,7 +16,7 @@ Common uses include:
 * Relaying/proxying network data
 * Executing commands over the network
 
-See the [Examples](#examples) section below for more.
+For practical examples, see the [Examples](#examples) section below.
 
 ## Installation
 1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
