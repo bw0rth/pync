@@ -12,6 +12,7 @@ Common uses include:
 * Remote file transfer (upload/download)
 * Port scanning
 * Network chat
+* Relaying/proxying network data
 * Executing commands over the network
 
 See the [Examples](#examples) section below for more.
