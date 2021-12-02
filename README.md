@@ -2,6 +2,8 @@
 arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.org/testing/netcat-openbsd/nc.1.en.html) for Python).
 
 ## Description
+pync is based on the nc (or netcat) utility.
+
 Common uses include:
 * Interactive client/server communication
 * Remote file transfer (upload/download)
