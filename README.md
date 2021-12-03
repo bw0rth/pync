@@ -3,6 +3,7 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://manpages.debian.
 
 ## Contents
 * [Description](#description)
+* [Options](#options)
 * [Installation](#installation)
 * [Examples](#examples)
 * [Module API](#module-api)
@@ -23,6 +24,9 @@ Common uses include:
 * Executing commands over the network
 
 For practical examples, see the [Examples](#examples) section below.
+
+## Options
+...
 
 ## Installation
 1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
