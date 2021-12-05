@@ -9,15 +9,14 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org
 * [Module API](#module-api)
 
 ## Description
-**pync** is based on the [nc](https://en.wikipedia.org/wiki/Netcat) (or [netcat](https://en.wikipedia.org/wiki/Netcat)) utility,
-though not yet as fully featured.</br>
-It can open TCP connections, send UDP packets,
-listen on arbitrary TCP and UDP ports and even
-perform a simple port scan.
-
 Inspired by reading the Black Hat Python book,
-my goal was to create an easy to use library that
-provides netcat-like functionality to Python programmers.
+the goal of **pync** was to create an easy to use library that
+provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python programmers.</br>
+
+Though not yet as fully featured as [netcat](https://en.wikipedia.org/wiki/Netcat), it can
+open TCP connections, send UDP packets, listen
+on arbitrary TCP and UDP ports and even perform
+a simple port scan.
 
 Common uses include:
 * Interactive client/server communication
