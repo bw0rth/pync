@@ -15,6 +15,10 @@ It can open TCP connections, send UDP packets,
 listen on arbitrary TCP and UDP ports and even
 perform a simple port scan.
 
+Inspired by reading the Black Hat Python book,
+my goal was to create an easy to use library that
+provides netcat-like functionality to Python programmers.
+
 Common uses include:
 * Interactive client/server communication
 * Remote file transfer (upload/download)
