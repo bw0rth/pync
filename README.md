@@ -38,14 +38,6 @@ For practical examples, see the [Examples](#examples) section below.
    ```
    
 ## Usage
-...
-   
-## Options
-| Option     | Default | Description                |
-| :--------- | :------ | :-------------             |
-| -h, --help | n/a     | show help message and exit |
-
-## Examples
 <details>
 <summary>Using pync from the command line</summary>
 
@@ -87,7 +79,13 @@ In a separate script, we can use the same pync function to connect to the server
    ```
 
 </details>
+   
+## Options
+| Option     | Default | Description                |
+| :--------- | :------ | :-------------             |
+| -h, --help | n/a     | show help message and exit |
 
+## Examples
 <details>
 <summary>Transfering files</summary>
    
