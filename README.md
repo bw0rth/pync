@@ -41,9 +41,9 @@ For practical examples, see the [Examples](#examples) section below.
 ...
    
 ## Options
-| Option | Default | Description                |
-| :----- | :------ | :-------------             |
-| -h     | n/a     | show help message and exit |
+| Option     | Default | Description                |
+| :--------- | :------ | :-------------             |
+| -h, --help | n/a     | show help message and exit |
 
 ## Examples
 <details>
