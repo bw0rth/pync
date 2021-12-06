@@ -83,7 +83,7 @@ In a separate script, we can use the same pync function to connect to the server
 ## Options
 | Option     | Default | Description                        |
 | :--------- | :------ | :--------------------------------- |
-| -e CMD     | n/a     | execute a command over the network |
+| -e         | n/a     | execute a command over the network |
 | -h         | n/a     | show help message and exit         |
 
 ## Examples
