@@ -36,6 +36,9 @@ For practical examples, see the [Examples](#examples) section below.
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
    
+## Usage
+...
+   
 ## Options
 | Option | Default | Description                |
 | :----- | :------ | :-------------             |
