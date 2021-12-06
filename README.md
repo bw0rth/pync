@@ -56,6 +56,8 @@ To list all available options for the pync command, use the "-h" option:
    ```sh
    pync -h
    ```
+
+---
 </details>
 
 <details>
@@ -78,6 +80,7 @@ In a separate script, we can use the same pync function to connect to the server
        nc.run()
    ```
 
+---
 </details>
    
 ## Options
