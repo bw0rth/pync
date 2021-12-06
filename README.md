@@ -28,9 +28,6 @@ Common uses include:
 
 For practical examples, see the [Examples](#examples) section below.
 
-## Options
-...
-
 ## Installation
 1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
 
@@ -38,6 +35,11 @@ For practical examples, see the [Examples](#examples) section below.
    ```sh
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
+   
+## Options
+| Option | Default | Description                |
+| :----- | :------ | :-------------             |
+| -h     | n/a     | show help message and exit |
 
 ## Examples
 <details>
