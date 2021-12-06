@@ -12,7 +12,7 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org
 ## Description
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
 the goal of **pync** was to create an easy to use library that
-provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python programmers.</br>
+provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Though not yet as fully featured as [netcat](https://en.wikipedia.org/wiki/Netcat), it can
 open TCP connections, send UDP packets, listen
