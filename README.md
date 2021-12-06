@@ -84,7 +84,7 @@ In a separate script, we can use the same pync function to connect to the server
 | Option     | Default | Description                        |
 | :--------- | :------ | :--------------------------------- |
 | -e CMD     | n/a     | execute a command over the network |
-| -h, --help | n/a     | show help message and exit         |
+| -h         | n/a     | show help message and exit         |
 
 ## Examples
 <details>
