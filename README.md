@@ -38,6 +38,11 @@ For practical examples, see the [Examples](#examples) section below.
    ```
    
 ## Usage
+```sh
+pync [OPTIONS] DEST PORT
+pync [OPTIONS] -l [DEST] PORT
+```
+
 <details>
 <summary>Using pync from the command line</summary>
 
