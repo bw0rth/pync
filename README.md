@@ -42,7 +42,14 @@ For practical examples, see the [Examples](#examples) section below.
 pync [OPTIONS] DEST PORT
 pync [OPTIONS] -l [DEST] PORT
 ```
+   
+## Options
+| Option     | Default | Description                        |
+| :--------- | :------ | :--------------------------------- |
+| -e CMD     | n/a     | execute a command over the network |
+| -h         | n/a     | show help message and exit         |
 
+## Examples
 <details>
 <summary>Using pync from the command line</summary>
 
@@ -87,14 +94,7 @@ In a separate script, we can use the same pync function to connect to the server
 
 ---
 </details>
-   
-## Options
-| Option     | Default | Description                        |
-| :--------- | :------ | :--------------------------------- |
-| -e         | n/a     | execute a command over the network |
-| -h         | n/a     | show help message and exit         |
 
-## Examples
 <details>
 <summary>Transfering files</summary>
 
