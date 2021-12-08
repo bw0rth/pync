@@ -111,7 +111,9 @@ In a separate script, we can use the same pync function to connect to the server
    pync -l localhost 8000 < file.txt
    ```
    
-   On machine B, we connect to machine A to download the file.
+   On machine B, connect to machine A and use the
+   greater-than operator to redirect pync's
+   standard output to the file.
    ```sh
    pync localhost 8000 > file.txt
    ```
