@@ -227,6 +227,8 @@ class Netcat(NetcatBase):
         parser.add_argument('-q',
                 help='quit after EOF on stdin and delay of SECS',
                 metavar='SECS',
+                default=0,
+                type=int,
         )
         parser.add_argument('-v',
                 help='Verbose',
