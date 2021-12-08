@@ -105,6 +105,16 @@ In a separate script, we can use the same pync function to connect to the server
 
 ---
 #### Transfering files from the command line
+   On machine A, create a TCP server and use the less-than
+   operator to connect the file to pync's standard input.
+   ```sh
+   pync -l localhost 8000 < file.txt
+   ```
+   
+   On machine B, we connect to machine A to download the file.
+   ```sh
+   pync localhost 8000 > file.txt
+   ```
 
 #### Transfering files from a script
 
