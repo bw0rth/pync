@@ -104,8 +104,9 @@ In a separate script, we can use the same pync function to connect to the server
 <summary>Transfering files</summary>
 
 ---
-> :warning: WARNING: Please do not transfer any sensitive information
-> using the following methods as the connections are not encrypted/secure.
+> :warning: WARNING</br>
+> Please do not transfer any sensitive information using the
+> following methods as the connections are not encrypted/secure.
    
 ### Transfering files from the command line
 
