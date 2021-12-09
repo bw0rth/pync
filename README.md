@@ -57,7 +57,7 @@ pync [OPTIONS] -l [DEST] PORT
 ## Examples
 The following examples are command line examples.</br>
 
-For examples of using pync in your own Python scripts, please
+For examples of using **pync** in your own Python scripts, please
 refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples) in the repository.
 
 <details>
