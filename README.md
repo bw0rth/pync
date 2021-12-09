@@ -107,7 +107,7 @@ to create a new file using the greater-than operator.
 </details>
 
 <details>
-<summary>Scanning for open ports</summary>
+<summary>Port scanning</summary>
 </details>
 
 <details>
