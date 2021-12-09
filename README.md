@@ -55,6 +55,10 @@ pync [OPTIONS] -l [DEST] PORT
 | -z         | False   | Zero-I/O mode [used for scanning]         |
 
 ## Examples
+The following examples are command line examples.</br>
+For examples of using pync in your own Python scripts, please
+refer to the [examples](https://github.com/brenw0rth/pync/tree/main/examples) folder in the repository.
+
 <details>
 <summary>Using pync from the command line</summary>
 
@@ -107,8 +111,6 @@ In a separate script, we can use the same pync function to connect to the server
 > :warning: WARNING</br>
 > Please do not transfer any sensitive information using the
 > following methods as the connections are not encrypted/secure.
-   
-### Transfering files from the command line
 
 Create a TCP server to host the file using the "-l" option.</br>
 The less-than operator will connect the file to pync's
@@ -123,8 +125,6 @@ to create a new file using the greater-than operator.
    ```sh
    pync host.example.com 8000 > file.txt
    ```
-
-### Transfering files from a script
 
 ---
 </details>
