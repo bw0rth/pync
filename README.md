@@ -104,21 +104,26 @@ In a separate script, we can use the same pync function to connect to the server
 <summary>Transfering files</summary>
 
 ---
-#### Transfering files from the command line
-   On machine A, create a TCP server and use the less-than
-   operator to connect the file to pync's standard input.
+> :warning: WARNING: Please do not transfer any sensitive information
+> using the following methods as the connections are not encrypted/secure.
+   
+### Transfering files from the command line
+
+Create a TCP server to host the file using the "-l" option.</br>
+The less-than operator will connect the file to pync's
+standard input.
    ```sh
-   pync -l localhost 8000 < file.txt
+   pync -l 8000 < file.txt
    ```
    
-   On machine B, connect to machine A and use the
-   greater-than operator to redirect pync's
-   standard output to the file.
+On another machine, connect to the server to download
+the file and redirect pync's standard output to a
+new file using the greater-than operator.
    ```sh
-   pync localhost 8000 > file.txt
+   pync host.example.com 8000 > file.txt
    ```
 
-#### Transfering files from a script
+### Transfering files from a script
 
 ---
 </details>
