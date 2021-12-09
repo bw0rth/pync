@@ -60,7 +60,7 @@ For examples of using pync in your own Python scripts, please
 refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples) in the repository.
 
 <details>
-<summary>Using pync from the command line</summary>
+<summary>Client/server model</summary>
 
 ---
 To use pync from the command line, you can use the pync command.<br/>
@@ -76,29 +76,6 @@ Run the following command in a separate terminal window to connect to the server
 To list all available options for the pync command, use the "-h" option:
    ```sh
    pync -h
-   ```
-
----
-</details>
-
-<details>
-<summary>Using pync inside a Python script</summary>
-
----
-You can import pync into your own Python scripts too.<br/>
-Here's an example that creates a local TCP server using the pync function:
-   ```py
-   # server.py
-   from pync import pync
-   with pync('-l localhost 8000') as nc:
-       nc.run()
-   ```
-In a separate script, we can use the same pync function to connect to the server:
-   ```py
-   # client.py
-   from pync import pync
-   with pync('localhost 8000') as nc:
-       nc.run()
    ```
 
 ---
