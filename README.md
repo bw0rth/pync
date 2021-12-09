@@ -117,9 +117,9 @@ standard input.
    pync -l 8000 < file.txt
    ```
    
-On another machine, connect to the server to download
-the file and redirect pync's standard output to a
-new file using the greater-than operator.
+On another machine, download the file by connecting
+to the server and redirecting pync's standard output
+to create a new file using the greater-than operator.
    ```sh
    pync host.example.com 8000 > file.txt
    ```
