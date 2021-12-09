@@ -82,7 +82,7 @@ To list all available options for the pync command, use the "-h" option:
 </details>
 
 <details>
-<summary>Transfering files</summary>
+<summary>Data transfer</summary>
 
 ---
 > :warning: WARNING</br>
