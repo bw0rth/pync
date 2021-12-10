@@ -117,23 +117,15 @@ The connection will close automatically after the file has been transferred.
 </details>
 
 <details>
+<summary>Talking To Servers</summary>
+</details>
+
+<details>
 <summary>Port scanning</summary>
 </details>
 
 <details>
-<summary>Relaying network data</summary>
-</details>
-
-<details>
 <summary>Executing commands over the network</summary>
-</details>
-
-<details>
-<summary>Simple network chat</summary>
-</details>
-
-<details>
-<summary>Creating a reverse/bind backdoor shell</summary>
 </details>
 
 ## Module API
