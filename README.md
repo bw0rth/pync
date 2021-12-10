@@ -64,20 +64,17 @@ refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examp
 <summary>Client/server model</summary>
 
 ---
-To use pync from the command line, you can use the pync command.<br/>
-Create a TCP server with the "-l" option to listen for incoming connections:
+Start by creating a TCP server to listen for a connection:
    ```sh
-   pync -l localhost 8000
+   pync -l 1234
    ```
-You can also run pync as a module with Python.<br/>
-Run the following command in a separate terminal window to connect to the server:
+   
+On a second console/machine, connect to the server:
    ```sh
-   python -m pync localhost 8000
+   pync localhost 1234
    ```
-To list all available options for the pync command, use the "-h" option:
-   ```sh
-   pync -h
-   ```
+   
+
 
 ---
 </details>
@@ -90,19 +87,25 @@ To list all available options for the pync command, use the "-h" option:
 > Please do not transfer any sensitive information using the
 > following methods as the connections are not encrypted/secure.
 
-Create a TCP server to host the file using the "-l" option.</br>
-The less-than operator will connect the file to pync's
-standard input.
+Expanding upon the previous client/server example, we can easily
+transfer data between connections.</br>
+
+Start by creating a TCP server and connecting a file to
+pync's standard input.</br>
+This server will send the contents of the file to any client
+that connects:
    ```sh
-   pync -l 8000 < file.txt
+   pync -l 1234 < filename.in
    ```
    
-On another machine, download the file by connecting
-to the server and redirecting pync's standard output
-to create a new file using the greater-than operator.
+Using another machine, connect to the server and capture output
+to a new file:
    ```sh
-   pync host.example.com 8000 > file.txt
+   pync host.example.com 1234 > filename.out
    ```
+   
+During the file transfer, there won't be any progress indication.</br>
+The connection will close automatically after the file has been transferred.
 
 ---
 </details>
