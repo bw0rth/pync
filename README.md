@@ -64,17 +64,23 @@ refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examp
 <summary>Client/server model</summary>
 
 ---
-Start by creating a TCP server to listen for a connection:
+Building a basic client/server model using **pync** is quite simple.</br>
+On one console, start by creating a TCP server to listen for a connection:
    ```sh
    pync -l 1234
    ```
    
-On a second console/machine, connect to the server:
+On a second console/machine, create a client to connect to the server:
    ```sh
    pync localhost 1234
    ```
    
+There should now be a connection and anything typed in one console
+should display in the other and vice-versa.</br>
+The connection may be terminated using Ctrl-C.
 
+This may not seem very useful right now but as you'll see in later
+examples, you can use this idea to transfer files and other cool stuff.
 
 ---
 </details>
