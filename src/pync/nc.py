@@ -319,23 +319,16 @@ class NetcatConnection(NetcatBase):
         if stdin is sys.__stdin__ and stdin.isatty():
             stdin = NonBlockingConsoleInput()
 
-        def _stdout_write(data):
-            stdout.write(data)
-
         def py2_stdout_write(data):
             stdout.write(data)
-            stdout.flush()
 
         def py3_stdout_write(data):
             stdout.buffer.write(data)
-            stdout.flush()
 
-        stdout_write = _stdout_write
+        stdout_write = py2_stdout_write
         if stdout is sys.__stdout__:
             if hasattr(stdout, 'buffer'):
                 stdout_write = py3_stdout_write
-            else:
-                stdout_write = py2_stdout_write
 
         eof_reached = None
         eof_elapsed = None
@@ -348,6 +341,7 @@ class NetcatConnection(NetcatBase):
                 if net_data:
                     try:
                         stdout_write(net_data)
+                        stdout.flush()
                     except OSError:
                         # TODO: Could I move this into the custom Process
                         #       write method? raise StopNetcat
