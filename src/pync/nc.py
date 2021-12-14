@@ -113,11 +113,13 @@ class NetcatBase(object):
         message = '{}{}\n'.format(prefix, message)
         cls.stderr.write(message)
 
-    def _log(self, *args, **kwargs):
+    def _log(self, *args, prefix=None, **kwargs):
+        if prefix is None:
+            prefix = '{}: '.format(self.name)
         if not self.v:
             return
         return self.__class__.log(*args,
-                prefix='{}: '.format(self.name),
+                prefix=prefix,
                 file=self.stderr,
                 **kwargs)
 
