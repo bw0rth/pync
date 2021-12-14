@@ -218,6 +218,10 @@ class Netcat(NetcatBase):
                 nargs='+',
                 action=PortAction,
         )
+        parser.add_argument('-k',
+                help='Keep inbound sockets open for multiple connects',
+                action='store_true',
+        )
         parser.add_argument('-l',
                 help='Listen mode, for inbound connects',
                 action='store_true',
