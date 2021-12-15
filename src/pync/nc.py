@@ -308,10 +308,7 @@ class NetcatConnection(NetcatBase):
             return self.sock.recv(1024)
 
     def send(self, data):
-        try:
-            self.sock.sendall(data)
-        except TypeError:
-            self.sock.sendall(data.encode())
+        self.sock.sendall(data)
 
     def close(self):
         self.sock.close()
