@@ -44,15 +44,16 @@ pync [OPTIONS] -l [DEST] PORT
 ```
    
 ## Options
-| Option     | Description                               |
-| :--------- | ----------------------------------------- |
-| -e CMD     | Execute a command over the network        |
-| -h         | show help message and exit                |
-| -l         | Listen mode, for inbound connects         |
-| -q SECS    | quit after EOF on stdin and delay of SECS |
-| -u         | UDP mode. [default: TCP]                  |
-| -v         | Verbose                                   |
-| -z         | Zero-I/O mode [used for scanning]         |
+| Option     | Description                                     |
+| :--------- | ----------------------------------------------- |
+| -e CMD     | Execute a command over the network              |
+| -h         | show help message and exit                      |
+| -k         | Keep inbound sockets open for multiple connects |
+| -l         | Listen mode, for inbound connects               |
+| -q SECS    | quit after EOF on stdin and delay of SECS       |
+| -u         | UDP mode. [default: TCP]                        |
+| -v         | Verbose                                         |
+| -z         | Zero-I/O mode [used for scanning]               |
 
 ## Examples
 The following examples are command line examples.</br>
