@@ -8,5 +8,5 @@ def makefile(obj):
     This creates a file-like object from the given argument.
     '''
     # TODO: Add socket support (non-blocking socket).
-    return io.StringIO(obj)
+    return io.BytesIO(obj)
 

@@ -37,7 +37,7 @@ def main():
         with pync.Netcat(args.port, dest=args.dest,
                 l=True, k=True, v=True) as nc:
             for conn in nc:
-                response = pync.makefile('HTTP/1.1 200 OK\n\n')
+                response = pync.makefile(b'HTTP/1.1 200 OK\n\n')
                 conn.readwrite(stdin=response)
                 with open('index.html', 'rb') as f:
                     conn.readwrite(stdin=f)

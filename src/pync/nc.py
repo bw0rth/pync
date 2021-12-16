@@ -322,17 +322,6 @@ class NetcatConnection(NetcatBase):
         if stdin is sys.__stdin__ and stdin.isatty():
             stdin = NonBlockingConsoleInput()
 
-        def py2_stdout_write(data):
-            stdout.write(data)
-
-        def py3_stdout_write(data):
-            stdout.buffer.write(data)
-
-        stdout_write = py2_stdout_write
-        if stdout is sys.__stdout__:
-            if hasattr(stdout, 'buffer'):
-                stdout_write = py3_stdout_write
-
         eof_reached = None
         eof_elapsed = None
 
@@ -343,7 +332,10 @@ class NetcatConnection(NetcatBase):
                 net_data = self.recv(1024, blocking=False)
                 if net_data:
                     try:
-                        stdout_write(net_data)
+                        try:
+                            stdout.buffer.write(net_data)
+                        except AttributeError:
+                            stdout.write(net_data)
                         stdout.flush()
                     except OSError:
                         # TODO: Could I move this into the custom Process
@@ -357,7 +349,10 @@ class NetcatConnection(NetcatBase):
                         break
 
                 if not eof_reached:
-                    stdin_data = stdin.read(1024)
+                    try:
+                        stdin_data = stdin.buffer.read(1024)
+                    except AttributeError:
+                        stdin_data = stdin.read(1024)
                     if stdin_data:
                         self.send(stdin_data)
                     else:

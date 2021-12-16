@@ -49,17 +49,13 @@ class _UnixConsoleInput(_BaseConsoleInput):
 
     def readline(self):
         stdin = sys.__stdin__
-        def py2_readline():
-            return stdin.readline()
-        def py3_readline():
-            return stdin.buffer.readline()
         # Non-blocking console input for *nix.
         readables, _, _ = select.select([stdin], [], [], .002)
         if stdin in readables:
             try:
-                return py3_readline()
+                return stdin.buffer.readline()
             except AttributeError:
-                return py2_readline()
+                return stdin.readline()
 
 
 if _WINDOWS:
