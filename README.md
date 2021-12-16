@@ -30,9 +30,10 @@ Common uses include:
 For practical examples, see the [Examples](#examples) section below.
 
 ## Installation
-1. Install [Python](https://www.python.org/) if not already installed (version 2.7 or higher).
+**pync** should work on any system with  [Python](https://www.python.org/)
+installed (version 2.7 or higher).
 
-2. Use Python's pip command to install pync straight from github:
+Use Python's pip command to install **pync** straight from github:
    ```sh
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
