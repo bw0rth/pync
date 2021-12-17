@@ -137,6 +137,11 @@ their own scripts.
 
 <details>
    <summary>pync.<b>pync</b>(<i>args</i>)</summary>
+   
+   ---
+   The pync.pync function is an alias for the Netcat.from_args class method.
+   
+   ---
 </details>
 
 <details>
@@ -148,5 +153,5 @@ their own scripts.
 </details>
 
 <details>
-   <summary>pync.<b>Netcat</b></summary>
+   <summary>pync.<b>Netcat</b>(<i>port, dest='', e=False, k=False, l=False, q=0, u=False, v=False, z=False</i>)</summary>
 </details>
