@@ -132,4 +132,21 @@ The connection will close automatically after the file has been transferred.
 </details>
 
 ## Module API
-...
+This section is for python developers looking to use **pync** in
+their own scripts.
+
+<details>
+   <summary>pync.<b>pync</b>(<i>args</i>)</summary>
+</details>
+
+<details>
+   <summary>pync.<b>connect</b>(<i>dest, port</i>)</summary>
+</details>
+
+<details>
+   <summary>pync.<b>listen</b>(<i>dest, port</i>)</summary>
+</details>
+
+<details>
+   <summary>pync.<b>Netcat</b></summary>
+</details>
