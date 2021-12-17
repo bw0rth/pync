@@ -1,13 +1,14 @@
 # pync
 arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
-## Contents
+## Navigation
 * [Description](#description)
 * [Installation](#installation)
 * [Usage](#usage)
 * [Options](#options)
 * [Examples](#examples)
 * [Module API](#module-api)
+* [Website](https://brenw0rth.github.io/pync)
 
 ## Description
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
