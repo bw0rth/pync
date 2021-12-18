@@ -183,7 +183,7 @@ class Netcat(NetcatBase):
         return getattr(self._conn_iter, name)
 
     @classmethod
-    def from_args(cls, args):
+    def from_args(cls, args, **kwargs):
         try:
             # Assume args is a string and try and split it.
             args = shlex.split(args)
@@ -193,7 +193,7 @@ class Netcat(NetcatBase):
 
         parser = cls.makeparser()
         args = parser.parse_args(args)
-        kwargs = vars(args)
+        kwargs.update(vars(args))
 
         return cls(**kwargs)
 
@@ -741,13 +741,17 @@ connect = NetcatTCPConnection.connect
 listen = NetcatTCPConnection.listen
 
 
-def pync(args):
+def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     try:
-        nc = Netcat.from_args(args)
+        nc = Netcat.from_args(args,
+                stdin=stdin,
+                stdout=stdout,
+                stderr=stderr,
+        )
     except socket.error as e:
         # The NetcatServer may raise a socket error if
         # an invalid port number is given.
-        Netcat.log(str(e))
+        Netcat.log(str(e), file=stderr)
         return 1
 
     try:
