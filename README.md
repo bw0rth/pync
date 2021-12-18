@@ -180,6 +180,32 @@ their own scripts.
 
 <details>
    <summary>pync.<b>connect</b>(<i>dest, port</i>)</summary>
+   
+   ---
+   pync.**connect**() is an alias for the NetcatTCPConnection.connect method.</br>
+   For use when you only need to make one connection to a server.
+   
+   The <i>dest</i> parameter should be a string containing either the IP address
+   or the hostname of the server machine.</br>
+   The <i>port</i> parameter should be an integer between 1 and 65535 inclusive
+   and determines the port number the target server is listening on.</br>
+   The return value is a NetcatConnection object.
+   
+   > :warning: NOTE</br>
+   > The NetcatConnection object does not close itself after use.</br>
+   > So be sure to either use it's close() method or use a with statement
+   > to automatically close it after use.
+
+   Use the NetcatConnection.run() method to run **pync**.
+   
+   Example:
+   ```py
+   import pync
+   with pync.connect('localhost', 8000) as nc:
+       nc.run()
+   ```
+   
+   ---
 </details>
 
 <details>
