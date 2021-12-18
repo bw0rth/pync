@@ -178,24 +178,25 @@ their own scripts.
 </details>
 
 <details>
-   <summary>pync.<b>connect</b>(<i>dest, port</i>)</summary>
+   <summary>pync.<b>connect</b>(<i>dest, port, **kwargs</i>)</summary>
    
    ---
-   pync.**connect**() is an alias for the NetcatTCPConnection.connect method.</br>
+   pync.**connect**() is an alias for the NetcatTCPConnection.connect class method.</br>
    For use when you only need to make one connection to a server.
    
    The <i>dest</i> parameter should be a string containing either the IP address
    or the hostname of the server machine.</br>
    The <i>port</i> parameter should be an integer between 1 and 65535 inclusive
    and determines the port number the target server is listening on.</br>
-   The return value is a NetcatTCPConnection object.
+   Any other keyword arguments will be passed to the NetcatTCPConnection class.
+   
+   The return value is a NetcatTCPConnection object.</br>
+   After connecting, use the NetcatTCPConnection.run() method to run netcat.
    
    > :warning: NOTE</br>
    > A NetcatConnection object does not close itself after use.</br>
    > So be sure to either use it's close() method or use a with statement
    > to automatically close it after use.
-
-   After connecting, use the NetcatTCPConnection.run() method to run netcat.
    
    Example:
    ```py
@@ -208,7 +209,7 @@ their own scripts.
 </details>
 
 <details>
-   <summary>pync.<b>listen</b>(<i>dest, port</i>)</summary>
+   <summary>pync.<b>listen</b>(<i>dest, port, **kwargs</i>)</summary>
    
    ---
    pync.**listen**() is an alias for the NetcatTCPConnection.listen class method.</br>
@@ -218,15 +219,16 @@ their own scripts.
    server to listen on.</br>
    The <i>port</i> parameter should be an integer between 1 and 65535 inclusive
    and determines the port number the server should listen on.</br>
+   Any other keyword arguments will be passed to the NetcatTCPConnection class.
+   
    This function will block, waiting for a client to connect.</br>
-   Once a client connects, the return value will be a NetcatTCPConnection object.
+   Once a client connects, the return value will be a NetcatTCPConnection object.</br>
+   After the client connects, use the NetcatTCPConnection.run() method to run netcat.
    
    > :warning: NOTE</br>
    > A NetcatConnection object does not close itself after use.</br>
    > So be sure to either use it's close() method or use a with statement
    > to automatically close it after use.
-
-   After the client connects, use the NetcatTCPConnection.run() method to run netcat.
    
    Example:
    ```py
