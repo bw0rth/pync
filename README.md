@@ -156,6 +156,10 @@ their own scripts.
    parameters.</br>
    These parameters can be any object that has a file-like interface.
    
+   > :warning: NOTE</br>
+   > **pync** expects to read bytes from stdin and writes bytes to stdout.</br>
+   > So be sure to open files in binary mode to avoid errors.
+   
    For example, create a TCP server that sends a file to any client
    that connects:
    ```py
