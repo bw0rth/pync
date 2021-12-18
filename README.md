@@ -204,8 +204,7 @@ their own scripts.
        conn.run()
    ```
    
-   In this example, the NetcatTCPConnection.run() method was used to run
-   netcat.</br>
+   The previous example used the NetcatTCPConnection.run() method to simply run netcat.</br>
    For more available methods, please refer to the NetcatTCPConnection documentation.
    
    ---
@@ -239,8 +238,7 @@ their own scripts.
        conn.run()
    ```
    
-   In this example, the NetcatTCPConnection.run() method was used to run
-   netcat.</br>
+   The previous example used the NetcatTCPConnection.run() method to simply run netcat.</br>
    For more available methods, please refer to the NetcatTCPConnection documentation.
    
    ---
