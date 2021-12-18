@@ -139,18 +139,17 @@ their own scripts.
    <summary>pync.<b>pync</b>(<i>args</i>)</summary>
    
    ---
-   The **pync** function is an alias for the **Netcat.from_args** class method.
+   The pync.**pync()** function is like running **pync** from the command line.</br>
+   This function should handle all exceptions and write any errors to stderr.
    
    The <i>args</i> parameter should be a string representing
-   the command line arguments to run.
-
-   The return value is a **Netcat** instance.
+   the command line arguments to run.</br>
+   The return value is an exit status code as an integer.
 
    Example:
    ```py
    from pync import pync
-   with pync('-l localhost 8000') as nc:
-       nc.run()
+   status = pync('-l localhost 8000')
    ```
    
    ---
