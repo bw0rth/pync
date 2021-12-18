@@ -136,7 +136,7 @@ This section is for python developers looking to use **pync** in
 their own scripts.
 
 <details>
-   <summary>pync.<b>pync</b>(<i>args</i>)</summary>
+   <summary>pync.<b>pync</b>(<i>args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr</i>)</summary>
    
    ---
    The pync.**pync()** function is like running **pync** from the command line.</br>
@@ -150,6 +150,18 @@ their own scripts.
    ```py
    from pync import pync
    status = pync('-l localhost 8000')
+   ```
+   
+   To control input/output, you can use the <i>stdin, stdout, stderr</i>
+   parameters.</br>
+   These parameters can be any object that has a file-like interface.
+   
+   For example, create a TCP server that sends a file to any client
+   that connects:
+   ```py
+   from pync import pync
+   with open('example.file', 'rb') as f:
+       pync('-l localhost 8000', stdin=f)
    ```
    
    ---
