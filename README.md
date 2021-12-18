@@ -139,8 +139,8 @@ their own scripts.
    <summary>pync.<b>pync</b>(<i>args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr</i>)</summary>
    
    ---
-   The pync.**pync()** function is like running **pync** from the command line.</br>
-   This function should handle all exceptions and write any errors to stderr.
+   The pync.**pync()** function is similar to running **pync** from the command line.</br>
+   This function should handle all exceptions and write any errors to <i>stderr</i>.
    
    The <i>args</i> parameter should be a string representing
    the command line arguments to run.</br>
