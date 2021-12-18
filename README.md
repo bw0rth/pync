@@ -168,7 +168,7 @@ their own scripts.
        pync('-l localhost 8000', stdin=f)
    ```
    
-   And now connect to the server to download the file:
+   And now, in a separate script, connect to the server and download the file:
    ```py
    from pync import pync
    with open('file.out', 'wb') as f:
