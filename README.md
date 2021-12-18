@@ -190,8 +190,7 @@ their own scripts.
    and determines the port number the target server is listening on.</br>
    Any other keyword arguments will be passed to the NetcatTCPConnection class.
    
-   The return value is a NetcatTCPConnection object.</br>
-   After connecting, use the NetcatTCPConnection.run() method to run netcat.
+   Once the connection has been made, the return value will be a NetcatTCPConnection object.</br>
    
    > :warning: NOTE</br>
    > A NetcatConnection object does not close itself after use.</br>
@@ -201,8 +200,8 @@ their own scripts.
    Example:
    ```py
    import pync
-   with pync.connect('localhost', 8000) as nc:
-       nc.run()
+   with pync.connect('localhost', 8000) as conn:
+       conn.run()
    ```
    
    ---
@@ -223,7 +222,6 @@ their own scripts.
    
    This function will block, waiting for a client to connect.</br>
    Once a client connects, the return value will be a NetcatTCPConnection object.</br>
-   After the client connects, use the NetcatTCPConnection.run() method to run netcat.
    
    > :warning: NOTE</br>
    > A NetcatConnection object does not close itself after use.</br>
@@ -233,8 +231,8 @@ their own scripts.
    Example:
    ```py
    import pync
-   with pync.listen('localhost', 8000) as nc:
-       nc.run()
+   with pync.listen('localhost', 8000) as conn:
+       conn.run()
    ```
    
    ---
