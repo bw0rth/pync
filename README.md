@@ -204,6 +204,10 @@ their own scripts.
        conn.run()
    ```
    
+   In this example, the NetcatTCPConnection.run() method was used to run
+   netcat.</br>
+   For more available methods, please refer to the NetcatTCPConnection documentation.
+   
    ---
 </details>
 
@@ -234,6 +238,10 @@ their own scripts.
    with pync.listen('localhost', 8000) as conn:
        conn.run()
    ```
+   
+   In this example, the NetcatTCPConnection.run() method was used to run
+   netcat.</br>
+   For more available methods, please refer to the NetcatTCPConnection documentation.
    
    ---
 </details>
