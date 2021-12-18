@@ -2,26 +2,12 @@
 
 import socket
 import sys
-from .nc import Netcat
+from .nc import pync
 
 
 def main():
     args = sys.argv[1:]
-
-    try:
-        nc = Netcat.from_args(args)
-    except socket.error as e:
-        # The NetcatServer may raise a socket error if
-        # an invalid port number is given.
-        Netcat.log(str(e))
-        return 1
-
-    try:
-        nc.run()
-    except KeyboardInterrupt:
-        sys.stderr.write('\n')
-    finally:
-        nc.close()
+    return pync(args)
 
 
 if __name__ == '__main__':
