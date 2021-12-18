@@ -164,8 +164,15 @@ their own scripts.
    that connects:
    ```py
    from pync import pync
-   with open('example.file', 'rb') as f:
+   with open('file.in', 'rb') as f:
        pync('-l localhost 8000', stdin=f)
+   ```
+   
+   And now connect to the server to download the file:
+   ```py
+   from pync import pync
+   with open('file.out', 'wb') as f:
+       pync('localhost 8000', stdout=f)
    ```
    
    ---
