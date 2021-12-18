@@ -189,14 +189,14 @@ their own scripts.
    or the hostname of the server machine.</br>
    The <i>port</i> parameter should be an integer between 1 and 65535 inclusive
    and determines the port number the target server is listening on.</br>
-   The return value is a NetcatConnection object.
+   The return value is a NetcatTCPConnection object.
    
    > :warning: NOTE</br>
-   > The NetcatConnection object does not close itself after use.</br>
+   > A NetcatConnection object does not close itself after use.</br>
    > So be sure to either use it's close() method or use a with statement
    > to automatically close it after use.
 
-   Use the NetcatConnection.run() method to run **pync**.
+   After connecting, use the NetcatTCPConnection.run() method to run netcat.
    
    Example:
    ```py
@@ -210,6 +210,33 @@ their own scripts.
 
 <details>
    <summary>pync.<b>listen</b>(<i>dest, port</i>)</summary>
+   
+   ---
+   pync.**listen**() is an alias for the NetcatTCPConnection.listen class method.</br>
+   For use when you only want to serve one client.
+   
+   The <i>dest</i> parameter should be a string containing the interface for the
+   server to listen on.</br>
+   The <i>port</i> parameter should be an integer between 1 and 65535 inclusive
+   and determines the port number the server should listen on.</br>
+   This function will block, waiting for a client to connect.</br>
+   Once a client connects, the return value will be a NetcatTCPConnection object.
+   
+   > :warning: NOTE</br>
+   > A NetcatConnection object does not close itself after use.</br>
+   > So be sure to either use it's close() method or use a with statement
+   > to automatically close it after use.
+
+   After the client connects, use the NetcatTCPConnection.run() method to run netcat.
+   
+   Example:
+   ```py
+   import pync
+   with pync.listen('localhost', 8000) as nc:
+       nc.run()
+   ```
+   
+   ---
 </details>
 
 <details>
