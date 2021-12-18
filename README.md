@@ -246,4 +246,34 @@ their own scripts.
 
 <details>
    <summary>pync.<b>Netcat</b>(<i>port, dest='', e=False, k=False, l=False, q=0, u=False, v=False, z=False</i>)</summary>
+   
+   ---
+   The pync.**Netcat**() class is a delegate to a connection iterator.</br>
+   Depending on the <i>l</i> parameter, the connection iterator could either
+   be a NetcatServer (<i>l=True</i>) or a NetcatClient (<i>l=False</i>).</br>
+   In either case, you can use a for loop on the Netcat object to iterate
+   through connections.
+   
+   ### Parameters
+   | Parameter | Description                                     |
+   | --------- | ----------------------------------------------- |
+   | e         | Execute a command over the network              |
+   | k         | Keep inbound sockets open for multiple connects |
+   | l         | Listen mode, for inbound connects               |
+   | q         | quit after EOF on stdin and delay of SECS       |
+   | u         | UDP mode. [default: TCP]                        |
+   | v         | Verbose                                         |
+   | z         | Zero-I/O mode [used for scanning]               |
+   
+   The <i>e</i> parameter should be a string containing a command
+   and any arguments to run.
+   
+   Example:
+   ```py
+   import pync
+   with pync.Netcat(8000, dest='localhost', l=True, e='date') as nc:
+       nc.run()
+   ```
+   
+   ---
 </details>
