@@ -254,6 +254,21 @@ their own scripts.
    In either case, you can use a for loop on the Netcat object to iterate
    through connections.
    
+   There are two ways to create a pync.**Netcat**() instance.</br>
+   1. From command line arguments:
+   ```py
+   import pync
+   with pync.Netcat.from_args('-l localhost 8000') as nc:
+       nc.run()
+   ```
+   
+   2. Or from keyword arguments:
+   ```py
+   import pync
+   with pync.Netcat(8000, 'localhost', l=True) as nc:
+       nc.run()
+   ```
+   
    ### Parameters
    | Parameter | Description                                     |
    | --------- | ----------------------------------------------- |
