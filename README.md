@@ -283,7 +283,7 @@ their own scripts.
    2. Or passing keyword arguments directly to the Netcat class:
    ```py
    import pync
-   with pync.Netcat(8000, 'localhost', l=True) as nc:
+   with pync.Netcat(8000, dest='localhost', l=True) as nc:
        nc.run()
    ```
    
