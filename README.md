@@ -151,7 +151,7 @@ their own scripts.
    status = pync('-l localhost 8000')
    ```
    
-   To control input/output, you can use the <i>stdin, stdout, stderr</i>
+   To control input/output, you can use the <i>stdin, stdout</i> and <i>stderr</i>
    parameters.</br>
    These parameters can be any object that has a file-like interface.
    
