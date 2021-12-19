@@ -280,7 +280,7 @@ their own scripts.
        nc.run()
    ```
    
-   2. Or passing keyword arguments directly to the Netcat class:
+   2. Or passing arguments directly to the Netcat class:
    ```py
    import pync
    with pync.Netcat(8000, dest='localhost', l=True) as nc:
