@@ -248,37 +248,44 @@ their own scripts.
    <summary>pync.<b>Netcat</b>(<i>port, dest='', e=False, k=False, l=False, q=0, u=False, v=False, z=False</i>)</summary>
    
    ---
-   The pync.**Netcat**() class is a delegate to a connection iterator.</br>
-   Depending on the <i>l</i> parameter, the connection iterator could either
-   be a NetcatServer (<i>l=True</i>) or a NetcatClient (<i>l=False</i>).</br>
-   In either case, you can use a for loop on the Netcat object to iterate
-   through connections.
+   Create a **Netcat** object.</br>
+   Each parameter has it's own example below, but in short they are:
    
-   There are two ways to create a pync.**Netcat**() instance.</br>
-   1. From command line arguments:
+   ### Parameters
+   | Parameter | Description                                          |
+   | --------- | ---------------------------------------------------- |
+   | port      | The port number to listen on or connect to           |
+   | dest      | The interface to listen on or hostname to connect to |
+   | e         | Execute a command over the network                   |
+   | k         | Keep inbound sockets open for multiple connects      |
+   | l         | Listen mode, for inbound connects                    |
+   | q         | quit after EOF on stdin and delay of SECS            |
+   | u         | UDP mode. [default: TCP]                             |
+   | v         | Verbose                                              |
+   | z         | Zero-I/O mode [used for scanning]                    |
+   </br>
+   
+   > :warning: NOTE</br>
+   > The Netcat class doesn't close itself after use.</br>
+   > So be sure to use it's close() method or use the with statement
+   > to automatically close Netcat after use.
+   </br>
+   
+   There are two ways to create a **Netcat** instance.</br>
+   
+   1. Passing an args string to the **from_args()** class method:
    ```py
-   import pync
-   with pync.Netcat.from_args('-l localhost 8000') as nc:
+   from pync import Netcat
+   with Netcat.from_args('-l localhost 8000') as nc:
        nc.run()
    ```
    
-   2. Or from keyword arguments:
+   2. Or passing keyword arguments directly to the Netcat class:
    ```py
    import pync
    with pync.Netcat(8000, 'localhost', l=True) as nc:
        nc.run()
    ```
-   
-   ### Parameters
-   | Parameter | Description                                     |
-   | --------- | ----------------------------------------------- |
-   | e         | Execute a command over the network              |
-   | k         | Keep inbound sockets open for multiple connects |
-   | l         | Listen mode, for inbound connects               |
-   | q         | quit after EOF on stdin and delay of SECS       |
-   | u         | UDP mode. [default: TCP]                        |
-   | v         | Verbose                                         |
-   | z         | Zero-I/O mode [used for scanning]               |
    
    The <i>e</i> parameter should be a string containing a command
    and any arguments to run.
