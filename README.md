@@ -312,7 +312,7 @@ their own scripts.
    client that connects (Linux):
    ```py
    import pync
-   with pync.Netcat(8000, dest='localhost', e="PS1='$ ' sh -i") as nc:
+   with pync.Netcat(8000, dest='localhost', l=True, e="PS1='$ ' sh -i") as nc:
        nc.run()
    ```
    
