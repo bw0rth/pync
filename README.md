@@ -263,13 +263,8 @@ their own scripts.
    | u         | UDP mode. [default: TCP]                             |
    | v         | Verbose                                              |
    | z         | Zero-I/O mode [used for scanning]                    |
-   </br>
-   
-   > :warning: NOTE</br>
-   > The Netcat class doesn't close itself after use.</br>
-   > So be sure to use it's close() method or use the with statement
-   > to automatically close Netcat after use.
-   </br>
+
+   ### Creating a Netcat Instance
    
    There are two ways to create a **Netcat** instance.</br>
    
@@ -286,14 +281,38 @@ their own scripts.
    with pync.Netcat(8000, dest='localhost', l=True) as nc:
        nc.run()
    ```
+   </br>
+
+   > :warning: NOTE</br>
+   > The Netcat class doesn't close itself after use.</br>
+   > So be sure to use it's close() method or use the with statement
+   > to automatically close Netcat after use.
+
+   ### Executing commands over the network
+
+   You can use the <i>e</i> parameter to connect a process to Netcat.</br>
+   This should be a string containing the command and any
+   arguments to run.
    
-   The <i>e</i> parameter should be a string containing a command
-   and any arguments to run.
-   
-   Example:
+   For example, create a TCP server that sends the time and date
+   to the first client that connects (Linux):
    ```py
    import pync
    with pync.Netcat(8000, dest='localhost', l=True, e='date') as nc:
+       nc.run()
+   ```
+
+   Any data coming in from the network will be fed
+   to the process' stdin and any data the process
+   writes to it's stdout will be sent out over the
+   network.
+
+   To test this, create another TCP server that
+   executes an interactive shell to the first
+   client that connects (Linux):
+   ```py
+   import pync
+   with pync.Netcat(8000, dest='localhost', e="PS1='$ ' sh -i") as nc:
        nc.run()
    ```
    
