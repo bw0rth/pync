@@ -324,7 +324,7 @@ their own scripts.
    open so once the server is finished with one
    client it will wait and listen for another.
 
-   For example, create a mock web server that serves
+   For example, create a simple web server that serves
    "Hello, world!" to every client that connects:
    ```py
    import io
