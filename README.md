@@ -315,6 +315,26 @@ their own scripts.
    with pync.Netcat(8000, dest='localhost', l=True, e="PS1='$ ' sh -i") as nc:
        nc.run()
    ```
+
+   ### Keeping the server open between clients
+
+   By default, **pync** will close the server
+   once a client connects.</br>
+   Using the <i>k</i> option, you can keep the server
+   open so once the server is finished with one
+   client it will wait and listen for another.
+
+   For example, create a mock web server that serves
+   "Hello, world!" to every client that connects:
+   ```py
+   import io
+   import pync
+   with pync.Netcat(8000, dest='localhost', l=True, k=True) as nc:
+       http_response = io.BytesIO(b'200 OK')
+       http_content = io.BytesIO(b'Hello, World!')
+       nc.readwrite(stdin=http_response)
+       nc.readwrite(stdin=http_content)
+   ```
    
    ---
 </details>
