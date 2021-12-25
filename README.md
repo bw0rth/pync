@@ -330,10 +330,11 @@ their own scripts.
    import io
    import pync
    with pync.Netcat(8000, dest='localhost', l=True, k=True) as nc:
-       http_response = io.BytesIO(b'200 OK')
-       http_content = io.BytesIO(b'Hello, World!')
-       nc.readwrite(stdin=http_response)
-       nc.readwrite(stdin=http_content)
+       for conn in nc:
+           http_response = io.BytesIO(b'HTTP/1.1 200 OK\n\n')
+           http_content = io.BytesIO(b'Hello, World!')
+           conn.readwrite(stdin=http_response)
+           conn.readwrite(stdin=http_content)
    ```
    
    ---
