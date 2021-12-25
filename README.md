@@ -336,6 +336,10 @@ their own scripts.
            conn.readwrite(stdin=http_response)
            conn.readwrite(stdin=http_content)
    ```
+
+   As seen in the previous example, you can use
+   a for loop on the Netcat object to iterate
+   through connections.</br>
    
    ---
 </details>
