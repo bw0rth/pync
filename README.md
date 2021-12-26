@@ -8,6 +8,7 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org
 * [Options](#options)
 * [Examples](#examples)
 * [Module API](#module-api)
+* [More](#more)
 * [TODO](#todo)
 
 ## Description
