@@ -343,7 +343,7 @@ their own scripts.
 </details>
 
 ## More
-* [Github pages site](brenw0rth.github.io/pync)
+* [Github pages site](https://brenw0rth.github.io/pync)
 
 ## TODO
 * Add SSL support
