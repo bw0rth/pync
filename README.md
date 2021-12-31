@@ -131,7 +131,7 @@ The connection will close automatically after the file has been transferred.
 </details>
 
 ## More
-* [GitHub pages site](https://brenw0rth.github.io/pync)
+* [Website](https://brenw0rth.github.io/pync)
 
 ## TODO
 * Add SSL support
