@@ -1,15 +1,6 @@
 ## Name
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
-## Contents
-* [Description](#description)
-* [Installation](#installation)
-* [Usage](#usage)
-* [Options](#options)
-* [Examples](#examples)
-* [More](#more)
-* [TODO](#todo)
-
 ## Synopsis
 ...
 
@@ -41,12 +32,6 @@ Use Python's pip command to install **pync** straight from github:
    ```sh
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
-   
-## Usage
-```sh
-pync [OPTIONS] DEST PORT
-pync [OPTIONS] -l [DEST] PORT
-```
    
 ## Options
 | Option     | Description                                     |
