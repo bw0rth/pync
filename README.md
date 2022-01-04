@@ -1,5 +1,5 @@
-# pync
-arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
+## NAME
+**pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
 ## Contents
 * [Description](#description)
@@ -10,7 +10,10 @@ arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org
 * [More](#more)
 * [TODO](#todo)
 
-## Description
+## SYNOPSIS
+...
+
+## DESCRIPTION
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
 the goal of **pync** was to create an easy to use library that
 provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
