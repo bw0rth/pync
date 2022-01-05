@@ -2,7 +2,7 @@
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
 ## Synopsis
-...
+pync [-hkluvz] [-e command] [-q seconds] [destination] [port]
 
 ## Description
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
@@ -32,18 +32,6 @@ Use Python's pip command to install **pync** straight from github:
    ```sh
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
-   
-## Options
-| Option     | Description                                     |
-| :--------- | ----------------------------------------------- |
-| -e CMD     | Execute a command over the network              |
-| -h         | show help message and exit                      |
-| -k         | Keep inbound sockets open for multiple connects |
-| -l         | Listen mode, for inbound connects               |
-| -q SECS    | quit after EOF on stdin and delay of SECS       |
-| -u         | UDP mode. [default: TCP]                        |
-| -v         | Verbose                                         |
-| -z         | Zero-I/O mode [used for scanning]               |
 
 ## Examples
 The following examples are command line examples.</br>
