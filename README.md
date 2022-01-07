@@ -109,7 +109,7 @@ The connection will close automatically after the file has been transferred.
 <summary>Executing commands over the network</summary>
 </details>
 
-## More
+## See Also
 * [Website](https://brenw0rth.github.io/pync)
 
 ## TODO
