@@ -32,6 +32,9 @@ Use Python's pip command to install **pync** straight from github:
    ```sh
    pip install https://github.com/brenw0rth/pync/archive/main.zip
    ```
+   
+## Options
+...
 
 ## Examples
 The following examples are command line examples.</br>
