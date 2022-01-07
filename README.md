@@ -37,9 +37,6 @@ Use Python's pip command to install **pync** straight from github:
 ...
 
 ## Examples
-The following examples are command line examples.</br>
-For examples of using **pync** in your own Python scripts, please
-refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples) in the repository.
 
 <details>
 <summary>Client/server model</summary>
@@ -108,6 +105,10 @@ The connection will close automatically after the file has been transferred.
 <details>
 <summary>Executing commands over the network</summary>
 </details>
+
+For examples on how to use **pync** in your
+own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
+in the code repository.
 
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
