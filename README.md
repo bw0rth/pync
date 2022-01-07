@@ -2,7 +2,7 @@
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
 ## Synopsis
-pync [-hkluvz] [-e command] [-q seconds] [destination] [port]
+**pync** [**-hkluvz**] [**-e** command] [**-q** seconds] [destination] [port]
 
 ## Description
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
