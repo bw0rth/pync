@@ -112,7 +112,6 @@ in the code repository.
 
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
-* [OpenBSD Netcat](https://man.openbsd.org/nc)
 
 ## TODO
 * Add SSL support
