@@ -11,8 +11,7 @@ provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for P
 
 Though not yet as fully featured as [netcat](https://en.wikipedia.org/wiki/Netcat), it can
 open TCP connections, send UDP packets, listen
-on arbitrary TCP and UDP ports and even perform
-a simple port scan.
+on arbitrary TCP and UDP ports and more.
 
 Common uses include:
 * Interactive client/server communication
