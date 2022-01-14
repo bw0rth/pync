@@ -313,8 +313,8 @@ class NetcatConnection(NetcatBase):
     def close(self):
         self.sock.close()
 
-    def shutdown(self, *args, **kwargs):
-        return self.sock.shutdown(*args, **kwargs)
+    def shutdown(self, how):
+        return self.sock.shutdown(how)
 
     def readwrite(self, stdin=None, stdout=None, stderr=None, q=None,
             shut_wr=False):
