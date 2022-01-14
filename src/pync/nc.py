@@ -297,7 +297,7 @@ class NetcatConnection(NetcatBase):
     def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
         if self.command:
             return self.execute(self.command)
-        self.readwrite(stdin, stdout, stderr)
+        self.readwrite(stdin, stdout, stderr, shut_wr=True)
 
     def recv(self, n, blocking=True):
         if blocking:
@@ -313,7 +313,11 @@ class NetcatConnection(NetcatBase):
     def close(self):
         self.sock.close()
 
-    def readwrite(self, stdin=None, stdout=None, stderr=None, q=None):
+    def shutdown(self, *args, **kwargs):
+        return self.sock.shutdown(*args, **kwargs)
+
+    def readwrite(self, stdin=None, stdout=None, stderr=None, q=None,
+            shut_wr=False):
         q = self.q if q is None else q
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
@@ -355,11 +359,15 @@ class NetcatConnection(NetcatBase):
                         stdin_data = stdin.read(1024)
                     if stdin_data:
                         self.send(stdin_data)
-                    else:
-                        if stdin_data is not None:
-                            # EOF reached on stdin.
-                            # Store the time to calculate time elapsed.
-                            eof_reached = time.time()
+                    elif stdin_data is not None:
+                        # EOF reached on stdin.
+                        # Store the time to calculate time elapsed.
+                        eof_reached = time.time()
+                        if shut_wr:
+                            # We no longer need to send data.
+                            # Shutdown the socket for writing.
+                            # No more sends.
+                            self.shutdown(socket.SHUT_WR)
                 # if q is a negative value, ignore EOF.
                 elif q >= 0:
                     eof_elapsed = time.time() - eof_reached
