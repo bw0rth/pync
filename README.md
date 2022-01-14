@@ -38,76 +38,24 @@ Use Python's pip command to install **pync** straight from github:
 ## Examples
 
 <details>
-<summary>Client/server model</summary>
+<summary>Using pync from the command line</summary>
 
 ---
-Building a basic client/server model using **pync** is quite simple.</br>
-On one console, start by creating a TCP server to listen for a connection:
-   ```sh
-   pync -l 1234
-   ```
-   
-On a second console/machine, create a client to connect to the server:
-   ```sh
-   pync localhost 1234
-   ```
-   
-There should now be a connection and anything typed in one console
-should display in the other and vice-versa.</br>
-The connection may be terminated using Ctrl-C.
-
-This may not seem very useful right now but as you'll see in later
-examples, you can use this idea to transfer files and other cool stuff.
+...
 
 ---
 </details>
 
 <details>
-<summary>Data transfer</summary>
+<summary>Using pync from a python script</summary>
 
 ---
-> :warning: WARNING</br>
-> Please do not transfer any sensitive information using the
-> following methods as the connections are not encrypted/secure.
-
-Expanding upon the previous client/server example, we can easily
-transfer data between connections.</br>
-
-Start by creating a TCP server and connecting a file to
-pync's standard input.</br>
-This server will send the contents of the file to any client
-that connects:
-   ```sh
-   pync -l 1234 < filename.in
-   ```
-   
-Using another machine, connect to the server and capture output
-to a new file:
-   ```sh
-   pync host.example.com 1234 > filename.out
-   ```
-   
-During the file transfer, there won't be any progress indication.</br>
-The connection will close automatically after the file has been transferred.
-
----
-</details>
-
-<details>
-<summary>Talking To Servers</summary>
-</details>
-
-<details>
-<summary>Port scanning</summary>
-</details>
-
-<details>
-<summary>Executing commands over the network</summary>
-</details>
-
 For examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
 in the code repository.
+
+---
+</details>
 
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
