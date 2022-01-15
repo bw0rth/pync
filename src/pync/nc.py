@@ -273,8 +273,8 @@ class NetcatConnection(NetcatBase):
         self.proto = '*'
 
         self.logger = logging.getLogger('pync.NetcatConnection')
-        logging.basicConfig()
-        self.logger.setLevel(logging.DEBUG)
+        #logging.basicConfig()
+        #self.logger.setLevel(logging.DEBUG)
 
     @classmethod
     def connect(cls, host, port, **kwargs):
@@ -370,19 +370,31 @@ class NetcatConnection(NetcatBase):
                         # EOF reached on stdin.
                         # Store the time to calculate time elapsed.
                         eof_reached = time.time()
-                        if shut_wr:
-                            # We no longer need to send data.
-                            # Shutdown the socket for writing.
-                            # No more sends.
+                elif not q:
+                    # q is 0 or None
+                    # shutdown socket sends and continue
+                    # to recv from socket until connection
+                    # is closed.
+                    if shut_wr:
+                        # We no longer need to send data.
+                        # Shutdown the socket for writing.
+                        # No more sends.
+                        try:
                             self.shutdown(socket.SHUT_WR)
-                            self.logger.debug('socket shutdown write')
-                # if q is a negative value, ignore EOF.
-                elif q >= 0:
+                        except OSError:
+                            pass
+                        self.logger.debug('shutdown socket for sends (SHUT_WR)')
+                elif q > 0:
+                    # q is a positive number.
+                    # do not shutdown socket sends.
+                    # exit on connection close or q seconds elapsed.
                     eof_elapsed = time.time() - eof_reached
                     if eof_elapsed >= q:
                         # quit after elapsed eof time.
-                        self.logger.debug('q option elapsed time complete')
+                        self.logger.debug('-q option elapsed time complete')
                         break
+                # q is a negative number, run loop until end of
+                # connection.
             except StopNetcat:
                 # IO has requested to stop the readwrite loop.
                 self.logger.debug('io stop netcat request')
