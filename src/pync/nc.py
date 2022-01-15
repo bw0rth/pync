@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 import argparse
 import itertools
+import logging
 import select
 import shlex
 import socket
@@ -271,6 +272,10 @@ class NetcatConnection(NetcatBase):
             self.dest = 'localhost'
         self.proto = '*'
 
+        self.logger = logging.getLogger('pync.NetcatConnection')
+        logging.basicConfig()
+        self.logger.setLevel(logging.DEBUG)
+
     @classmethod
     def connect(cls, host, port, **kwargs):
         sock = socket.create_connection((host, port))
@@ -346,10 +351,12 @@ class NetcatConnection(NetcatBase):
                         #       write method? raise StopNetcat
                         #
                         # process terminated.
+                        self.logger.debug('process terminated')
                         break
                 else:
                     if net_data is not None:
                         # connection lost.
+                        self.logger.debug('connection lost')
                         break
 
                 if not eof_reached:
@@ -368,14 +375,17 @@ class NetcatConnection(NetcatBase):
                             # Shutdown the socket for writing.
                             # No more sends.
                             self.shutdown(socket.SHUT_WR)
+                            self.logger.debug('socket shutdown write')
                 # if q is a negative value, ignore EOF.
                 elif q >= 0:
                     eof_elapsed = time.time() - eof_reached
                     if eof_elapsed >= q:
                         # quit after elapsed eof time.
+                        self.logger.debug('q option elapsed time complete')
                         break
             except StopNetcat:
                 # IO has requested to stop the readwrite loop.
+                self.logger.debug('io stop netcat request')
                 break
 
     def execute(self, cmd):
