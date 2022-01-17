@@ -62,7 +62,7 @@ python -m pync [options...]
 
 ---
 The easiest way to use **pync** in your own
-scripts is to use the **pync()** function:
+code is to use the **pync()** function:
 ```py
 from pync import pync
 status = pync('[options...]')
