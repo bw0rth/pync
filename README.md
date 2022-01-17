@@ -44,12 +44,12 @@ Use Python's pip command to install **pync** straight from github:
 There are two ways to run **pync** from the command
 line.</br>
 
-Using the **pync** command:
+Running the **pync** command directly:
 ```sh
 pync [options...]
 ```
 
-Or as a python module:
+Or running it as a python module:
 ```sh
 python -m pync [options...]
 ```
