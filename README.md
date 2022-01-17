@@ -63,7 +63,7 @@ python -m pync [options...]
 ---
 The easiest way to use **pync** in your own
 scripts is to use the **pync()** function:
-```sh
+```py
 from pync import pync
 status = pync('[options...]')
 ```
@@ -72,7 +72,17 @@ The status return value will indicate success or
 failure similar to running **pync** from the
 command line.
 
-If you wish to redirect input/output, you can pass
+If you want to redirect input/output, you can pass
+your own file-like objects to the stdin/out/err
+parameters.
+
+For example, you can connect a file to **pync**'s
+input like this:
+```py
+from pync import pync
+with open('file.in', 'rb') as f:
+    pync('[options...]', stdin=f)
+```
 
 For more examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
