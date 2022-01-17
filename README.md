@@ -68,7 +68,7 @@ from pync import pync
 status = pync('[options...]')
 ```
 
-The function takes an argument string and returns
+This function takes an argument string and returns
 an integer value to indicate success or failure
 similar to running **pync** from the command line.
 
