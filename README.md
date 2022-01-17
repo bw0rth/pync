@@ -68,7 +68,7 @@ from pync import pync
 status = pync('[options...]')
 ```
 
-The status return value will indicate success or
+The <i>status</i> return value will indicate success or
 failure similar to running **pync** from the
 command line.
 
@@ -76,12 +76,12 @@ If you want to redirect input/output, you can pass
 your own file-like objects to the stdin/out/err
 parameters.
 
-For example, you can connect a file to **pync**'s
-input like this:
+For example, you can capture output by connecting
+a file to the <i>stdout</i> parameter:
 ```py
 from pync import pync
-with open('file.in', 'rb') as f:
-    pync('[options...]', stdin=f)
+with open('file.in', 'wb') as f:
+    pync('[options...]', stdout=f)
 ```
 
 For more examples on how to use **pync** in your
