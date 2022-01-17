@@ -46,12 +46,12 @@ line.</br>
 
 Using the **pync** command:
 ```sh
-pync example.com 80
+pync [options...]
 ```
 
 Or as a python module:
 ```sh
-python -m pync example.com 80
+python -m pync [options...]
 ```
 
 ---
