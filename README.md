@@ -68,9 +68,9 @@ from pync import pync
 status = pync('[options...]')
 ```
 
-The <i>status</i> return value will indicate success or
-failure similar to running **pync** from the
-command line.
+The function takes an argument string and returns
+an integer value to indicate success or failure
+similar to running **pync** from the command line.
 
 If you want to redirect input/output, you can pass
 your own file-like objects to the stdin/out/err
