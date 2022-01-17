@@ -61,7 +61,20 @@ python -m pync [options...]
 <summary>Using pync from a python script</summary>
 
 ---
-For examples on how to use **pync** in your
+The easiest way to use **pync** in your own
+scripts is to use the **pync()** function:
+```sh
+from pync import pync
+status = pync('[options...]')
+```
+
+The status return value will indicate success or
+failure similar to running **pync** from the
+command line.
+
+If you wish to redirect input/output, you can pass
+
+For more examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
 in the code repository.
 
