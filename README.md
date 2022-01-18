@@ -76,7 +76,7 @@ For example, you can capture output by connecting
 a file to the <i>stdout</i> parameter:
 ```py
 from pync import pync
-with open('file.in', 'wb') as f:
+with open('file.out', 'wb') as f:
     pync('[options...]', stdout=f)
 ```
 
