@@ -9,11 +9,7 @@ Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3
 the goal of **pync** was to create an easy to use library that
 provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
-Though not yet as fully featured as [netcat](https://en.wikipedia.org/wiki/Netcat), it can
-open TCP connections, send UDP packets, listen
-on arbitrary TCP and UDP ports and more.
-
-Common uses include:
+Common [netcat](https://en.wikipedia.org/wiki/Netcat) uses include:
 * Interactive client/server communication
 * Remote file transfer (upload/download)
 * Port scanning
