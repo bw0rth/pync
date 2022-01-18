@@ -9,7 +9,7 @@ Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3
 the goal of **pync** was to create an easy to use library that
 provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
-Common [netcat](https://en.wikipedia.org/wiki/Netcat) uses include:
+Common uses include:
 * Interactive client/server communication
 * Remote file transfer (upload/download)
 * Port scanning
