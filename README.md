@@ -47,60 +47,10 @@ There are three ways to use **pync**.
    from pync import pync
    pync('[options] [destination] [port]')
    ```
-       
-<details>
-<summary>Show command line examples</summary>
-
----
-There are two ways to run **pync** from the command
-line.</br>
-
-Running the **pync** command directly:
-```sh
-pync [options...]
-```
-
-Or running it as a python module:
-```sh
-python -m pync [options...]
-```
-
----
-</details>
-
-<details>
-<summary>Show python examples</summary>
-
----
-The easiest way to use **pync** in your own
-code is to use the **pync()** function:
-```py
-from pync import pync
-status = pync('[options...]')
-```
-
-This function takes an argument string and returns
-an integer value to indicate success or failure
-similar to running **pync** from the command line.
-
-If you want to redirect input/output, you can pass
-your own file-like objects to the stdin/out/err
-parameters.
-
-For example, you can capture output by connecting
-a file to the <i>stdout</i> parameter:
-```py
-from pync import pync
-with open('file.out', 'wb') as f:
-    pync('[options...]', stdout=f)
-```
-
+   
 For more examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
 in the code repository.
-
----
-</details>
 
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
