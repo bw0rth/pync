@@ -164,7 +164,7 @@ connection success/failure to the console:
    <summary>Show command</summary>
    
    ```sh
-   pync -zv host.example.com 20-30
+   pync -zv host.example.com 20-30 80 443
    ```
    </details>
    <details>
@@ -173,13 +173,14 @@ connection success/failure to the console:
    ```py
    # scan.py
    from pync import pync
-   pync('-zv host.example.com 20-30')
+   pync('-zv host.example.com 20-30 80 443')
    ```
    </details>
-
-This will attempt to connect to ports 20,21,22...30
-on the target machine and print whether each
-connection failed or succeeded.
+   
+As you can see, you can provide a single port, a list of ports
+or a range of ports to scan.</br>
+In this case, we scan port 20 to 30 (20,21,22...30), port 80 (http)
+and port 443 (https).
 
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
