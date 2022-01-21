@@ -156,9 +156,10 @@ The connection will close automatically after the file has been transferred.
 ### Port Scanning
 ---
 **pync** can be used to perform a simple connect scan to see what ports and
-services a target machine is running.</br>
+services a target machine is running.
+
 To do this, use the -z flag to turn on zero I/O mode and -v to print
-connection success/failure to the console.
+connection success/failure to the console:
 <details open>
    <summary>Show command</summary>
    
