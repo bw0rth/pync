@@ -158,18 +158,18 @@ The connection will close automatically after the file has been transferred.
 **pync** can be used to perform a simple connect scan to see what ports and
 services a target machine is running.
 
-To do this, use the -z flag to turn on zero I/O mode and -v to print
+* To do this, use the -z flag to turn on zero I/O mode and -v to print
 connection success/failure to the console:
-<details open>
+   <details open>
    <summary>Show command</summary>
-   
+
    ```sh
    pync -zv host.example.com 20-30 80 443
    ```
    </details>
    <details>
    <summary>Show python code</summary>
-   
+
    ```py
    # scan.py
    from pync import pync
