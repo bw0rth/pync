@@ -49,7 +49,8 @@ There are three ways to use **pync**.
    ```
    
 ### Client/Server model
-1. Create a server:
+---
+1. Create a server to listen for incoming connections on port 8000:
    <details open>
    <summary>Show command</summary>
 
@@ -66,6 +67,25 @@ There are three ways to use **pync**.
    pync('-l localhost 8000')
    ```
    </details>
+   
+2. On a separate console, connect to the server:
+   <details open>
+   <summary>Show command</summary>
+   
+   ```sh
+   pync localhost 8000
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+   
+   ```py
+   # client.py
+   from pync import pync
+   pync('localhost 8000')
+   ```
+   </details>
+---
    
 For more examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
