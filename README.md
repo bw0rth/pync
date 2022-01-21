@@ -34,7 +34,7 @@ Use Python's pip command to install **pync** straight from github:
 ## Examples
 
 <details>
-<summary>Using pync from the command line</summary>
+<summary>Show command line examples</summary>
 
 ---
 There are two ways to run **pync** from the command
@@ -54,7 +54,7 @@ python -m pync [options...]
 </details>
 
 <details>
-<summary>Using pync from a python script</summary>
+<summary>Show python examples</summary>
 
 ---
 The easiest way to use **pync** in your own
