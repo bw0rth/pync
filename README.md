@@ -102,7 +102,7 @@ to another.
 
 > :warning: WARNING:</br>
 > Please do not transfer any sensitive data using this method as the connection
-> is not encrypted.
+> is not secure.
 
 1. Create a server to host the file:
    <details open>
