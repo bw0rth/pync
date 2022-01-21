@@ -50,7 +50,11 @@ There are three ways to use **pync**.
    pync('[options] [destination] [port]')
    ```
    
-### Client/Server model
+For examples on how to use **pync** in your
+own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
+in the code repository.
+   
+### Client/Server Model
 ---
 1. Create a local server to listen for incoming connections on port 8000:
    <details open>
@@ -91,7 +95,7 @@ There are three ways to use **pync**.
 There should now be a connection between the two consoles and anything
 typed in one console should display in the other and vice-versa.
 
-### Data transfer
+### Data Transfer
 ---
 To build on the previous example, we can transfer file data from one machine
 to another.
@@ -138,9 +142,31 @@ to another.
    ```
    </details>
    
-For more examples on how to use **pync** in your
-own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
-in the code repository.
+During the file transfer, there won't be any progress indication.</br>
+The connection will close automatically after the file has been transferred.
+
+### Port Scanning
+---
+**pync** can be used to perform a simple connect scan to see what ports and
+services a target machine is running.</br>
+To do this, use the -z flag to turn on zero I/O mode and -v to print
+connection success/failure to the console.
+<details open>
+   <summary>Show command</summary>
+   
+   ```sh
+   pync -zv host.example.com 20-30
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+   
+   ```py
+   # scan.py
+   from pync import pync
+   pync('-zv host.example.com 20-30')
+   ```
+   </details>
 
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
