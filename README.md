@@ -48,6 +48,25 @@ There are three ways to use **pync**.
    pync('[options] [destination] [port]')
    ```
    
+### Client/Server model
+1. Create a server:
+   <details open>
+   <summary>Show command</summary>
+
+   ```sh
+   pync -l localhost 8000
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+
+   ```py
+   # server.py
+   from pync import pync
+   pync('-l localhost 8000')
+   ```
+   </details>
+   
 For more examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
 in the code repository.
