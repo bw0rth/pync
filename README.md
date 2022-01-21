@@ -36,7 +36,7 @@ Use Python's pip command to install **pync** straight from github:
 ## Examples
 
 There are three ways to use **pync**.
-1. Running the **pync** command:</br>
+1. Running the **pync** command:
    ```sh
    pync [options] [destination] [port]
    ```
@@ -52,7 +52,7 @@ There are three ways to use **pync**.
    
 ### Client/Server model
 ---
-1. Create a server to listen for incoming connections on port 8000:
+1. Create a local server to listen for incoming connections on port 8000:
    <details open>
    <summary>Show command</summary>
 
@@ -93,6 +93,50 @@ typed in one console should display in the other and vice-versa.
 
 ### Data transfer
 ---
+To build on the previous example, we can transfer file data from one machine
+to another.
+
+> :warning: WARNING:</br>
+> Please do not transfer any sensitive data using this method as the connection
+> is not encrypted.
+
+1. Create a server to host the file:
+   <details open>
+   <summary>Show command</summary>
+   
+   ```sh
+   pync -l 8000 < file.in
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+   
+   ```py
+   # server.py
+   from pync import pync
+   with open('file.in', 'rb') as f:
+       pync('-l 8000', stdin=f)
+   ```
+   </details>
+   
+2. On a separate console, connect to the server to download the file:
+   <details open>
+   <summary>Show command</summary>
+   
+   ```sh
+   pync localhost 8000 > file.out
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+   
+   ```py
+   # client.py
+   from pync import pync
+   with open('file.out', 'wb') as f:
+       pync('localhost 8000', stdout=f)
+   ```
+   </details>
    
 For more examples on how to use **pync** in your
 own scripts, please refer to the [examples folder](https://github.com/brenw0rth/pync/tree/main/examples)
