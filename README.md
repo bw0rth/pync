@@ -85,6 +85,11 @@ There are three ways to use **pync**.
    pync('localhost 8000')
    ```
    </details>
+   
+There should now be a connection between the two consoles and anything
+typed in one console should display in the other and vice-versa.
+
+### Data transfer
 ---
    
 For more examples on how to use **pync** in your
