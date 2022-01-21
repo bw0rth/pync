@@ -118,6 +118,10 @@ to another.
    ```py
    # server.py
    from pync import pync
+   # NOTE:
+   # pync reads bytes and writes bytes
+   # so be sure to open files in binary
+   # mode to avoid any errors.
    with open('file.in', 'rb') as f:
        pync('-l 8000', stdin=f)
    ```
@@ -137,6 +141,10 @@ to another.
    ```py
    # client.py
    from pync import pync
+   # NOTE:
+   # pync reads bytes and writes bytes
+   # so be sure to open files in binary
+   # mode to avoid any errors.
    with open('file.out', 'wb') as f:
        pync('localhost 8000', stdout=f)
    ```
