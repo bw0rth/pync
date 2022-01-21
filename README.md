@@ -33,6 +33,21 @@ Use Python's pip command to install **pync** straight from github:
 
 ## Examples
 
+There are three ways to use **pync**.
+1. Using the **pync** command:</br>
+   ```sh
+   pync [options] [destination] [port]
+   ```
+2. Running it as a python module:
+   ```sh
+   python -m pync [options] [destination] [port]
+   ```
+3. Importing it into your own python code:
+   ```py
+   from pync import pync
+   pync('[options] [destination] [port]')
+   ```
+       
 <details>
 <summary>Show command line examples</summary>
 
