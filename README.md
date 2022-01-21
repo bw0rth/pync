@@ -176,6 +176,10 @@ connection success/failure to the console.
    ```
    </details>
 
+This will attempt to connect to ports
+20,21,22...30 and print whether each connection
+failed or succeeded.
+
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
 * [Netcat man page](https://www.unix.com/man-page/Linux/1/nc/)
