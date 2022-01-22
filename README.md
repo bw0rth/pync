@@ -38,6 +38,12 @@ show help message and exit.
 Keeps the server open between connections.</br>
 This option is only valid with the <i>listen (-l)</i> option.
 
+#### -l -- Listen Mode
+Create a server to listen for incoming connections.
+
+#### -u -- UDP Mode
+Use UDP for transport instead of TCP.
+
 ## Examples
 
 There are three ways to use **pync**.
