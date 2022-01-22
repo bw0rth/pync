@@ -102,12 +102,12 @@ When finished, hit <kbd>Ctrl</kbd><kbd>C</kbd> from either console to close the 
 
 ### Data Transfer
 ---
-To build on the previous example, we can transfer file data from one machine
-to another.
-
 > :warning: WARNING:</br>
 > Please DO NOT transfer any sensitive data using this method as the connection
 > is not secure.
+
+To build on the previous example, we can transfer file data from one machine
+to another.
 
 1. Create a server to host the file:
    <details open>
