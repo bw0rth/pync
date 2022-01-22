@@ -31,7 +31,12 @@ Use Python's pip command to install **pync** straight from github:
    ```
    
 ## Options
-...
+#### -h -- Help
+show help message and exit.
+
+#### -k -- Keep Server Open
+Keeps the server open between connections.</br>
+This option is only valid with the <i>listen (-l)</i> option.
 
 ## Examples
 
