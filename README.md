@@ -187,15 +187,15 @@ or to verify a servers response to certain commands.
 
 ### Port Scanning
 ---
-**pync** can be used to perform a simple connect scan to see what ports and
-services a target machine is running.
-
 > :warning: WARNING:</br>
 > Please DO NOT scan machines without permission.</br>
 > Whether it is illegal or not, it is rude and can be seen as suspicious
 > behaviour.</br>
-> It is recommended to setup your own servers or use nmap's scanme
+> It is recommended to setup your own servers or use Nmap's scanme
 > domain for testing.
+
+**pync** can be used to perform a simple connect scan to see what ports and
+services a target machine is running.
 
 1. To do this, use the -z flag to turn on zero I/O mode and -v to print
 connection success/failure to the console:
