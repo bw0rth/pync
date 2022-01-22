@@ -96,8 +96,9 @@ together and send messages back and forth.
    </details>
    
 There should now be a connection between the two consoles and anything
-typed in one console should display in the other and vice-versa.</br>
-When finished, hit [Ctrl-C] from either console to close the connection.
+typed in one console should display in the other and vice-versa.
+
+When finished, hit <kbd>Ctrl</kbd><kbd>C</kbd> from either console to close the connection.
 
 ### Data Transfer
 ---
