@@ -106,7 +106,7 @@ To build on the previous example, we can transfer file data from one machine
 to another.
 
 > :warning: WARNING:</br>
-> Please do not transfer any sensitive data using this method as the connection
+> Please DO NOT transfer any sensitive data using this method as the connection
 > is not secure.
 
 1. Create a server to host the file:
@@ -189,6 +189,13 @@ or to verify a servers response to certain commands.
 ---
 **pync** can be used to perform a simple connect scan to see what ports and
 services a target machine is running.
+
+> :warning: WARNING:</br>
+> Please DO NOT scan machines without permission.</br>
+> Whether it is illegal or not, it is rude and can be seen as suspicious
+> behaviour.</br>
+> It is recommended to setup your own servers or use nmap's scanme
+> domain for testing.
 
 1. To do this, use the -z flag to turn on zero I/O mode and -v to print
 connection success/failure to the console:
