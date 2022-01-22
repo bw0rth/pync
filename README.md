@@ -194,8 +194,8 @@ or to verify a servers response to certain commands.
 ---
 > :warning: WARNING:</br>
 > Please DO NOT scan machines without permission.</br>
-> Whether it is illegal or not, it is rude and can be seen as suspicious
-> behaviour.</br>
+> Whether it is illegal or not, it is considered rude
+> and can be seen as suspicious behaviour.</br>
 > It is recommended to setup your own servers or use Nmap's scanme
 > domain for testing.
 
