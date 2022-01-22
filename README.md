@@ -56,6 +56,9 @@ in the code repository.
    
 ### Client/Server Model
 ---
+To illustrate a basic client/server model, we can connect two **pync** instances
+together and send messages back and forth.
+
 1. Create a local server to listen for incoming connections on port 8000:
    <details open>
    <summary>Show command</summary>
