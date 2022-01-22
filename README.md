@@ -182,6 +182,31 @@ or a range of ports to scan.</br>
 In this case, we scan port 20 to 30 (20,21,22...30), port 80 (http)
 and port 443 (https).
 
+You may also want to grab the server banner to check for the version
+of the service running.</br>
+
+1. You can try this by piping a message to the server and hoping for a response:
+   <details open>
+   <summary>Show command</summary>
+
+   ```sh
+   echo "QUIT" | pync host.example.com 20-30
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+
+   ```py
+   # scan.py
+   import io
+   from pync import pync
+   # BytesIO turns our message into a file-like
+   # object for the pync function.
+   message = io.BytesIO(b'QUIT')
+   pync('host.example.com 20-30', stdin=message)
+   ```
+   </details>
+
 ## See Also
 * [Website](https://brenw0rth.github.io/pync)
 * [Netcat man page](https://www.unix.com/man-page/Linux/1/nc/)
