@@ -9,17 +9,17 @@ pync [-hkluvz] [-e command] [-q seconds] [destination] [port]
 ## Description
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
 the goal of **pync** was to create an easy to use library that
-provides [netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
+provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Common uses include:
-* Interactive client/server communication
-* Remote file transfer (upload/download)
-* Port scanning
+* [Interactive client/server communication](#talking-to-servers)
+* [Remote file transfer (upload/download)](#data-transfer)
+* [Port scanning](#port-scanning)
+* Executing commands over the network
 * Network chat
 * Relaying/proxying network data
-* Executing commands over the network
 
-For practical examples, see the [Examples](#examples) section below.
+See the [Examples](#examples) section below for more.
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
