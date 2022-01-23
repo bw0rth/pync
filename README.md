@@ -285,7 +285,7 @@ to the first client that connects:
    <summary>Show command</summary>
 
    ```sh
-   pync -e "echo 'Hello, World!'" -l localhost 8000
+   pync -e "echo 'Hello'" -l localhost 8000
    ```
    </details>
    <details>
@@ -294,7 +294,7 @@ to the first client that connects:
    ```py
    # server.py
    from pync import pync
-   pync('-e "echo \'Hello, World!\'" -l localhost 8000')
+   pync('-e "echo \'Hello\'" -l localhost 8000')
    ```
    </details>
 
