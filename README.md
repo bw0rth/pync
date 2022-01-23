@@ -15,9 +15,7 @@ Common uses include:
 * [Interactive client/server communication](#talking-to-servers)
 * [Remote file transfer (upload/download)](#data-transfer)
 * [Port scanning](#port-scanning)
-* Executing commands over the network
-* Network chat
-* Relaying/proxying network data
+* [Executing commands over the network](#executing-commands)
 
 See the [Examples](#examples) section below for more.
 
@@ -271,6 +269,32 @@ of the service running.</br>
    # object for the pync function.
    message = io.BytesIO(b'QUIT')
    pync('host.example.com 20-30', stdin=message)
+   ```
+   </details>
+
+### Executing Commands
+---
+After a connection to a client or server has been
+established, you can execute a command and connect
+the input/output of the command process with
+the connection.
+
+1. For example, create a server that echoes a message
+to the first client that connects:
+   <details open>
+   <summary>Show command</summary>
+
+   ```sh
+   pync -e "echo 'Hello, World!'" -l localhost 8000
+   ```
+   </details>
+   <details>
+   <summary>Show python code</summary>
+
+   ```py
+   # server.py
+   from pync import pync
+   pync('-e "echo \'Hello, World!\'" -l localhost 8000')
    ```
    </details>
 
