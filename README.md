@@ -44,6 +44,23 @@ Create a server to listen for incoming connections.
 #### -u -- UDP Mode
 Use UDP for transport instead of TCP.
 
+#### -v -- Verbose Output
+Print status messages to stderr.
+
+#### -z -- Zero I/O
+Connect then close immediately.</br>
+Useful for port scanning.
+
+#### -e command -- Execute Command
+Execute a command after a connection has been
+Established.</br>
+Input/output will be connected with the newly
+created process.
+
+#### -q seconds -- Quit After EOF
+Quit after end of file on stdin with a delay
+of <i>seconds</i>.
+
 ## Examples
 
 There are three ways to use **pync**.
