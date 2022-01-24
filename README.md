@@ -52,7 +52,7 @@ the **-v** option.
 
 ### -e command
 Execute a command after a connection has been
-Established.</br>
+established.</br>
 Input/output will be connected with the newly
 created process.
 
