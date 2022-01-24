@@ -299,7 +299,6 @@ to the first client that connects:
    </details>
 
 ## See Also
-* [Website](https://brenw0rth.github.io/pync)
 * [Netcat man page](https://www.unix.com/man-page/Linux/1/nc/)
 
 ## TODO
