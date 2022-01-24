@@ -29,33 +29,33 @@ Use Python's pip command to install **pync** straight from github:
    ```
    
 ## Options
-#### -h -- Help
+#### -h
 show help message and exit.
 
-#### -k -- Keep Server Open
+#### -k
 Keeps the server open between connections.</br>
 This option is only valid with the <i>listen (-l)</i> option.
 
-#### -l -- Listen Mode
+#### -l
 Create a server to listen for incoming connections.
 
-#### -u -- UDP Mode
+#### -u
 Use UDP for transport instead of TCP.
 
-#### -v -- Verbose Output
+#### -v
 Print status messages to stderr.
 
-#### -z -- Zero I/O
+#### -z
 Connect then close immediately.</br>
 Useful for port scanning.
 
-#### -e command -- Execute Command
+#### -e command
 Execute a command after a connection has been
 Established.</br>
 Input/output will be connected with the newly
 created process.
 
-#### -q seconds -- Quit After EOF
+#### -q seconds
 Quit after end of file on stdin with a delay
 of <i>seconds</i>.
 
