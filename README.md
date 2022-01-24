@@ -34,7 +34,7 @@ show help message and exit.
 
 ### -k
 Keeps the server open between connections.</br>
-This option is only valid with the <i>listen (-l)</i> option.
+This option is only valid with the **-l** option.
 
 ### -l
 Create a server to listen for incoming connections.
