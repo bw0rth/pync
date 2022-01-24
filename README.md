@@ -47,7 +47,8 @@ Print status messages to stderr.
 
 ### -z
 Connect then close immediately.</br>
-Useful for port scanning.
+Useful for port scanning when combined with
+the **-v** option.
 
 ### -e command
 Execute a command after a connection has been
