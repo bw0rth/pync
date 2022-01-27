@@ -85,6 +85,7 @@ class PortAction(argparse.Action):
 
 
 class NetcatBase(object):
+    """ This is the base class for all Netcat objects. """
     name = 'pync'
     stdin, stdout, stderr = sys.stdin, sys.stdout, sys.stderr
 
