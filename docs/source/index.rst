@@ -1,10 +1,9 @@
-Name
+pync
 ====
-**pync** -- arbitrary TCP and UDP connections and listens (Netcat for Python).
 
-Synopsis
-========
-.. code-block:: sh
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents
 
-   pync [options] [dest] [port]
+   readme
 
