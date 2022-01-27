@@ -1,8 +1,8 @@
-NAME
+Name
 ====
 **pync** -- arbitrary TCP and UDP connections and listens (Netcat for Python).
 
-SYNOPSIS
+Synopsis
 ========
 .. code-block:: sh
 
