@@ -2,8 +2,8 @@ pync
 ====
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
-   :caption: Contents
 
    readme
 
