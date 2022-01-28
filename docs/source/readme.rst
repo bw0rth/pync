@@ -1,3 +1,7 @@
+======
+README
+======
+
 Name
 ====
 **pync** -- arbitrary TCP and UDP connections and listens (Netcat for Python).
