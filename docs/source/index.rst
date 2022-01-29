@@ -9,4 +9,5 @@ pync
    :maxdepth: 2
 
    readme
+   api
 
