@@ -9,9 +9,13 @@ Installation
 
 .. tab:: Unix
    
-   pip install https://github.com/brenw0rth/pync/archive/main.zip
+   .. code-block:: sh
+
+      pip install https://github.com/brenw0rth/pync/archive/main.zip
 
 .. tab:: Windows
 
-   py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
+   .. code-block:: sh
+
+      py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
