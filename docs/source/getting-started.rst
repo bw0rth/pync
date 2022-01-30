@@ -19,3 +19,7 @@ Installation
 
       py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
+Basic Usage
+===========
+Once installed, you can run **pync** from the command-line or import it in a Python script.
+
