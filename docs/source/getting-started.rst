@@ -21,7 +21,7 @@ Installation
 
 Basic Usage
 ===========
-Once installed, you can run **pync** from the command-line:
+Once installed, you can run **pync** from the command-line or from a Python script:
 
 .. tab:: Unix
 
@@ -34,8 +34,6 @@ Once installed, you can run **pync** from the command-line:
    .. code-block:: sh
 
       py -m pync --help
-
-Or from a Python script:
 
 .. tab:: Python
 
