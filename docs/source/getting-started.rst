@@ -21,24 +21,31 @@ Installation
 
 Basic Usage
 ===========
-Once installed, you can run **pync** from the command-line or import it into a Python script.
+Once installed, there are three ways to run **pync**.
 
-.. tab:: Command
+1. Running the **pync** command directly:
+
+   .. code-block:: sh
+
+      pync --help
+
+2. Running **pync** as a module with the Python command:
 
    .. tab:: Linux
-      
+
       .. code-block:: sh
 
-         pync --help
+         python -m pync --help
 
    .. tab:: Windows
 
       .. code-block:: sh
 
          py -m pync --help
-.. tab:: Python
 
-   .. code-block:: Python
+3. Or importing **pync** from a Python script:
+
+   .. code-block:: python
 
       # help.py
       from pync import pync
