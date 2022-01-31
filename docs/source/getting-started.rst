@@ -37,9 +37,11 @@ Once installed, you can run **pync** from the command-line:
 
 Or from a Python script:
 
-.. code-block:: python
+.. tab:: Python
 
-   # help.py
-   from pync import pync
-   pync('--help')
+   .. code-block:: python
+
+      # help.py
+      from pync import pync
+      pync('--help')
 
