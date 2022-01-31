@@ -5,9 +5,9 @@ Getting Started
 Installation
 ============
 | **pync** should work on any system with `Python <https://www.python.org/>`_ installed (2.7 or higher).
-| Using `Python <https://www.python.org/>`_'s pip command, you can install **pync** straight from github.
+| Using Python's pip command, you can install **pync** straight from GitHub.
 
-.. tab:: Linux
+.. tab:: Unix
    
    .. code-block:: sh
 
@@ -21,33 +21,25 @@ Installation
 
 Basic Usage
 ===========
-Once installed, there are three ways to run **pync**.
+Once installed, you can run **pync** from the command-line:
 
-1. Running the **pync** command directly:
+.. tab:: Unix
 
    .. code-block:: sh
 
-      pync --help
+      python -m pync --help
 
-2. Running **pync** as a module with the Python command:
+.. tab:: Windows
 
-   .. tab:: Linux
+   .. code-block:: sh
 
-      .. code-block:: sh
+      py -m pync --help
 
-         python -m pync --help
+Or from a Python script:
 
-   .. tab:: Windows
+.. code-block:: python
 
-      .. code-block:: sh
-
-         py -m pync --help
-
-3. Or importing **pync** from a Python script:
-
-   .. code-block:: python
-
-      # help.py
-      from pync import pync
-      pync('--help')
+   # help.py
+   from pync import pync
+   pync('--help')
 
