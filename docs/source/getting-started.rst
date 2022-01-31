@@ -36,7 +36,6 @@ Once installed, you can run **pync** from the command-line or import it into a P
       .. code-block:: sh
 
          py -m pync --help
-
 .. tab:: Python
 
    .. code-block:: Python
