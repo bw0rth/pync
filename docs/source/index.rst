@@ -1,3 +1,4 @@
+====
 pync
 ====
 
@@ -11,8 +12,10 @@ Common uses include:
 * Port scanning (simple connect scan)
 * Remote command execution
 
+Contents
+========
+
 .. toctree::
-   :caption: Contents:
    :maxdepth: 2
 
    getting-started
