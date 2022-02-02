@@ -20,7 +20,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   getting-started
-   examples
-   api-reference
+   getting-started/index
+   examples/index
+   reference/index
 
