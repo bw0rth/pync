@@ -22,4 +22,5 @@ Contents
 
    getting-started
    examples
+   api-reference
 
