@@ -20,7 +20,7 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   getting-started/index
+   getting-started
    examples/index
    reference/index
 
