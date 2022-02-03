@@ -62,16 +62,16 @@ of <b><i>seconds</i></b>.
 
 ## Examples
 
-There are three ways to use **pync**.
-1. Running the **pync** command:
+There are several ways to run **pync**.
+* Running the **pync** command:
    ```sh
    pync [options] [destination] [port]
    ```
-2. Running it as a python module:
+* Running it as a python module:
    ```sh
    python -m pync [options] [destination] [port]
    ```
-3. Importing it into your own python code:
+* Importing it into your own python code:
    ```py
    from pync import pync
    pync('[options] [destination] [port]')
