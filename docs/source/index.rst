@@ -14,13 +14,16 @@ Common uses include:
 * Port scanning (simple connect scan)
 * Remote command execution
 
-Contents
-========
-
 .. toctree::
+   :caption: Contents
    :maxdepth: 2
 
    getting-started
    examples/index
    reference/index
+
+.. toctree::
+   :caption: See Also
+   
+   GitHub Repository <https://github.com/brenw0rth/pync>
 
