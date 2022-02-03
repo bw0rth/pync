@@ -20,6 +20,7 @@ Common uses include:
 
    getting-started
    examples/index
+   options/index
    reference/index
 
 .. toctree::
