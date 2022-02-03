@@ -20,7 +20,7 @@ Installation
 
       py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
-How to Run pync
+Running pync
 ===============
 
 Once installed, there are several ways to run **pync**:
