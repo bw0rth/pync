@@ -19,6 +19,10 @@ Common uses include:
 
 See the [Examples](#examples) section below for more.
 
+## Documentation
+Full documentation on how to install and use **pync** can
+be found at https://pync.readthedocs.io.
+
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
 installed (version 2.7 or higher).
