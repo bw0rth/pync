@@ -5,6 +5,7 @@ stays open serving the index.html file.
 '''
 
 import argparse
+import io
 import sys
 
 import pync
@@ -30,14 +31,11 @@ def main():
 
     # The l option is for listen mode and k for keeping the server open
     # between each client connection.
-    #
-    # We use the "pync.makefile" helper function to turn a string into a
-    # file-like object, ready to be used by the "readwrite" method.
     try:
         with pync.Netcat(args.port, dest=args.dest,
                 l=True, k=True, v=True) as nc:
             for conn in nc:
-                response = pync.makefile(b'HTTP/1.1 200 OK\n\n')
+                response = io.BytesIO(b'HTTP/1.1 200 OK\n\n')
                 conn.readwrite(stdin=response)
                 with open('index.html', 'rb') as f:
                     conn.readwrite(stdin=f)
