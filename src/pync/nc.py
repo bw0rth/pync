@@ -514,15 +514,16 @@ class NetcatTCPClient(NetcatClient):
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
     def create_connection(self, addr):
+        dest, port = addr
         try:
             sock = socket.create_connection(addr)
         except ConnectionRefusedError:
             self.log(
                     self.conn_refused.format(
-                        dest=e.dest, port=e.port,
+                        dest=dest, port=port,
                     ),
             )
-            raise ConnectionRefused(self.dest, port)
+            raise ConnectionRefused(dest, port)
         except socket.error as e:
             self.log(str(e))
             raise
