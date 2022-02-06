@@ -519,9 +519,9 @@ class NetcatClient(NetcatBase):
         nc_conn = NetcatTCPConnection(sock, **self._kwargs)
         self.log(
                 self.conn_succeeded.format(
-                    dest=conn.dest,
-                    port=conn.port,
-                    proto=conn.proto,
+                    dest=nc_conn.dest,
+                    port=nc_conn.port,
+                    proto=nc_conn.proto,
                 ),
                 prefix='',
         )
