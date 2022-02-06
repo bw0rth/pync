@@ -506,9 +506,16 @@ class NetcatClient(NetcatBase):
     def __next__(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
+        return self.create_connection((self.dest, port))
 
+
+class NetcatTCPClient(NetcatClient):
+    conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
+    conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
+
+    def create_connection(self, addr):
         try:
-            sock = socket.create_connection((self.dest, port))
+            sock = socket.create_connection(addr)
         except ConnectionRefusedError:
             self.log(
                     self.conn_refused.format(
@@ -536,14 +543,51 @@ class NetcatClient(NetcatBase):
         return nc_conn
 
 
-class NetcatTCPClient(NetcatClient):
-    conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
-    conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
-
-
-class NetcatUDPClient(NetcatBase):
+class NetcatUDPClient(NetcatClient):
     conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
+
+    def create_connection(self, addr):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.connect(addr)
+        nc_conn = NetcatUDPConnection(sock, **self._kwargs)
+        if self.z:
+            # If zero io mode, close the connection.
+            nc_conn.close()
+        return nc_conn
+
+
+class NetcatServer(NetcatBase):
+    
+    def __iter__(self):
+        while True:
+            try:
+                nc_conn = next(self)
+            except StopIteration:
+                return
+
+            try:
+                yield nc_conn
+            finally:
+                nc_conn.close()
+
+    def __next__(self):
+        while True:
+            try:
+                can_read, _, _ = select.select([self.sock], [], [], .002)
+            except (ValueError, socket.error):
+                # Bad / closed socket.
+                # This can occur when the server is closed.
+                raise StopIteration
+            if self.sock in can_read:
+                cli_sock, _ = self.sock.accept()
+                nc_conn = self.NetcatConnection(cli_sock, **self._kwargs)
+                break
+        if not self.k:
+            # The "k" option keeps the server open.
+            # In this case, "k" is set to False so close the server.
+            self.close()
+        return nc_conn
 
 
 class NetcatTCPServer(NetcatBase):
