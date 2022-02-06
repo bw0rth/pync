@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 import argparse
+import contextlib
 import itertools
 import logging
 import select
@@ -460,12 +461,12 @@ class ConnectionRefused(ConnectionRefusedError):
         self.port = port
 
 
-class NetcatTCPClient(NetcatBase):
-    conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
-    conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
+class NetcatClient(NetcatBase):
+    conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
+    conn_refused = 'connect to {dest} port {port} failed: Connection refused'
 
     def __init__(self, dest, port, v=False, z=False, **kwargs):
-        super(NetcatTCPClient, self).__init__(**kwargs)
+        super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
         
@@ -482,7 +483,12 @@ class NetcatTCPClient(NetcatBase):
 
     def __iter__(self):
         while True:
-            nc_conn = self.next_connection()
+            try:
+                nc_conn = self.next_connection()
+            except (ConnectionRefused, socket.error):
+                # Move onto next connection if any errors.
+                continue
+
             try:
                 if not self.z:
                     yield nc_conn
@@ -490,134 +496,50 @@ class NetcatTCPClient(NetcatBase):
                 nc_conn.close()
 
     def run(self):
-        # Handle any errors and write them to stderr if "v"erbose
-        # option is True.
-        while True:
-            try:
-                conn = self.next_connection()
-            except StopIteration:
-                # No more ports to connect to.
-                # Exit loop
-                break
-            except ConnectionRefused as e:
-                self.log(
-                        self.conn_refused.format(
-                            dest=e.dest, port=e.port,
-                        ),
-                )
-                continue
-            except socket.error as e:
-                self.log(str(e))
-                continue
-
-            self.log(
-                    self.conn_succeeded.format(
-                        dest=conn.dest,
-                        port=conn.port,
-                        proto=conn.proto,
-                    ),
-                    prefix='',
-            )
-
-            if self.z:
-                # do nothing when zero io mode.
-                continue
-            try:
-                conn.run()
-            finally:
-                conn.close()
+        for conn in self:
+            conn.run()
 
     def next_connection(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
+
         try:
             sock = socket.create_connection((self.dest, port))
         except ConnectionRefusedError:
+            self.log(
+                    self.conn_refused.format(
+                        dest=e.dest, port=e.port,
+                    ),
+            )
             raise ConnectionRefused(self.dest, port)
+        except socket.error as e:
+            self.log(str(e))
+            raise
+
         nc_conn = NetcatTCPConnection(sock, **self._kwargs)
+        self.log(
+                self.conn_succeeded.format(
+                    dest=conn.dest,
+                    port=conn.port,
+                    proto=conn.proto,
+                ),
+                prefix='',
+        )
+
         if self.z:
             # If zero io mode, close the connection.
             nc_conn.close()
         return nc_conn
 
 
+class NetcatTCPClient(NetcatClient):
+    conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
+    conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
+
+
 class NetcatUDPClient(NetcatBase):
     conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
-
-    def __init__(self, dest, port, v=False, z=False, **kwargs):
-        super(NetcatUDPClient, self).__init__(**kwargs)
-
-        self.dest, self.port = dest, port
-        
-        if isinstance(self.port, int):
-            # Only one port passed, wrap it in a list
-            # for the __iter__ function.
-            self.port = [self.port]
-
-        self._iterports = iter(self.port)
-
-        self.v = v
-        self.z = z
-        self._kwargs = kwargs
-
-    def __iter__(self):
-        while True:
-            nc_conn = self.next_connection()
-            try:
-                if not self.z:
-                    yield nc_conn
-            finally:
-                nc_conn.close()
-
-    def run(self):
-        # Handle any errors and write them to stderr if "v"erbose
-        # option is True.
-        while True:
-            try:
-                conn = self.next_connection()
-            except StopIteration:
-                # No more ports to connect to.
-                # Exit loop
-                break
-            except ConnectionRefused as e:
-                self.log(
-                        self.conn_refused.format(
-                            dest=e.dest, port=e.port,
-                        ),
-                )
-                continue
-            except socket.error as e:
-                self.log(str(e))
-                continue
-
-            self.log(
-                    self.conn_succeeded.format(
-                        dest=conn.dest,
-                        port=conn.port,
-                        proto=conn.proto,
-                    ),
-                    prefix='',
-            )
-
-            if self.z:
-                # do nothing when zero io mode.
-                continue
-            try:
-                conn.run()
-            finally:
-                conn.close()
-
-    def next_connection(self):
-        # This will raise StopIteration when no more ports.
-        port = next(self._iterports)
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.connect((self.dest, port))
-        nc_conn = NetcatUDPConnection(sock, **self._kwargs)
-        if self.z:
-            # If zero io mode, close the connection
-            nc_conn.close()
-        return nc_conn
 
 
 class NetcatTCPServer(NetcatBase):
