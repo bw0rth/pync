@@ -484,7 +484,11 @@ class NetcatClient(NetcatBase):
     def __iter__(self):
         while True:
             try:
-                nc_conn = self.next_connection()
+                nc_conn = next(self)
+            except StopIteration:
+                # No more ports to connect to.
+                # Exit loop
+                return
             except (ConnectionRefused, socket.error):
                 # Move onto next connection if any errors.
                 continue
@@ -499,7 +503,7 @@ class NetcatClient(NetcatBase):
         for conn in self:
             conn.run()
 
-    def next_connection(self):
+    def __next__(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
 
