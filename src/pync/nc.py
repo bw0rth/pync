@@ -137,7 +137,7 @@ class Netcat(NetcatBase):
             e=None,             # Command to execute through connection.
             k=False,            # Keep the server sock open in listen mode.
             l=False,            # Listen mode.
-            q=0,                # Quit after EOF with delay.
+            q=-1,                # Quit after EOF with delay.
             v=False,            # Verbose
             z=False,            # Zero IO mode.
             u=False,            # UDP mode.
@@ -236,7 +236,7 @@ class Netcat(NetcatBase):
         parser.add_argument('-q',
                 help='quit after EOF on stdin and delay of SECS',
                 metavar='SECS',
-                default=0,
+                default=-1,
                 type=int,
         )
         parser.add_argument('-v',
