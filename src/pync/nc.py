@@ -304,7 +304,7 @@ class NetcatConnection(NetcatBase):
     def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
         if self.command:
             return self.execute(self.command)
-        self.readwrite(stdin, stdout, stderr, shut_wr=True)
+        self.readwrite(stdin, stdout, stderr)
 
     def recv(self, n, blocking=True):
         if blocking:
@@ -323,9 +323,9 @@ class NetcatConnection(NetcatBase):
     def shutdown(self, how):
         return self.sock.shutdown(how)
 
-    def readwrite(self, stdin=None, stdout=None, stderr=None, q=None,
-            shut_wr=False):
-        q = self.q if q is None else q
+    def readwrite(self, stdin=None, stdout=None, stderr=None):
+        q = self.q    # flag to quit after EOF.
+        N = False     # flag to shutdown socket writes on EOF.
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
         stderr = stderr or self.stderr
@@ -372,23 +372,14 @@ class NetcatConnection(NetcatBase):
                         # EOF reached on stdin.
                         # Store the time to calculate time elapsed.
                         eof_reached = time.time()
-                elif not q:
-                    # q is 0 or None
-                    # shutdown socket sends and continue
-                    # to recv from socket until connection
-                    # is closed.
-                    if shut_wr:
-                        # We no longer need to send data.
-                        # Shutdown the socket for writing.
-                        # No more sends.
+                elif q >= 0:
+                    if N:
+                        # shutdown socket writes.
+                        # Some servers require this to finish their work.
                         try:
                             self.shutdown(socket.SHUT_WR)
                         except OSError:
                             pass
-                        self.logger.debug('shutdown socket for sends (SHUT_WR)')
-                elif q > 0:
-                    # q is a positive number.
-                    # do not shutdown socket sends.
                     # exit on connection close or q seconds elapsed.
                     eof_elapsed = time.time() - eof_reached
                     if eof_elapsed >= q:
