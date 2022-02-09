@@ -128,7 +128,7 @@ together and send messages back and forth.
 There should now be a connection between the two consoles and anything
 typed in one console should display in the other and vice-versa.
 
-When finished, hit <kbd>Ctrl</kbd><kbd>C</kbd> from either console to close the connection.
+When finished, hit <kbd>Ctrl</kbd>+<kbd>C</kbd> from either console to close the connection.
 
 ### Data Transfer
 ---
