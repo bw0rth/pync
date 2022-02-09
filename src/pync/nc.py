@@ -261,7 +261,7 @@ class NetcatConnection(NetcatBase):
 
     def __init__(self, sock,
             e=None,
-            q=0,
+            q=-1,
             **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
@@ -323,9 +323,15 @@ class NetcatConnection(NetcatBase):
     def shutdown(self, how):
         return self.sock.shutdown(how)
 
-    def readwrite(self, stdin=None, stdout=None, stderr=None):
-        q = self.q    # flag to quit after EOF.
-        N = False     # flag to shutdown socket writes on EOF.
+    def readwrite(self, stdin=None, stdout=None, stderr=None,
+            q=None):
+        # flag to quit after EOF on stdin.
+        if q is None:
+            q = self.q
+
+        # flag to shutdown socket writes on stdin EOF.
+        N = False
+
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
         stderr = stderr or self.stderr
@@ -369,10 +375,12 @@ class NetcatConnection(NetcatBase):
                     if stdin_data:
                         self.send(stdin_data)
                     elif stdin_data is not None:
+                        self.logger.debug('EOF on stdin.')
                         # EOF reached on stdin.
                         # Store the time to calculate time elapsed.
                         eof_reached = time.time()
                         if N:
+                            self.logger.debug('shuting down socket')
                             # shutdown socket writes.
                             # Some servers require this to finish their work.
                             try:

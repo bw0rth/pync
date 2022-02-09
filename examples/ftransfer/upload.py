@@ -39,7 +39,9 @@ def main():
 
     with mode(args.host, args.port) as conn:
         with open(args.filename, 'rb') as f:
-            conn.readwrite(stdin=f)
+            # pass the open file to stdin.
+            # Use the q option to quit after EOF on stdin.
+            conn.readwrite(stdin=f, q=0)
 
 
 if __name__ == '__main__':
