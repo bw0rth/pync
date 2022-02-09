@@ -372,14 +372,14 @@ class NetcatConnection(NetcatBase):
                         # EOF reached on stdin.
                         # Store the time to calculate time elapsed.
                         eof_reached = time.time()
+                        if N:
+                            # shutdown socket writes.
+                            # Some servers require this to finish their work.
+                            try:
+                                self.shutdown(socket.SHUT_WR)
+                            except OSError:
+                                pass
                 elif q >= 0:
-                    if N:
-                        # shutdown socket writes.
-                        # Some servers require this to finish their work.
-                        try:
-                            self.shutdown(socket.SHUT_WR)
-                        except OSError:
-                            pass
                     # exit on connection close or q seconds elapsed.
                     eof_elapsed = time.time() - eof_reached
                     if eof_elapsed >= q:
