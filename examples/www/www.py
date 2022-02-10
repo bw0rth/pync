@@ -33,7 +33,7 @@ def main():
     # between each client connection.
     try:
         with pync.Netcat(args.port, dest=args.dest,
-                l=True, k=True, v=True) as nc:
+                l=True, k=True, v=True, q=0) as nc:
             for conn in nc:
                 response = io.BytesIO(b'HTTP/1.1 200 OK\n\n')
                 conn.readwrite(stdin=response)
