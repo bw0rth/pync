@@ -137,7 +137,8 @@ class Netcat(NetcatBase):
             e=None,             # Command to execute through connection.
             k=False,            # Keep the server sock open in listen mode.
             l=False,            # Listen mode.
-            q=-1,                # Quit after EOF with delay.
+            N=False,            # Shutdown socket writes on EOF.
+            q=-1,               # Quit after EOF with delay.
             v=False,            # Verbose
             z=False,            # Zero IO mode.
             u=False,            # UDP mode.
@@ -227,6 +228,10 @@ class Netcat(NetcatBase):
         )
         parser.add_argument('-l',
                 help='Listen mode, for inbound connects',
+                action='store_true',
+        )
+        parser.add_argument('-N',
+                help='Shutdown socket on EOF',
                 action='store_true',
         )
         parser.add_argument('-e',
@@ -380,7 +385,7 @@ class NetcatConnection(NetcatBase):
                         # Store the time to calculate time elapsed.
                         eof_reached = time.time()
                         if N:
-                            self.logger.debug('shuting down socket')
+                            self.logger.debug('shutting down socket')
                             # shutdown socket writes.
                             # Some servers require this to finish their work.
                             try:
