@@ -266,12 +266,14 @@ class NetcatConnection(NetcatBase):
 
     def __init__(self, sock,
             e=None,
+            N=False,
             q=-1,
             **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.sock = sock
-        self.command = e
+        self.e = e
+        self.N = N
         self.q = q
         self.dest, self.port = sock.getpeername()
 
@@ -307,8 +309,9 @@ class NetcatConnection(NetcatBase):
         return cls(sock, **kwargs)
 
     def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
-        if self.command:
-            return self.execute(self.command)
+        command = self.e
+        if command:
+            return self.execute(command)
         self.readwrite(stdin, stdout, stderr)
 
     def recv(self, n, blocking=True):
@@ -329,20 +332,21 @@ class NetcatConnection(NetcatBase):
         return self.sock.shutdown(how)
 
     def readwrite(self, stdin=None, stdout=None, stderr=None,
-            q=None):
-        # flag to quit after EOF on stdin.
-        if q is None:
-            q = self.q
-
-        # flag to shutdown socket writes on stdin EOF.
-        N = False
-
+            N=None, q=None):
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
         stderr = stderr or self.stderr
 
         if stdin is sys.__stdin__ and stdin.isatty():
             stdin = NonBlockingConsoleInput()
+
+        # flag to shutdown socket writes on stdin EOF.
+        if N is None:
+            N = self.N
+
+        # flag to quit after EOF on stdin.
+        if q is None:
+            q = self.q
 
         eof_reached = None
         eof_elapsed = None
