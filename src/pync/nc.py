@@ -67,6 +67,7 @@ class NetcatContext(object):
     def print_debug(self, message):
         if self.D:
             self.stderr.write(message)
+            self.stderr.flush()
 
 
 class NetcatConnection(NetcatContext):
@@ -411,7 +412,7 @@ class NetcatTCPServer(NetcatIterator):
     listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
     conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
 
-    def __init__(self, port, dest='', k=False, v=False, **kwargs):
+    def __init__(self, port, dest='', k=False, **kwargs):
         super(NetcatTCPServer, self).__init__(**kwargs)
 
         # First, use "getaddrinfo" to raise a socket error if
@@ -432,7 +433,6 @@ class NetcatTCPServer(NetcatIterator):
         self.sock.bind((dest, port))
         self.sock.listen(1)
         self.k = k
-        self.v = v
 
     def __iter__(self):
         while True:
@@ -464,7 +464,12 @@ class NetcatTCPServer(NetcatIterator):
                 raise StopIteration
             if self.sock in can_read:
                 cli_sock, _ = self.sock.accept()
-                nc_conn = NetcatTCPConnection(cli_sock, **self._conn_kwargs)
+                nc_conn = NetcatTCPConnection(cli_sock,
+                        D=self.D,
+                        v=self.v,
+                        stdin=self.stdin, stdout=self.stdout, stderr=self.stderr,
+                        **self._conn_kwargs,
+                )
                 break
         if not self.k:
             # The "k" option keeps the server open.
@@ -478,10 +483,9 @@ class NetcatTCPServer(NetcatIterator):
 
 class NetcatUDPServer(NetcatIterator):
 
-    def __init__(self, port, dest='', k=False, v=False, **kwargs):
+    def __init__(self, port, dest='', k=False, **kwargs):
         super(NetcatUDPServer, self).__init__(**kwargs)
         self.k = k
-        self.v = v
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((dest, port))
 
@@ -651,6 +655,8 @@ class Netcat(object):
         server_args = args['server arguments']
         if server_args.l:
             kwargs.update(vars(server_args))
+        else:
+            kwargs.update(vars(args['client arguments']))
 
         return cls(**kwargs)
 
@@ -674,6 +680,10 @@ class Netcat(object):
                 metavar='PORT',
                 nargs='+',
                 action=PortAction,
+        )
+        parser.add_argument('-D',
+                help='Enable debugging output to stderr',
+                action='store_true',
         )
         parser.add_argument('-k',
                 group='server arguments',
