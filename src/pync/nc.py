@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+'''
+pync - arbitrary TCP and UDP connections and listens (Netcat for Python).
+'''
+
 from __future__ import unicode_literals
 import argparse
 import contextlib
@@ -34,22 +38,31 @@ if sys.version_info.major == 2:
 
 
 class NetcatContext(object):
+    D = False
+    v = False
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
 
     def __init__(self,
-            D=False,
-            v=False,
+            D=None,
+            v=None,
             stdin=None, stdout=None, stderr=None, **kwargs):
-        self.stdin = stdin or sys.stdin
-        self.stdout = stdout or sys.stdout
-        self.stderr = stderr or sys.stderr
 
-        self.D = D
-        self.v = v
+        if D is not None:
+            self.D = D
+        if v is not None:
+            self.v = v
+
+        self.stdin = stdin or self.stdin
+        self.stdout = stdout or self.stdout
+        self.stderr = stderr or self.stderr
 
         self._init_kwargs(**kwargs)
 
     def _init_kwargs(self, **kwargs):
-        pass
+        if kwargs:
+            raise ValueError(kwargs)
 
     def __enter__(self):
         return self
@@ -62,29 +75,37 @@ class NetcatContext(object):
 
     def print_verbose(self, message):
         if self.v:
-            self.stderr.write(message)
+            self.stderr.write(message+'\n')
+            self.stderr.flush()
 
     def print_debug(self, message):
         if self.D:
-            self.stderr.write(message)
+            self.stderr.write(message+'\n')
             self.stderr.flush()
 
 
 class NetcatConnection(NetcatContext):
+    e = None
+    N = False
+    q = -1
 
     def __init__(self, sock,
             e=None,
-            N=False,
-            q=-1,
+            N=None,
+            q=None,
             **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.sock = sock
-        self.e = e
-        self.N = N
-        self.q = q
-        self.dest, self.port = sock.getpeername()
 
+        if e is not None:
+            self.e = e
+        if N is not None:
+            self.N = N
+        if q is not None:
+            self.q = q
+
+        self.dest, self.port = sock.getpeername()
         if self.dest == '127.0.0.1':
             self.dest = 'localhost'
         self.proto = '*'
@@ -281,12 +302,14 @@ class NetcatIterator(NetcatContext):
 class NetcatClient(NetcatIterator):
     conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} failed: Connection refused'
+    z = False
 
-    def __init__(self, dest, port, z=False, **kwargs):
+    def __init__(self, dest, port, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
-        self.z = z
+        if z is not None:
+            self.z = z
         
         if isinstance(self.port, int):
             # Only one port passed, wrap it in a list
@@ -352,7 +375,6 @@ class NetcatTCPClient(NetcatClient):
                     port=nc_conn.port,
                     proto=nc_conn.proto,
                 ),
-                prefix='',
         )
 
         if self.z:
@@ -376,7 +398,40 @@ class NetcatUDPClient(NetcatClient):
 
 
 class NetcatServer(NetcatIterator):
-    
+    k = False
+    address_family = None
+    socket_type = None
+    Connection = None
+
+    def __init__(self, port, dest='', k=None, bind_and_activate=True, **kwargs):
+        super(NetcatServer, self).__init__(**kwargs)
+
+        self.dest = dest
+        if dest == '':
+            # getaddrinfo doesn't accept an empty string.
+            # set to 0.0.0.0 to listen on all interfaces.
+            self.dest = '0.0.0.0'
+
+        self.port = port
+        if not isinstance(port, int) and not isinstance(port, str):
+            # port is not an int or a string.
+            # getaddrinfo expects an int or string.
+            # All objects have __repr__ so call repr to get string.
+            self.port = repr(port)
+
+        if k is not None:
+            self.k = k
+
+        self.sock = socket.socket(self.address_family, self.socket_type)
+
+        if bind_and_activate:
+            try:
+                self.server_bind()
+                self.server_activate()
+            except:
+                self.server_close()
+                raise
+
     def __iter__(self):
         while True:
             try:
@@ -398,137 +453,70 @@ class NetcatServer(NetcatIterator):
                 # This can occur when the server is closed.
                 raise StopIteration
             if self.sock in can_read:
-                cli_sock, _ = self.sock.accept()
-                nc_conn = self.NetcatConnection(cli_sock, **self._conn_kwargs)
+                cli_sock, _ = self.get_request()
+                nc_conn = self.Connection(cli_sock, **self._conn_kwargs)
                 break
         if not self.k:
             # The "k" option keeps the server open.
             # In this case, "k" is set to False so close the server.
             self.close()
         return nc_conn
-
-
-class NetcatTCPServer(NetcatIterator):
-    listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
-    conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
-
-    def __init__(self, port, dest='', k=False, **kwargs):
-        super(NetcatTCPServer, self).__init__(**kwargs)
-
-        # First, use "getaddrinfo" to raise a socket error if
-        # there are any problems with the given dest and port.
-        if dest == '':
-            # getaddrinfo doesn't accept an empty string.
-            # set to 0.0.0.0 to listen on all interfaces.
-            dest = '0.0.0.0'
-        if not isinstance(port, int) and not isinstance(port, str):
-            # port is not an int or a string.
-            # getaddrinfo expects an int or string.
-            # All objects have __repr__ so call repr to get string.
-            port = repr(port)
-        socket.getaddrinfo(dest, port)
-
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((dest, port))
-        self.sock.listen(1)
-        self.k = k
-
-    def __iter__(self):
-        while True:
-            nc_conn = self.next_connection()
-            try:
-                yield nc_conn
-            finally:
-                nc_conn.close()
 
     def run(self):
-        while True:
-            try:
-                conn = self.next_connection()
-            except StopIteration:
-                # Server can't accept any more connections.
-                break
-            try:
-                conn.run()
-            finally:
-                conn.close()
+        for conn in self:
+            conn.run()
 
-    def next_connection(self):
-        while True:
-            try:
-                can_read, _, _ = select.select([self.sock], [], [], .002)
-            except (ValueError, socket.error):
-                # Bad / closed socket.
-                # This can occur when the server is closed.
-                raise StopIteration
-            if self.sock in can_read:
-                cli_sock, _ = self.sock.accept()
-                nc_conn = NetcatTCPConnection(cli_sock,
-                        D=self.D,
-                        v=self.v,
-                        stdin=self.stdin, stdout=self.stdout, stderr=self.stderr,
-                        **self._conn_kwargs,
-                )
-                break
-        if not self.k:
-            # The "k" option keeps the server open.
-            # In this case, "k" is set to False so close the server.
-            self.close()
-        return nc_conn
+    def server_bind(self):
+        raise NotImplementedError
 
-    def close(self):
+    def server_activate(self):
+        pass
+
+    def server_close(self):
         self.sock.close()
 
-
-class NetcatUDPServer(NetcatIterator):
-
-    def __init__(self, port, dest='', k=False, **kwargs):
-        super(NetcatUDPServer, self).__init__(**kwargs)
-        self.k = k
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind((dest, port))
-
-    def __iter__(self):
-        while True:
-            nc_conn = self.next_connection()
-            try:
-                yield nc_conn
-            finally:
-                nc_conn.close()
-
-    def run(self):
-        while True:
-            try:
-                conn = self.next_connection()
-            except StopIteration:
-                # Server can't accept any more connections.
-                break
-            try:
-                conn.run()
-            finally:
-                conn.close()
-
-    def next_connection(self):
-        while True:
-            try:
-                can_read, _, _ = select.select([self.sock], [], [], .002)
-            except (ValueError, TypeError):
-                # Bad / closed socket.
-                # This can occur when the server is closed.
-                raise StopIteration
-            if self.sock in can_read:
-                data, addr = self.sock.recvfrom(1024)
-                self.stdout.write(data.decode())
-                self.sock.connect(addr)
-                nc_conn = NetcatUDPConnection(self.sock, **self._conn_kwargs)
-                break
-        if not self.k:
-            self.sock = None
-        return nc_conn
+    def get_request(self):
+        raise NotImplementedError
 
     def close(self):
+        self.server_close()
+
+
+class NetcatTCPServer(NetcatServer):
+    listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
+    conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
+    address_family = socket.AF_INET
+    socket_type = socket.SOCK_STREAM
+    request_queue_size = 1
+    Connection = NetcatTCPConnection
+
+    def server_bind(self):
+        # This should raise any errors if problems with dest and port.
+        socket.getaddrinfo(self.dest, self.port)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((self.dest, self.port))
+
+    def server_activate(self):
+        self.sock.listen(self.request_queue_size)
+
+    def get_request(self):
+        return self.sock.accept()
+
+
+class NetcatUDPServer(NetcatServer):
+    address_family = socket.AF_INET
+    socket_type = socket.SOCK_DGRAM
+    max_packet_size = 8192
+    Connection = NetcatUDPConnection
+
+    def server_close(self):
         pass
+
+    def get_request(self):
+        data, addr = self.sock.recvfrom(self.max_packet_size)
+        self.stdout.write(data.decode())
+        self.sock.connect(addr)
+        return self.sock, addr
 
 
 class StopNetcat(Exception):
@@ -617,6 +605,7 @@ class PortAction(argparse.Action):
 class Netcat(object):
     ''' Factory class that returns the correct Netcat object based
     on the arguments given. '''
+
     name = 'pync'
 
     TCPServer = NetcatTCPServer
@@ -663,10 +652,11 @@ class Netcat(object):
     @classmethod
     def makeparser(cls):
         parser = GroupingArgumentParser(cls.name,
+                description=__doc__,
                 usage='''
        {name} [OPTIONS] DEST PORT
        {name} [OPTIONS] -l [DEST] PORT
-    '''.lstrip().format(name=cls.name),
+    '''.strip().format(name=cls.name),
         )
         parser.add_argument('dest',
                 help='The host name or ip to connect or bind to',
@@ -725,17 +715,18 @@ class Netcat(object):
         return parser
 
 
-def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
-    nc = Netcat.from_args(args,
-            stdin=stdin,
-            stdout=stdout,
-            stderr=stderr,
-    )
+def pync(args, stderr=sys.stderr, **kwargs):
+    # TODO: return status codes.
+    try:
+        # NetcatServer may raise an error on bad address.
+        nc = Netcat.from_args(args, stderr=stderr, **kwargs)
+    except:
+        raise
 
     try:
         nc.run()
     except KeyboardInterrupt:
-        sys.stderr.write('\n')
+        nc.stderr.write('\n')
     finally:
         nc.close()
 
