@@ -607,6 +607,7 @@ class Netcat(object):
     on the arguments given. '''
 
     name = 'pync'
+    description = 'pync - arbitrary TCP and UDP connections and listens (Netcat for Python).'
 
     TCPServer = NetcatTCPServer
     TCPClient = NetcatTCPClient
@@ -652,7 +653,7 @@ class Netcat(object):
     @classmethod
     def makeparser(cls):
         parser = GroupingArgumentParser(cls.name,
-                description=__doc__,
+                description=cls.description,
                 usage='''
        {name} [OPTIONS] DEST PORT
        {name} [OPTIONS] -l [DEST] PORT
