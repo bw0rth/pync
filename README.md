@@ -144,7 +144,7 @@ to another.
    <summary>Show command</summary>
    
    ```sh
-   pync -N -l 8000 < file.in
+   pync -lN 8000 < file.in
    ```
    </details>
    <details>
@@ -158,7 +158,7 @@ to another.
    # so be sure to open files in binary
    # mode to avoid any errors.
    with open('file.in', 'rb') as f:
-       pync('-N -l 8000', stdin=f)
+       pync('-lN 8000', stdin=f)
    ```
    </details>
    
