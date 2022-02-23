@@ -717,6 +717,15 @@ class Netcat(object):
 
 
 def pync(args, stderr=sys.stderr, **kwargs):
+    """Create and run a Netcat instance.
+    This is similar to running **pync** from the command-line.
+
+    :param args: A string containing command-line arguments.
+    :param stderr: A file-like object for writing error messages to.
+    :param kwargs: Any other key word arguments get passed to the
+        underlying Netcat class.
+    """
+
     # TODO: return status codes.
     try:
         # NetcatServer may raise an error on bad address.
