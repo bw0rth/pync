@@ -24,7 +24,7 @@ def main():
             type=int,
     )
     parser.add_argument('filename',
-            help='Filename to save the data to',
+            help='Filename to upload',
             metavar='FILENAME',
     )
     parser.add_argument('--listen', '-l',
@@ -40,8 +40,8 @@ def main():
     with mode(args.host, args.port) as conn:
         with open(args.filename, 'rb') as f:
             # pass the open file to stdin.
-            # Use the q option to quit after EOF on stdin.
-            conn.readwrite(stdin=f, q=0)
+            # Shut down socket writes after EOF with the N option.
+            conn.readwrite(stdin=f, N=True)
 
 
 if __name__ == '__main__':

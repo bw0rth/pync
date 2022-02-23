@@ -31,6 +31,9 @@ def main():
 
     # The l option is for listen mode and k for keeping the server open
     # between each client connection.
+    # Use the q option to be able to use thr readwrite method
+    # multiple times.
+    # q=0 means stop readwrite loop after EOF on stdin.
     try:
         with pync.Netcat(args.port, dest=args.dest,
                 l=True, k=True, v=True, q=0) as nc:
