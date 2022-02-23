@@ -2,3 +2,7 @@
 API Reference
 =============
 
+.. toctree::
+
+   pync
+
