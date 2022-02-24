@@ -733,6 +733,12 @@ def pync(args, stderr=sys.stderr, **kwargs):
        
        from pync import pync
        pync('-l localhost 8000')
+
+    .. code-block:: python
+       :caption: TCP client connecting to a local server on port 8000.
+
+       from pync import pync
+       pync('localhost 8000')
     """
 
     # TODO: return status codes.
