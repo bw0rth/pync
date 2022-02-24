@@ -725,8 +725,11 @@ def pync(args, stderr=sys.stderr, **kwargs):
     :param kwargs: Any other key word arguments get passed to the
         underlying Netcat class.
 
+    Examples
+    ========
+
     .. code-block:: python
-       :caption: Examples
+       :caption: Local TCP server running on port 8000.
        
        from pync import pync
        pync('-l localhost 8000')
