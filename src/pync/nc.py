@@ -724,6 +724,14 @@ def pync(args, stderr=sys.stderr, **kwargs):
     :param stderr: A file-like object for writing error messages to.
     :param kwargs: Any other key word arguments get passed to the
         underlying Netcat class.
+
+    Examples
+    ========
+
+    .. code-block:: python
+       
+       from pync import pync
+       pync('-l localhost 8000')
     """
 
     # TODO: return status codes.
