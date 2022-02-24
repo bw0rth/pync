@@ -729,13 +729,13 @@ def pync(args, stderr=sys.stderr, **kwargs):
     ========
 
     .. code-block:: python
-       :caption: Local TCP server running on port 8000.
+       :caption: Create a local TCP server on port 8000.
        
        from pync import pync
        pync('-l localhost 8000')
 
     .. code-block:: python
-       :caption: TCP client connecting to a local server on port 8000.
+       :caption: Connect to a local TCP server on port 8000.
 
        from pync import pync
        pync('localhost 8000')
