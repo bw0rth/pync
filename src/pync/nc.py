@@ -630,23 +630,27 @@ class Netcat(object):
                 return cls.TCPClient(dest, port, **kwargs)
 
     @classmethod
-    def from_args(cls, argv, **kwargs):
+    def from_args(cls, args):
         try:
             # Assume args is a string and try to split it.
-            argv = shlex.split(argv)
+            args = shlex.split(args)
         except AttributeError:
             # args is not a string, assume it's a list.
             pass
 
         parser = cls.makeparser()
-        args = parser.parse_args(argv)
-        kwargs.update(vars(args['general arguments']))
+        parsed_args = parser.parse_args(args)
 
-        server_args = args['server arguments']
+        general_args = parsed_args['general arguments']
+        client_args = parsed_args['client arguments']
+        server_args = parsed_args['server arguments']
+
+        kwargs = dict()
+        kwargs.update(vars(general_args))
         if server_args.l:
             kwargs.update(vars(server_args))
         else:
-            kwargs.update(vars(args['client arguments']))
+            kwargs.update(vars(client_args))
 
         return cls(**kwargs)
 
@@ -716,14 +720,14 @@ class Netcat(object):
         return parser
 
 
-def pync(args, stderr=sys.stderr, **kwargs):
+def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     """Create and run a Netcat instance.
     This is similar to running **pync** from the command-line.
 
     :param args: A string containing command-line arguments.
-    :param stderr: A file-like object for writing error messages to.
-    :param kwargs: Any other key word arguments get passed to the
-        underlying Netcat class.
+    :param stdin: A file-like object to read outgoing network data from.
+    :param stdout: A file-like object to write incoming network data to.
+    :param stderr: A file-like object for writing error/verbose/debug messages to.
 
     Examples
     ========
@@ -744,7 +748,11 @@ def pync(args, stderr=sys.stderr, **kwargs):
     # TODO: return status codes.
     try:
         # NetcatServer may raise an error on bad address.
-        nc = Netcat.from_args(args, stderr=stderr, **kwargs)
+        nc = Netcat.from_args(args,
+                stdin=stdin,
+                stdout=stdout,
+                stderr=stderr,
+        )
     except:
         raise
 
