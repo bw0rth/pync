@@ -4,18 +4,6 @@
 pync - arbitrary TCP and UDP connections and listens (Netcat for Python).
 '''
 
-__all__ = [
-        'pync',
-        'Netcat',
-        'NetcatTCPClient',
-        'NetcatTCPServer',
-        'NetcatTCPConnection',
-        'NetcatUDPClient',
-        'NetcatUDPServer',
-        'NetcatUDPConnection',
-        'StopReadWrite',
-]
-
 from __future__ import unicode_literals
 import argparse
 import contextlib

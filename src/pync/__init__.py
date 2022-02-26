@@ -2,7 +2,10 @@
 
 from .helpers import makefile
 from .nc import (
-        pync, connect, listen, Netcat,
-        Process, StopNetcat, ConnectionRefused
+        pync,
+        Netcat, connect, listen,
+        NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
+        NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
+        Process, StopReadWrite, ConnectionRefused
 )
 
