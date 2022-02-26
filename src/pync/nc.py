@@ -750,13 +750,13 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
 
     # TODO: return status codes.
     try:
-        # NetcatServer may raise an error on bad address.
         nc = Netcat.from_args(args,
                 stdin=stdin,
                 stdout=stdout,
                 stderr=stderr,
         )
     except socket.error as e:
+        # NetcatServer may raise a socket error on bad address.
         stderr.write('pync: {}\n'.format(e))
         return 1
 
