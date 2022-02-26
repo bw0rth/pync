@@ -630,7 +630,10 @@ class Netcat(object):
                 return cls.TCPClient(dest, port, **kwargs)
 
     @classmethod
-    def from_args(cls, args):
+    def from_args(cls, args,
+            stdin=sys.stdin,
+            stdout=sys.stdout,
+            stderr=sys.stderr):
         try:
             # Assume args is a string and try to split it.
             args = shlex.split(args)
@@ -753,8 +756,9 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
                 stdout=stdout,
                 stderr=stderr,
         )
-    except:
-        raise
+    except socket.error as e:
+        stderr.write('pync: {}\n'.format(e))
+        return 1
 
     try:
         nc.run()
