@@ -4,6 +4,18 @@
 pync - arbitrary TCP and UDP connections and listens (Netcat for Python).
 '''
 
+__all__ = [
+        'pync',
+        'Netcat',
+        'NetcatTCPClient',
+        'NetcatTCPServer',
+        'NetcatTCPConnection',
+        'NetcatUDPClient',
+        'NetcatUDPServer',
+        'NetcatUDPConnection',
+        'StopReadWrite',
+]
+
 from __future__ import unicode_literals
 import argparse
 import contextlib
@@ -112,26 +124,11 @@ class NetcatConnection(NetcatContext):
 
     @classmethod
     def connect(cls, host, port, **kwargs):
-        sock = socket.create_connection((host, port))
-        return cls(sock, **kwargs)
+        raise NotImplementedError
 
     @classmethod
     def listen(cls, host, port, **kwargs):
-        server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_sock.bind((host, port))
-        server_sock.listen(1)
-
-        # ctrl-c interrupt doesn't seem to break out of server accept.
-        # So using select for non-blocking server accept.
-        while True:
-            readables, _, _ = select.select([server_sock], [], [], .002)
-            if server_sock in readables:
-                sock, _ = server_sock.accept()
-                break
-
-        server_sock.close()
-        return cls(sock, **kwargs)
+        raise NotImplementedError
 
     def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
         command = self.e
@@ -189,7 +186,7 @@ class NetcatConnection(NetcatContext):
                         stdout.flush()
                     except OSError:
                         # TODO: Could I move this into the custom Process
-                        #       write method? raise StopNetcat
+                        #       write method? raise StopReadWrite
                         #
                         # process terminated.
                         break
@@ -224,7 +221,7 @@ class NetcatConnection(NetcatContext):
                         break
                 # q is a negative number, run loop until end of
                 # connection.
-            except StopNetcat:
+            except StopReadWrite:
                 # IO has requested to stop the readwrite loop.
                 break
 
@@ -273,7 +270,7 @@ class NetcatUDPConnection(NetcatConnection):
         try:
             return super(NetcatUDPConnection, self).recv(*args, **kwargs)
         except ConnectionRefusedError:
-            raise StopNetcat
+            raise StopReadWrite
 
 
 class ConnectionRefused(ConnectionRefusedError):
@@ -519,7 +516,7 @@ class NetcatUDPServer(NetcatServer):
         return self.sock, addr
 
 
-class StopNetcat(Exception):
+class StopReadWrite(Exception):
     pass
 
 
@@ -542,7 +539,7 @@ class _ProcStdout:
         try:
             return self._stdout.read(n)
         except ProcessTerminated:
-            raise StopNetcat
+            raise StopReadWrite
 
 
 connect = NetcatTCPConnection.connect
