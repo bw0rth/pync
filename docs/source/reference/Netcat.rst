@@ -1,0 +1,6 @@
+======
+Netcat
+======
+
+.. autoclass:: pync.Netcat
+

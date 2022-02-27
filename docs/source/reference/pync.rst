@@ -1,6 +1,6 @@
-=============
-pync.pync
-=============
+====
+pync
+====
 
 .. autofunction:: pync.pync
 
