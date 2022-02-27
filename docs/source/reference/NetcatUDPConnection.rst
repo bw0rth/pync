@@ -1,6 +1,0 @@
-===================
-NetcatUDPConnection
-===================
-
-.. autoclass:: pync.NetcatUDPConnection
-

@@ -1,6 +1,0 @@
-===============
-NetcatUDPClient
-===============
-
-.. autoclass:: pync.NetcatUDPClient
-

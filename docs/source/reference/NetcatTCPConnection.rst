@@ -1,6 +1,0 @@
-===================
-NetcatTCPConnection
-===================
-
-.. autoclass:: pync.NetcatTCPConnection
-

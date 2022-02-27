@@ -1,6 +1,0 @@
-===============
-NetcatUDPServer
-===============
-
-.. autoclass:: pync.NetcatUDPServer
-

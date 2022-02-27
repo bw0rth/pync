@@ -1,6 +1,0 @@
-===============
-NetcatTCPClient
-===============
-
-.. autoclass:: pync.NetcatTCPClient
-

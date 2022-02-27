@@ -6,10 +6,7 @@ API Reference
 
    pync
    Netcat
-   NetcatTCPServer
-   NetcatTCPClient
-   NetcatTCPConnection
-   NetcatUDPServer
-   NetcatUDPClient
-   NetcatUDPConnection
+   clients
+   servers
+   connections
 

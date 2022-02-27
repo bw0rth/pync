@@ -1,6 +1,0 @@
-===============
-NetcatTCPServer
-===============
-
-.. autoclass:: pync.NetcatTCPServer
-
