@@ -715,7 +715,7 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     :param args: A string containing command-line arguments.
     :param stdin: A file-like object to read outgoing network data from.
     :param stdout: A file-like object to write incoming network data to.
-    :param stderr: A file-like object for writing error/verbose/debug messages to.
+    :param stderr: A file-like object to write error/verbose/debug messages to.
 
     Examples
     ========
@@ -731,6 +731,20 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
 
        from pync import pync
        pync('localhost 8000')
+
+    .. code-block:: python
+       :caption: Create a local TCP server to host a file on port 8000.
+
+       from pync import pync
+       with open('file.in', 'rb') as f:
+           pync('-l localhost 8000', stdin=f)
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server to download a file on port 8000.
+
+       from pync import pync
+       with open('file.out', 'wb') as f:
+           pync('localhost 8000', stdout=f)
     """
 
     # TODO: return status codes.
