@@ -588,8 +588,26 @@ class PortAction(argparse.Action):
 
 
 class Netcat(object):
-    ''' Factory class that returns the correct Netcat object based
-    on the arguments given. '''
+    """
+    Factory class that returns the correct Netcat object based
+    on the arguments given.
+
+    :param port: The port number to connect or bind to depending on the "l" parameter.
+    :type port: int
+
+    :param dest: The IP address or hostname to connect or bind to depending
+        on the "l" parameter.
+    :type dest: str
+
+    :param l: Set to True to create a server and listen for incoming connections.
+    :type l: bool
+
+    :param u: Set to True to use UDP for transport instead of the default TCP.
+    :type u: bool
+
+    :param kwargs: All other keyword arguments get passed to the underlying
+        Netcat class.
+    """
 
     name = 'pync'
     description = 'pync - arbitrary TCP and UDP connections and listens (Netcat for Python).'
@@ -619,6 +637,11 @@ class Netcat(object):
             stdin=sys.stdin,
             stdout=sys.stdout,
             stderr=sys.stderr):
+        """
+        Create a Netcat object from command-line arguments instead of keyword
+        arguments.
+        """
+
         try:
             # Assume args is a string and try to split it.
             args = shlex.split(args)
@@ -709,7 +732,8 @@ class Netcat(object):
 
 
 def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
-    """Create and run a Netcat instance.
+    """
+    Create and run a Netcat instance.
     This is similar to running **pync** from the command-line.
 
     :param args: A string containing command-line arguments.
