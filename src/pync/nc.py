@@ -640,6 +640,29 @@ class Netcat(object):
         """
         Create a Netcat object from command-line arguments instead of keyword
         arguments.
+
+        :param args: A string containing the command-line arguments to create
+            the Netcat instance with.
+        :type args: str
+
+        :param stdin: A file-like object to read outgoing network data from.
+        :type stdin: file
+
+        :param stdout: A file-like object to write incoming network data to.
+        :type stdout: file
+
+        :param stderr: A file-like object to write verbose/debug/error messages to.
+        :type stderr: file
+
+        Examples
+        ========
+
+        .. code-block:: python
+           :caption: Create a local TCP server on port 8000.
+
+           from pync import Netcat
+           with Netcat.from_args('-l localhost 8000') as nc:
+               nc.run()
         """
 
         try:
