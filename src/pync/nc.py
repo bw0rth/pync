@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-'''
+"""
 pync - arbitrary TCP and UDP connections and listens (Netcat for Python).
-'''
+"""
 
 from __future__ import unicode_literals
 import argparse
@@ -85,6 +85,20 @@ class NetcatContext(object):
 
 
 class NetcatConnection(NetcatContext):
+    """
+    Wraps a socket object to provide Netcat-like functionality.
+
+    :param e: A string containing a process command to run and attach to the
+        Netcat i_o.
+    :param N: Set to True to shutdown socket writes after EOF on stdin.
+        Some servers require this to perform properly.
+    :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
+
+    :type e: str
+    :type N: bool
+    :type q: int
+    """
+
     e = None
     N = False
     q = -1
@@ -112,6 +126,10 @@ class NetcatConnection(NetcatContext):
 
     @classmethod
     def connect(cls, host, port, **kwargs):
+        """
+        Factory method to connect to a server and return a NetcatConnection
+        object.
+        """
         raise NotImplementedError
 
     @classmethod
@@ -219,6 +237,9 @@ class NetcatConnection(NetcatContext):
 
 
 class NetcatTCPConnection(NetcatConnection):
+    """
+    Wraps a TCP socket to provide Netcat-like functionality.
+    """
 
     @classmethod
     def connect(cls, host, port, **kwargs):
@@ -245,6 +266,9 @@ class NetcatTCPConnection(NetcatConnection):
 
 
 class NetcatUDPConnection(NetcatConnection):
+    """
+    Wraps a UDP socket object to provide Netcat-like functionality.
+    """
     
     @classmethod
     def connect(cls):
@@ -335,6 +359,9 @@ class NetcatClient(NetcatIterator):
 
 
 class NetcatTCPClient(NetcatClient):
+    """
+    """
+
     conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
@@ -369,6 +396,9 @@ class NetcatTCPClient(NetcatClient):
 
 
 class NetcatUDPClient(NetcatClient):
+    """
+    """
+
     conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
 
@@ -468,6 +498,9 @@ class NetcatServer(NetcatIterator):
 
 
 class NetcatTCPServer(NetcatServer):
+    """
+    """
+
     listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
     conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
     address_family = socket.AF_INET
@@ -489,6 +522,9 @@ class NetcatTCPServer(NetcatServer):
 
 
 class NetcatUDPServer(NetcatServer):
+    """
+    """
+
     address_family = socket.AF_INET
     socket_type = socket.SOCK_DGRAM
     max_packet_size = 8192
@@ -505,10 +541,13 @@ class NetcatUDPServer(NetcatServer):
 
 
 class StopReadWrite(Exception):
-    pass
+    """
+    """
 
 
 class Process(NonBlockingProcess):
+    """
+    """
 
     def __init__(self, *args, **kwargs):
         super(Process, self).__init__(*args, **kwargs)
@@ -607,6 +646,40 @@ class Netcat(object):
 
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
+
+    Examples
+    ========
+
+    .. code-block:: python
+       :caption: Create a local TCP server on port 8000.
+
+       from pync import Netcat
+       with Netcat(8000, dest='localhost', l=True, N=True) as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server on port 8000.
+
+       from pync import Netcat
+       with Netcat(8000, dest='localhost') as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: Create a local TCP server to host a file on port 8000.
+
+       from pync import Netcat
+       with open('file.in', 'rb') as f:
+           with Netcat(8000, dest='localhost', l=True, N=True, stdin=f) as nc:
+               nc.run()
+
+    .. code-block:: python
+       :caption: Connect to a localhost TCP server on port 8000 and download
+           the data to a file.
+
+       from pync import Netcat
+       with open('file.out', 'wb') as f:
+           with Netcat(8000, dest='localhost', stdout=f) as nc:
+               nc.run()
     """
 
     name = 'pync'
@@ -663,6 +736,30 @@ class Netcat(object):
            from pync import Netcat
            with Netcat.from_args('-l localhost 8000') as nc:
                nc.run()
+
+        .. code-block:: python
+           :caption: Connect to a local TCP server on port 8000.
+
+           from pync import Netcat
+           with Netcat.from_args('localhost 8000') as nc:
+               nc.run()
+
+        .. code-block:: python
+           :caption: Create a local TCP server to host a file on port 8000.
+
+           from pync import Netcat
+           with open('file.in', 'rb') as f:
+               with Netcat.from_args('-lN localhost 8000', stdin=f) as nc:
+                   nc.run()
+
+        .. code-block:: python
+           :caption: Connect to a local TCP server on port 8000 and download the data
+               to a file.
+
+           from pync import Netcat
+           with open('file.out', 'wb') as f:
+               with Netcat.from_args('localhost 8000', stdout=f) as nc:
+                   nc.run()
         """
 
         try:
