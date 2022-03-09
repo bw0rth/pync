@@ -90,12 +90,13 @@ class NetcatConnection(NetcatContext):
 
     :param e: A string containing a process command to run and attach to the
         Netcat i_o.
+    :type e: str
+
     :param N: Set to True to shutdown socket writes after EOF on stdin.
         Some servers require this to perform properly.
-    :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
-
-    :type e: str
     :type N: bool
+
+    :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
     :type q: int
     """
 
@@ -128,12 +129,16 @@ class NetcatConnection(NetcatContext):
     def connect(cls, host, port, **kwargs):
         """
         Factory method to connect to a server and return a NetcatConnection
-        object.
+        instance.
         """
         raise NotImplementedError
 
     @classmethod
     def listen(cls, host, port, **kwargs):
+        """
+        Factory method to listen for a connection and return a NetcatConnection
+        instance.
+        """
         raise NotImplementedError
 
     def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
@@ -239,18 +244,73 @@ class NetcatConnection(NetcatContext):
 class NetcatTCPConnection(NetcatConnection):
     """
     Wraps a TCP socket to provide Netcat-like functionality.
+
+    Examples
+    ========
+
+    .. code-block:: python
+       :caption: Create a local TCP server on port 8000.
+
+       import socket
+       from pync import NetcatTCPConnection
+
+       server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+       server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+       server_sock.bind(('localhost', 8000))
+       server_sock.listen(1)
+
+       client_sock, _ = server_sock.accept()
+       with NetcatTCPConnection(client_sock) as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server on port 8000.
+
+       import socket
+       from pync import NetcatTCPConnection
+
+       sock = socket.create_connection(('localhost', 8000))
+       with NetcatTCPConnection(sock) as nc:
+           nc.run()
     """
 
     @classmethod
-    def connect(cls, host, port, **kwargs):
-        sock = socket.create_connection((host, port))
+    def connect(cls, dest, port, **kwargs):
+        """
+        Connect to a server and return a NetcatTCPConnection instance.
+
+        Example
+        =======
+
+        .. code-block:: python
+           :caption: Connect to a local TCP server on port 8000.
+
+           from pync import NetcatTCPConnection
+           with NetcatTCPConnection.connect('localhost', 8000) as nc:
+               nc.run()
+        """
+        sock = socket.create_connection((dest, port))
         return cls(sock, **kwargs)
 
     @classmethod
-    def listen(cls, host, port, **kwargs):
+    def listen(cls, dest, port, **kwargs):
+        """
+        Listen for a connection and return a NetcatTCPConnection instance.
+
+        Example
+        =======
+
+        .. code-block:: python
+           :caption: Listen for a connection on port 8000.
+
+           from pync import NetcatTCPConnection
+           with NetcatTCPConnection.listen('localhost', 8000) as nc:
+               nc.run()
+        """
+
         server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_sock.bind((host, port))
+        server_sock.bind((dest, port))
         server_sock.listen(1)
 
         # ctrl-c interrupt doesn't seem to break out of server accept.

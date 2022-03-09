@@ -7,11 +7,9 @@ Connections
 
 .. autoclass:: pync.NetcatTCPConnection
    :members:
-   :inherited-members:
    :show-inheritance:
 
 .. autoclass:: pync.NetcatUDPConnection
    :members:
-   :inherited-members:
    :show-inheritance:
 
