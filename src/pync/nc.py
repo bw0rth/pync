@@ -126,7 +126,7 @@ class NetcatConnection(NetcatContext):
         self.proto = '*'
 
     @classmethod
-    def connect(cls, host, port, **kwargs):
+    def connect(cls, dest, port, **kwargs):
         """
         Factory method to connect to a server and return a NetcatConnection
         instance.
@@ -134,7 +134,7 @@ class NetcatConnection(NetcatContext):
         raise NotImplementedError
 
     @classmethod
-    def listen(cls, host, port, **kwargs):
+    def listen(cls, dest, port, **kwargs):
         """
         Factory method to listen for a connection and return a NetcatConnection
         instance.
@@ -245,8 +245,7 @@ class NetcatTCPConnection(NetcatConnection):
     """
     Wraps a TCP socket to provide Netcat-like functionality.
 
-    Examples
-    ========
+    :Examples:
 
     .. code-block:: python
        :caption: Create a local TCP server on port 8000.
@@ -279,8 +278,19 @@ class NetcatTCPConnection(NetcatConnection):
         """
         Connect to a server and return a NetcatTCPConnection instance.
 
-        Example
-        =======
+        :param dest: Hostname or IP address to connect to.
+        :type dest: str
+
+        :param port: Port number to connect to.
+        :type port: int
+
+        :param kwargs: Any other keyword arguments get passed to __init__.
+
+        :return: Returns a :class:`pync.NetcatTCPConnection` instance once a
+            connection has been established.
+        :rtype: :class:`pync.NetcatTCPConnection`
+
+        :Example:
 
         .. code-block:: python
            :caption: Connect to a local TCP server on port 8000.
@@ -297,8 +307,19 @@ class NetcatTCPConnection(NetcatConnection):
         """
         Listen for a connection and return a NetcatTCPConnection instance.
 
-        Example
-        =======
+        :param dest: Hostname or IP address to bind to.
+        :type dest: str
+
+        :param port: Port number to bind to.
+        :type port: int
+
+        :param kwargs: Any other keyword arguments get passed to __init__.
+
+        :return: Returns a :class:`pync.NetcatTCPConnection` instance once a
+            connection has been established.
+        :rtype: :class:`pync.NetcatTCPConnection`
+
+        :Example:
 
         .. code-block:: python
            :caption: Listen for a connection on port 8000.
@@ -331,12 +352,19 @@ class NetcatUDPConnection(NetcatConnection):
     """
     
     @classmethod
-    def connect(cls):
-        pass
+    def connect(cls, dest, port, **kwargs):
+        """
+        :TODO:
+        """
+        # TODO
+        raise NotImplementedError
 
     @classmethod
-    def listen(cls):
-        pass
+    def listen(cls, dest, port, **kwargs):
+        """
+        :TODO:
+        """
+        raise NotImplementedError
 
     def recv(self, *args, **kwargs):
         try:
@@ -920,16 +948,18 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     :type args: str
 
     :param stdin: A file-like object to read outgoing network data from.
-    :type stdin: file
+    :type stdin: file, optional
 
     :param stdout: A file-like object to write incoming network data to.
-    :type stdout: file
+    :type stdout: file, optional
 
     :param stderr: A file-like object to write error/verbose/debug messages to.
-    :type stderr: file
+    :type stderr: file, optional
 
-    Examples
-    ========
+    :return: Error status code depending on success (0) or failure (>0).
+    :rtype: int
+
+    :Examples:
 
     .. code-block:: python
        :caption: Create a local TCP server on port 8000.
