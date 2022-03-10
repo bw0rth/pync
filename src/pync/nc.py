@@ -141,7 +141,17 @@ class NetcatConnection(NetcatContext):
         """
         raise NotImplementedError
 
-    def run(self, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
+    def run(self, stdin=None, stdout=None, stderr=None):
+        """
+        This method runs Netcat respecting all arguments that have been passed.
+        """
+        if stdin is None:
+            stdin = self.stdin
+        if stdout is None:
+            stdout = self.stdout
+        if stderr is None:
+            stderr = self.stderr
+
         command = self.e
         if command:
             return self.execute(command)
@@ -165,6 +175,12 @@ class NetcatConnection(NetcatContext):
         return self.sock.shutdown(how)
 
     def readwrite(self, stdin=None, stdout=None, stderr=None, N=None, q=None):
+        """
+        The main loop to read and write i_o.
+        Read from stdin and send to network.
+        Receive from network and write to stdout.
+        Write verbose/debug/error messages to stderr.
+        """
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
         stderr = stderr or self.stderr
@@ -237,6 +253,9 @@ class NetcatConnection(NetcatContext):
                 break
 
     def execute(self, cmd):
+        """
+        Execute a command and connect i_o to the Netcat connection.
+        """
         proc = Process(cmd)
         self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
 
@@ -271,6 +290,54 @@ class NetcatTCPConnection(NetcatConnection):
        sock = socket.create_connection(('localhost', 8000))
        with NetcatTCPConnection(sock) as nc:
            nc.run()
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server on port 8000 and execute
+           a command to run over the Netcat connection with the "e" option.
+
+       import socket
+       from pync import NetcatTCPConnection
+
+       sock = socket.create_connection(('localhost', 8000))
+       with NetcatTCPConnection(sock, e='echo "Hello, World!"') as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server on port 8000, upload a file
+           and tell the server when EOF has been reached with the "N" option.
+
+       import socket
+       from pync import NetcatTCPConnection
+
+       with open('file.in', 'rb') as f:
+           sock = socket.create_connection(('localhost', 8000))
+           with NetcatTCPConnection(sock, N=True, stdin=f) as nc:
+               nc.run()
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server on port 8000 and quit when EOF
+           is reached on stdin (Note: this does not shutdown socket writes; Please
+           explicitly use the "N" option to tell the server about the EOF).
+
+       import socket
+       from pync import NetcatTCPConnection
+
+       with open('file.in', 'rb') as f:
+           sock = socket.create_connection(('localhost', 8000))
+           with NetcatTCPConnection(sock, q=0) as nc:
+               nc.run()
+
+    .. code-block:: python
+       :caption: Same as the previous example but this time quit after EOF on stdin
+           with a delay of 5 seconds.
+
+       import socket
+       from pync import NetcatTCPConnection
+
+       with open('file.in', 'rb') as f:
+           sock = socket.create_connection(('localhost', 8000))
+           with NetcatTCPConnection(sock, q=5) as nc:
+               nc.run()
     """
 
     @classmethod
@@ -724,19 +791,18 @@ class Netcat(object):
 
     :param dest: The IP address or hostname to connect or bind to depending
         on the "l" parameter.
-    :type dest: str
+    :type dest: str, optional
 
     :param l: Set to True to create a server and listen for incoming connections.
-    :type l: bool
+    :type l: bool, optional
 
     :param u: Set to True to use UDP for transport instead of the default TCP.
-    :type u: bool
+    :type u: bool, optional
 
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
 
-    Examples
-    ========
+    :Examples:
 
     .. code-block:: python
        :caption: Create a local TCP server on port 8000.
@@ -807,16 +873,15 @@ class Netcat(object):
         :type args: str
 
         :param stdin: A file-like object to read outgoing network data from.
-        :type stdin: file
+        :type stdin: file, optional
 
         :param stdout: A file-like object to write incoming network data to.
-        :type stdout: file
+        :type stdout: file, optional
 
         :param stderr: A file-like object to write verbose/debug/error messages to.
-        :type stderr: file
+        :type stderr: file, optional
 
-        Examples
-        ========
+        :Examples:
 
         .. code-block:: python
            :caption: Create a local TCP server on port 8000.
