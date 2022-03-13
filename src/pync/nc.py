@@ -130,6 +130,26 @@ class NetcatConnection(NetcatContext):
         """
         Factory method to connect to a server and return a NetcatConnection
         instance.
+        This method should be implemented by a sub-class.
+
+        :param dest: The destination hostname or IP address to connect to.
+        :type dest: str
+
+        :param port: The port number to connect to.
+        :type port: int
+
+        :param kwargs: Any other keyword arguments get passed to __init__.
+
+        :returns: Returns a subclass of :class:`pync.NetcatConnection` once
+            a connection has been established.
+        :rtype: :class:`pync.NetcatConnection`
+
+        :Example:
+
+        .. code-block:: python
+
+           with NetcatConnection.connect('localhost', 8000) as conn:
+               conn.run()
         """
         raise NotImplementedError
 
@@ -138,24 +158,46 @@ class NetcatConnection(NetcatContext):
         """
         Factory method to listen for a connection and return a NetcatConnection
         instance.
+        This method should be implemented by a sub-class.
+
+        :param dest: The hostname or IP address to bind to.
+        :type dest: str
+
+        :param port: The port number to bind to.
+        :type port: int
+
+        :param kwargs: Any other keyword arguments get passed to __init__.
+
+        :returns: Returns a subclass of :class:`pync.NetcatConnection` once a
+            connection has been established.
+        :rtype: :class:`pync.NetcatConnection`
+
+        :Example:
+
+        .. code-block:: python
+
+           with NetcatConnection.listen('localhost', 8000) as conn:
+               conn.run()
         """
         raise NotImplementedError
 
-    def run(self, stdin=None, stdout=None, stderr=None):
+    def run(self, **kwargs):
         """
         This method runs Netcat respecting all arguments that have been passed.
-        """
-        if stdin is None:
-            stdin = self.stdin
-        if stdout is None:
-            stdout = self.stdout
-        if stderr is None:
-            stderr = self.stderr
 
+        :param kwargs: Any keyword arguments are passed to readwrite.
+
+        :Example:
+
+        .. code-block:: python
+           
+           with NetcatConnection(sock) as nc:
+               nc.run()
+        """
         command = self.e
         if command:
             return self.execute(command)
-        self.readwrite(stdin, stdout, stderr)
+        self.readwrite(**kwargs)
 
     def recv(self, n, blocking=True):
         if blocking:
@@ -180,6 +222,28 @@ class NetcatConnection(NetcatContext):
         Read from stdin and send to network.
         Receive from network and write to stdout.
         Write verbose/debug/error messages to stderr.
+
+        :param stdin: A file-like object to read outgoing network data from.
+        :type stdin: file, optional
+        
+        :param stdout: A file-like object to write incoming network data to.
+        :type stdout: file, optional
+
+        :param stderr: A file-like object to write verbose/debug/error messages
+            to.
+        :type stderr: file, optional
+
+        :Example:
+
+        .. code-block:: python
+
+           # Use the "q" option to quit the readwrite loop when EOF is reached on stdin.
+           with NetcatConnection(sock, q=0) as nc:
+               nc.readwrite(stdin=file1)
+               # Use the "N" option to inform the other end of the connection that
+               # we have no more data to send.
+               # Note that we cannot readwrite again after this.
+               nc.readwrite(stdin=file2, N=True)
         """
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
@@ -255,6 +319,17 @@ class NetcatConnection(NetcatContext):
     def execute(self, cmd):
         """
         Execute a command and connect i_o to the Netcat connection.
+
+        :param cmd: A string or list containing the command and any
+            arguments to run.
+        :type cmd: str, list
+
+        :Example:
+
+        .. code-block:: python
+
+           with NetcatConnection(sock) as nc:
+               nc.execute('echo "Hello, World!"')
         """
         proc = Process(cmd)
         self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
@@ -263,108 +338,31 @@ class NetcatConnection(NetcatContext):
 class NetcatTCPConnection(NetcatConnection):
     """
     Wraps a TCP socket to provide Netcat-like functionality.
-
-    :Examples:
-
-    .. code-block:: python
-       :caption: Create a local TCP server on port 8000.
-
-       import socket
-       from pync import NetcatTCPConnection
-
-       server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-       server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-       server_sock.bind(('localhost', 8000))
-       server_sock.listen(1)
-
-       client_sock, _ = server_sock.accept()
-       with NetcatTCPConnection(client_sock) as nc:
-           nc.run()
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server on port 8000.
-
-       import socket
-       from pync import NetcatTCPConnection
-
-       sock = socket.create_connection(('localhost', 8000))
-       with NetcatTCPConnection(sock) as nc:
-           nc.run()
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server on port 8000 and execute
-           a command to run over the Netcat connection with the "e" option.
-
-       import socket
-       from pync import NetcatTCPConnection
-
-       sock = socket.create_connection(('localhost', 8000))
-       with NetcatTCPConnection(sock, e='echo "Hello, World!"') as nc:
-           nc.run()
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server on port 8000, upload a file
-           and tell the server when EOF has been reached with the "N" option.
-
-       import socket
-       from pync import NetcatTCPConnection
-
-       with open('file.in', 'rb') as f:
-           sock = socket.create_connection(('localhost', 8000))
-           with NetcatTCPConnection(sock, N=True, stdin=f) as nc:
-               nc.run()
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server on port 8000 and quit when EOF
-           is reached on stdin (Note: this does not shutdown socket writes; Please
-           explicitly use the "N" option to tell the server about the EOF).
-
-       import socket
-       from pync import NetcatTCPConnection
-
-       with open('file.in', 'rb') as f:
-           sock = socket.create_connection(('localhost', 8000))
-           with NetcatTCPConnection(sock, q=0) as nc:
-               nc.run()
-
-    .. code-block:: python
-       :caption: Same as the previous example but this time quit after EOF on stdin
-           with a delay of 5 seconds.
-
-       import socket
-       from pync import NetcatTCPConnection
-
-       with open('file.in', 'rb') as f:
-           sock = socket.create_connection(('localhost', 8000))
-           with NetcatTCPConnection(sock, q=5) as nc:
-               nc.run()
     """
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
         """
-        Connect to a server and return a NetcatTCPConnection instance.
+        Factory method to connect to a TCP server and return a
+        :class:`pync.NetcatTCPConnection` object.
 
-        :param dest: Hostname or IP address to connect to.
+        :param dest: The destination hostname or IP address to connect to.
         :type dest: str
 
-        :param port: Port number to connect to.
+        :param port: The port number to connect to.
         :type port: int
 
         :param kwargs: Any other keyword arguments get passed to __init__.
 
-        :return: Returns a :class:`pync.NetcatTCPConnection` instance once a
-            connection has been established.
         :rtype: :class:`pync.NetcatTCPConnection`
 
         :Example:
 
         .. code-block:: python
-           :caption: Connect to a local TCP server on port 8000.
-
+           
            from pync import NetcatTCPConnection
-           with NetcatTCPConnection.connect('localhost', 8000) as nc:
-               nc.run()
+           with NetcatTCPConnection.connect('localhost', 8000) as conn:
+               conn.run()
         """
         sock = socket.create_connection((dest, port))
         return cls(sock, **kwargs)
@@ -372,30 +370,27 @@ class NetcatTCPConnection(NetcatConnection):
     @classmethod
     def listen(cls, dest, port, **kwargs):
         """
-        Listen for a connection and return a NetcatTCPConnection instance.
+        Factory method to listen for an incoming TCP connection and
+        return a :class:`pync.NetcatTCPConnection` object.
 
-        :param dest: Hostname or IP address to bind to.
+        :param dest: The destination hostname or IP address to bind to.
         :type dest: str
 
-        :param port: Port number to bind to.
+        :param port: The port number to bind to.
         :type port: int
 
         :param kwargs: Any other keyword arguments get passed to __init__.
 
-        :return: Returns a :class:`pync.NetcatTCPConnection` instance once a
-            connection has been established.
         :rtype: :class:`pync.NetcatTCPConnection`
 
         :Example:
 
         .. code-block:: python
-           :caption: Listen for a connection on port 8000.
 
            from pync import NetcatTCPConnection
-           with NetcatTCPConnection.listen('localhost', 8000) as nc:
-               nc.run()
+           with NetcatTCPConnection.listen('localhost', 8000) as conn:
+               conn.run()
         """
-
         server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server_sock.bind((dest, port))
@@ -464,6 +459,20 @@ class NetcatIterator(NetcatContext):
 
 
 class NetcatClient(NetcatIterator):
+    """
+    A Netcat client is iterable.
+    You can pass one or more ports and iterate through
+    each :class:`pync.NetcatConnection`.
+
+    :Example:
+
+    .. code-block:: python
+
+       with NetcatClient('localhost', [8000, 8001]) as nc:
+           for conn in nc:
+               conn.run()
+    """
+
     conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} failed: Connection refused'
     z = False
@@ -503,24 +512,35 @@ class NetcatClient(NetcatIterator):
     def __next__(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
-        return self.create_connection((self.dest, port))
+        return self._create_connection((self.dest, port))
 
     def run(self):
+        """
+        Convenience method to run each :class:`pync.NetcatConnection` one after another.
+
+        :Example:
+
+        .. code-block:: python
+
+           with NetcatClient('localhost', [8000, 8001]) as nc:
+               nc.run()
+        """
         for conn in self:
             conn.run()
 
-    def create_connection(self, addr):
+    def _create_connection(self, addr):
         raise NotImplementedError
 
 
 class NetcatTCPClient(NetcatClient):
     """
+    A :class:`pync.NetcatClient` for the Transmission Control Protocol.
     """
 
     conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
 
-    def create_connection(self, addr):
+    def _create_connection(self, addr):
         dest, port = addr
         try:
             sock = socket.create_connection(addr)
@@ -552,12 +572,13 @@ class NetcatTCPClient(NetcatClient):
 
 class NetcatUDPClient(NetcatClient):
     """
+    A :class:`pync.NetcatClient` for the User Datagram Protocol.
     """
 
     conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
 
-    def create_connection(self, addr):
+    def _create_connection(self, addr):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(addr)
         nc_conn = NetcatUDPConnection(sock, **self._conn_kwargs)
@@ -568,13 +589,39 @@ class NetcatUDPClient(NetcatClient):
 
 
 class NetcatServer(NetcatIterator):
+    """
+    A Netcat server is an iterable.
+    You can iterate through each incoming connection.
+
+    :param port: The port number to bind the server to.
+    :type port: int
+
+    :param dest: The hostname or IP address to bind the server to.
+    :type dest: str
+
+    :param k: Set to True to keep the server open between connections.
+    :type k: bool
+
+    :param kwargs: Any other keyword arguments get passed to each
+        connection.
+
+    :Example:
+
+    .. code-block:: python
+
+       with NetcatServer(8000, dest='localhost', k=True) as nc:
+           for conn in nc:
+               conn.run()
+    """
+
     k = False
     address_family = None
     socket_type = None
     Connection = None
 
-    def __init__(self, port, dest='', k=None, bind_and_activate=True, **kwargs):
+    def __init__(self, port, dest='', k=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
+        bind_and_activate = True
 
         self.dest = dest
         if dest == '':
@@ -596,10 +643,10 @@ class NetcatServer(NetcatIterator):
 
         if bind_and_activate:
             try:
-                self.server_bind()
-                self.server_activate()
+                self._server_bind()
+                self._server_activate()
             except:
-                self.server_close()
+                self._server_close()
                 raise
 
     def __iter__(self):
@@ -623,7 +670,7 @@ class NetcatServer(NetcatIterator):
                 # This can occur when the server is closed.
                 raise StopIteration
             if self.sock in can_read:
-                cli_sock, _ = self.get_request()
+                cli_sock, _ = self._get_request()
                 nc_conn = self.Connection(cli_sock, **self._conn_kwargs)
                 break
         if not self.k:
@@ -633,27 +680,42 @@ class NetcatServer(NetcatIterator):
         return nc_conn
 
     def run(self):
+        """
+        Convenience method to run each :class:`pync.NetcatConnection` one
+        after the other.
+
+        :Example:
+
+        .. code-block:: python
+
+           with NetcatServer(8000, dest='localhost', k=True) as nc:
+               nc.run()
+        """
         for conn in self:
             conn.run()
 
-    def server_bind(self):
+    def _server_bind(self):
         raise NotImplementedError
 
-    def server_activate(self):
+    def _server_activate(self):
         pass
 
-    def server_close(self):
+    def _server_close(self):
         self.sock.close()
 
-    def get_request(self):
+    def _get_request(self):
         raise NotImplementedError
 
     def close(self):
+        """
+        Close the server.
+        """
         self.server_close()
 
 
 class NetcatTCPServer(NetcatServer):
     """
+    A :class:`pync.NetcatServer` for the Transmission Control Protocol.
     """
 
     listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
@@ -663,21 +725,22 @@ class NetcatTCPServer(NetcatServer):
     request_queue_size = 1
     Connection = NetcatTCPConnection
 
-    def server_bind(self):
+    def _server_bind(self):
         # This should raise any errors if problems with dest and port.
         socket.getaddrinfo(self.dest, self.port)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.dest, self.port))
 
-    def server_activate(self):
+    def _server_activate(self):
         self.sock.listen(self.request_queue_size)
 
-    def get_request(self):
+    def _get_request(self):
         return self.sock.accept()
 
 
 class NetcatUDPServer(NetcatServer):
     """
+    A :class:`pync.NetcatServer` for the User Datagram Protocol.
     """
 
     address_family = socket.AF_INET
@@ -685,10 +748,10 @@ class NetcatUDPServer(NetcatServer):
     max_packet_size = 8192
     Connection = NetcatUDPConnection
 
-    def server_close(self):
+    def _server_close(self):
         pass
 
-    def get_request(self):
+    def _get_request(self):
         data, addr = self.sock.recvfrom(self.max_packet_size)
         self.stdout.write(data.decode())
         self.sock.connect(addr)
@@ -802,38 +865,13 @@ class Netcat(object):
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
 
-    :Examples:
+    :Example:
 
     .. code-block:: python
-       :caption: Create a local TCP server on port 8000.
 
        from pync import Netcat
-       with Netcat(8000, dest='localhost', l=True, N=True) as nc:
+       with Netcat(8000, dest='localhost', l=True) as nc:
            nc.run()
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server on port 8000.
-
-       from pync import Netcat
-       with Netcat(8000, dest='localhost') as nc:
-           nc.run()
-
-    .. code-block:: python
-       :caption: Create a local TCP server to host a file on port 8000.
-
-       from pync import Netcat
-       with open('file.in', 'rb') as f:
-           with Netcat(8000, dest='localhost', l=True, N=True, stdin=f) as nc:
-               nc.run()
-
-    .. code-block:: python
-       :caption: Connect to a localhost TCP server on port 8000 and download
-           the data to a file.
-
-       from pync import Netcat
-       with open('file.out', 'wb') as f:
-           with Netcat(8000, dest='localhost', stdout=f) as nc:
-               nc.run()
     """
 
     name = 'pync'
@@ -881,38 +919,13 @@ class Netcat(object):
         :param stderr: A file-like object to write verbose/debug/error messages to.
         :type stderr: file, optional
 
-        :Examples:
+        :Example:
 
         .. code-block:: python
-           :caption: Create a local TCP server on port 8000.
 
            from pync import Netcat
            with Netcat.from_args('-l localhost 8000') as nc:
                nc.run()
-
-        .. code-block:: python
-           :caption: Connect to a local TCP server on port 8000.
-
-           from pync import Netcat
-           with Netcat.from_args('localhost 8000') as nc:
-               nc.run()
-
-        .. code-block:: python
-           :caption: Create a local TCP server to host a file on port 8000.
-
-           from pync import Netcat
-           with open('file.in', 'rb') as f:
-               with Netcat.from_args('-lN localhost 8000', stdin=f) as nc:
-                   nc.run()
-
-        .. code-block:: python
-           :caption: Connect to a local TCP server on port 8000 and download the data
-               to a file.
-
-           from pync import Netcat
-           with open('file.out', 'wb') as f:
-               with Netcat.from_args('localhost 8000', stdout=f) as nc:
-                   nc.run()
         """
 
         try:
@@ -1024,33 +1037,12 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     :return: Error status code depending on success (0) or failure (>0).
     :rtype: int
 
-    :Examples:
+    :Example:
 
     .. code-block:: python
-       :caption: Create a local TCP server on port 8000.
        
        from pync import pync
        pync('-l localhost 8000')
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server on port 8000.
-
-       from pync import pync
-       pync('localhost 8000')
-
-    .. code-block:: python
-       :caption: Create a local TCP server to host a file on port 8000.
-
-       from pync import pync
-       with open('file.in', 'rb') as f:
-           pync('-lN localhost 8000', stdin=f)
-
-    .. code-block:: python
-       :caption: Connect to a local TCP server to download a file on port 8000.
-
-       from pync import pync
-       with open('file.out', 'wb') as f:
-           pync('localhost 8000', stdout=f)
     """
 
     try:
