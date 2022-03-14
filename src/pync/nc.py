@@ -710,7 +710,7 @@ class NetcatServer(NetcatIterator):
         """
         Close the server.
         """
-        self.server_close()
+        self._server_close()
 
 
 class NetcatTCPServer(NetcatServer):
@@ -865,13 +865,46 @@ class Netcat(object):
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
 
-    :Example:
+    :Examples:
 
     .. code-block:: python
+       :caption: Use the "l" option to create a :class:`pync.NetcatTCPServer`
+           object.
 
        from pync import Netcat
        with Netcat(8000, dest='localhost', l=True) as nc:
            nc.run()
+
+    .. code-block:: python
+       :caption: By default, with no other options, Netcat will return a
+           :class:`pync.NetcatTCPClient` object.
+
+       from pync import Netcat
+       with Netcat(8000, dest='localhost') as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: Create a :class:`pync.NetcatUDPServer` with the "u" and "l" options.
+
+       from pync import Netcat
+       with Netcat(8000, dest='localhost', l=True, u=True) as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: And a :class:`pync.NetcatUDPClient` using only the "u" option.
+
+       from pync import Netcat
+       with Netcat(8000, dest='localhost', u=True) as nc:
+           nc.run()
+
+    .. code-block:: python
+       :caption: Any other keyword arguments get passed to the underlying Netcat class.
+
+       from pync import Netcat
+       # Use the "k" option to keep the server open between connections.
+       with Netcat(8000, dest='localhost', l=True, k=True) as nc:
+           for connection in nc:
+               connection.execute('echo "Hello, World!"')
     """
 
     name = 'pync'
@@ -1037,12 +1070,34 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     :return: Error status code depending on success (0) or failure (>0).
     :rtype: int
 
-    :Example:
+    :Examples:
 
     .. code-block:: python
+       :caption: Create a local TCP server on port 8000.
        
        from pync import pync
        pync('-l localhost 8000')
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server on port 8000.
+
+       from pync import pync
+       pync('localhost 8000')
+
+    .. code-block:: python
+       :caption: Create a local TCP server to host a file on port 8000.
+
+       from pync import pync
+       with open('file.in', 'rb') as f:
+           pync('-l localhost 8000', stdin=f)
+
+    .. code-block:: python
+       :caption: Connect to a local TCP server to download a file on
+           port 8000.
+
+       from pync import pync
+       with open('file.out', 'wb') as f:
+           pync('localhost 8000', stdout=f)
     """
 
     try:
