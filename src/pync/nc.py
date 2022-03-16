@@ -464,13 +464,31 @@ class NetcatClient(NetcatIterator):
     You can pass one or more ports and iterate through
     each :class:`pync.NetcatConnection`.
 
+    :param dest: The destination hostname or IP address to connect to.
+    :type dest: str
+
+    :param port: The port number(s) to connect to.
+    :type port: int, list(int)
+
+    :param z: Set to True to turn Zero i_o on (connect then close).
+        Useful for simple port scanning.
+    :type z: bool, optional
+
     :Example:
 
     .. code-block:: python
+       :caption: By passing multiple ports, we can iterate through connections
+           one after another.
 
        with NetcatClient('localhost', [8000, 8001]) as nc:
-           for conn in nc:
-               conn.run()
+           for connection in nc:
+               connection.run()
+
+    .. code-block:: python
+       :caption: Using the "z" and "v" options, we can perform a simple port scan.
+
+       with NetcatClient('localhost', [8000, 8002], z=True, v=True) as nc:
+           nc.run()
     """
 
     conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
@@ -608,10 +626,12 @@ class NetcatServer(NetcatIterator):
     :Example:
 
     .. code-block:: python
+       :caption: Use the "k" option to keep the server open and iterate
+           through each :class:`pync.NetcatConnection`.
 
        with NetcatServer(8000, dest='localhost', k=True) as nc:
-           for conn in nc:
-               conn.run()
+           for connection in nc:
+               connection.execute('echo "Hello, World!"')
     """
 
     k = False
