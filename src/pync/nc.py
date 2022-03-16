@@ -237,13 +237,13 @@ class NetcatConnection(NetcatContext):
 
         .. code-block:: python
 
-           # Use the "q" option to quit the readwrite loop when EOF is reached on stdin.
-           with NetcatConnection(sock, q=0) as nc:
-               nc.readwrite(stdin=file1)
-               # Use the "N" option to inform the other end of the connection that
-               # we have no more data to send.
-               # Note that we cannot readwrite again after this.
-               nc.readwrite(stdin=file2, N=True)
+           with NetcatConnection(sock) as nc:
+               # Set q to 0 to quit the readwrite loop once EOF has been reached on file1.
+               nc.readwrite(stdin=file1, q=0)
+               # Set the N option to tell the other end of the connection that we
+               # have no more data to send after EOF on file2.
+               # Set q to -1 to keep receiving network data until connection closes.
+               nc.readwrite(stdin=file2, N=True, q=-1)
         """
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
@@ -870,7 +870,7 @@ class Netcat(object):
     on the arguments given.
 
     :param port: The port number to connect or bind to depending on the "l" parameter.
-    :type port: int
+    :type port: int, list(int)
 
     :param dest: The IP address or hostname to connect or bind to depending
         on the "l" parameter.
@@ -896,7 +896,7 @@ class Netcat(object):
            nc.run()
 
     .. code-block:: python
-       :caption: By default, with no other options, Netcat will return a
+       :caption: By default, without the "l" option, Netcat will return a
            :class:`pync.NetcatTCPClient` object.
 
        from pync import Netcat
@@ -925,6 +925,17 @@ class Netcat(object):
        with Netcat(8000, dest='localhost', l=True, k=True) as nc:
            for connection in nc:
                connection.execute('echo "Hello, World!"')
+
+    .. code-block:: python
+       :caption: Pass a list of ports to connect to one after the other.
+
+       # Simple port scan example.
+       from pync import Netcat
+       # Use the "z" option to turn Zero i_o on (connect then close).
+       # Use the "v" option to turn verbose output on to see connection success or failure.
+       with Netcat([8000, 8003, 8002], dest='localhost', z=True, v=True) as nc:
+           for connection in nc:
+               connection.run()
     """
 
     name = 'pync'
