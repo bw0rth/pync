@@ -99,7 +99,7 @@ class NetcatConnection(NetcatContext):
     :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
     :type q: int
 
-    You can use this class as a context manager using the "with" statement:
+    You can use sub-classes of this class as a context manager using the "with" statement:
 
     .. code-block:: python
 
@@ -486,7 +486,7 @@ class NetcatClient(NetcatIterator):
         Useful for simple port scanning.
     :type z: bool, optional
 
-    You can use this class as a context manager using the "with" statement:
+    You can use sub-classes of this class as a context manager using the "with" statement:
 
     .. code-block:: python
 
@@ -651,7 +651,7 @@ class NetcatServer(NetcatIterator):
     :param kwargs: Any other keyword arguments get passed to each
         connection.
 
-    You can use this class as a context manager using the "with" statement:
+    You can use sub-classes of this class as a context manager using the "with" statement:
 
     .. code-block:: python
 
