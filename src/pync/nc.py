@@ -98,6 +98,22 @@ class NetcatConnection(NetcatContext):
 
     :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
     :type q: int
+
+    You can use this class as a context manager using the "with" statement:
+
+    .. code-block:: python
+
+       with NetcatConnection(...) as nc:
+           nc.run()
+
+    If you choose not to use the "with" statement, please make sure to use
+    the close() method after use:
+
+    .. code-block:: python
+
+       nc = NetcatConnection(...)
+       nc.run()
+       nc.close()
     """
 
     e = None
@@ -237,13 +253,9 @@ class NetcatConnection(NetcatContext):
 
         .. code-block:: python
 
-           with NetcatConnection(sock) as nc:
-               # Set q to 0 to quit the readwrite loop once EOF has been reached on file1.
-               nc.readwrite(stdin=file1, q=0)
-               # Set the N option to tell the other end of the connection that we
-               # have no more data to send after EOF on file2.
-               # Set q to -1 to keep receiving network data until connection closes.
-               nc.readwrite(stdin=file2, N=True, q=-1)
+           with NetcatConnection(sock, q=0) as nc:
+               nc.readwrite(stdin=file1)
+               nc.readwrite(stdin=file2, N=True)
         """
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout
@@ -474,11 +486,27 @@ class NetcatClient(NetcatIterator):
         Useful for simple port scanning.
     :type z: bool, optional
 
+    You can use this class as a context manager using the "with" statement:
+
+    .. code-block:: python
+
+       with NetcatClient(...) as nc:
+           nc.run()
+
+    If you choose not to use the "with" statement, please make sure to use
+    the close() method after use:
+
+    .. code-block:: python
+
+       nc = NetcatClient(...)
+       nc.run()
+       nc.close()
+
     :Example:
 
     .. code-block:: python
-       :caption: By passing multiple ports, we can iterate through connections
-           one after another.
+       :caption: We can connect to multiple ports one after another by passing
+           a list of ports.
 
        with NetcatClient('localhost', [8000, 8001]) as nc:
            for connection in nc:
@@ -623,6 +651,22 @@ class NetcatServer(NetcatIterator):
     :param kwargs: Any other keyword arguments get passed to each
         connection.
 
+    You can use this class as a context manager using the "with" statement:
+
+    .. code-block:: python
+
+       with NetcatServer(...) as nc:
+           nc.run()
+
+    If you don't use the "with" statement, please make sure to use the
+    close() method after use:
+
+    .. code-block:: python
+       
+       nc = NetcatServer(...)
+       nc.run()
+       nc.close()
+
     :Example:
 
     .. code-block:: python
@@ -702,7 +746,7 @@ class NetcatServer(NetcatIterator):
     def run(self):
         """
         Convenience method to run each :class:`pync.NetcatConnection` one
-        after the other.
+        after another.
 
         :Example:
 
@@ -884,6 +928,22 @@ class Netcat(object):
 
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
+
+    You can use this class as a context manager using the "with" statement:
+
+    .. code-block:: python
+
+       with Netcat(...) as nc:
+           nc.run()
+
+    If you use it without the "with" statement, please make sure to use the
+    close method after use:
+
+    .. code-block:: python
+
+       nc = Netcat(...)
+       nc.run()
+       nc.close()
 
     :Examples:
 
