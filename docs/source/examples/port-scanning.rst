@@ -9,7 +9,7 @@ see what ports and services a target machine is running.
    and -v to print connection success/failure to the
    console:
 
-.. tab:: Linux
+.. tab:: Unix
 
    .. code-block:: sh
 
@@ -34,7 +34,7 @@ the version of the service running.
 1. You can try this by piping a message to the server and
    hoping for a response:
 
-.. tab:: Linux
+.. tab:: Unix
    
    .. code-block:: sh
 

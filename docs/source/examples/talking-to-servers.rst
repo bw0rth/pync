@@ -9,7 +9,7 @@ response to certain commands.
 1. For example, we can pipe a get request to a web server
    to retrieve the home page:
 
-.. tab:: Linux
+.. tab:: Unix
 
    .. code-block:: sh
 
