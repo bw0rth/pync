@@ -249,12 +249,27 @@ class NetcatConnection(NetcatContext):
             to.
         :type stderr: file, optional
 
+        :param N: Set to True to shutdown socket writes after EOF is reached
+            on stdin.
+            This will inform the other end of the connection that no more
+            data will be sent.
+        :type N: bool
+
+        :param q: If set to a positive <number>, quit the readwrite loop after EOF
+            and <number> of seconds has elapsed.
+            If set to a negative number, readwrite until connection closes.
+        :type q: int
+
         :Example:
 
         .. code-block:: python
 
+           # Set the "q" option to 0 to quit the readwrite loop after EOF
+           # on stdin.
            with NetcatConnection(sock, q=0) as nc:
                nc.readwrite(stdin=file1)
+               # Set the "N" option to inform the other end of the connection
+               # that we have no more data to send after EOF on file2.
                nc.readwrite(stdin=file2, N=True)
         """
         stdin = stdin or self.stdin
