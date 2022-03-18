@@ -9,7 +9,7 @@ forth.
 1. Create a local server to listen for incoming connections
    on port 8000:
 
-.. tab:: Command
+.. tab:: Linux
 
    .. code-block:: sh
 
@@ -25,7 +25,7 @@ forth.
 
 2. On a separate console, connect to the server:
 
-.. tab:: Command
+.. tab:: Linux
 
    .. code-block:: sh
 

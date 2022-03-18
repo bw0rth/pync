@@ -7,7 +7,7 @@ transfer file data from one machine to another.
 
 1. Create a server to host the file:
 
-.. tab:: Command
+.. tab:: Linux
 
    .. code-block:: sh
 
@@ -29,7 +29,7 @@ transfer file data from one machine to another.
 2. On a separate console, connect to the server to
    download the file:
 
-.. tab:: Command
+.. tab:: Linux
 
    .. code-block:: sh
 
