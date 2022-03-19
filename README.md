@@ -30,6 +30,7 @@ Use Python's pip command to install **pync** straight from github:
 For full documentation, please visit https://pync.readthedocs.io.
 
 ## See Also
+* [pync script examples](https://github.com/brenw0rth/pync/tree/main/examples)
 * [Netcat man page](https://www.unix.com/man-page/Linux/1/nc/)
 
 ## TODO
