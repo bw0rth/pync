@@ -42,4 +42,4 @@ For full documentation, please visit https://pync.readthedocs.io.
 * Add PTY support
 
 ## License
-MIT
+See [LICENSE](https://github.com/brenw0rth/pync/blob/main/LICENSE)
