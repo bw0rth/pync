@@ -21,7 +21,7 @@ transfer file data from one machine to another.
       from pync import pync
       # NOTE:
       # pync reads bytes and writes bytes
-      # so be sure to open file in binary
+      # so be sure to open files in binary
       # mode to avoid any errors.
       with open('file.in', 'rb') as f:
           pync('-lN 8000', stdin=f)
