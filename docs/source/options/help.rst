@@ -4,3 +4,19 @@ Showing the [-h]elp Message
 
 The **-h** option simply shows **pync**'s help message.
 
+This will display a short description and a brief summary
+of the available options:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      pync -h
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      from pync import pync
+      pync('-h')
+
