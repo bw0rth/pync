@@ -19,8 +19,8 @@ Common uses include:
    :maxdepth: 2
 
    getting-started
-   examples/index
    options/index
+   examples/index
    reference/index
 
 .. toctree::
