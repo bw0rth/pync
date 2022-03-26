@@ -9,6 +9,8 @@ You shouldn't have to use them directly. The nc.py module
 will use them when input is (stdin and stdin.isatty).
 '''
 
+from __future__ import print_function
+
 try:
     import msvcrt
     _WINDOWS = True
@@ -36,13 +38,30 @@ class _WinConsoleInput(_BaseConsoleInput):
         # select doesn't work for files on Windows.
         # So using msvcrt console IO functions instead.
         if msvcrt.kbhit():
-            ch = msvcrt.getche()
-            self.line += ch
-            if ch == b'\r':
+            ch = msvcrt.getch()
+            if ch == b'\x08':
+                # User has pressed backspace.
+                # Remove last character from line.
+                self.line = self.line[:-1]
+                # The only way I could find to remove
+                # the last character from the console
+                # was to move the cursor back with '\b'
+                # then overwrite the character with a
+                # space before moving the cursor back
+                # again with '\b'.
+                sys.stdout.buffer.write(b'\b \b')
+                sys.stdout.flush()
+            elif ch == b'\r':
+                # User has pressed enter to send the line.
+                self.line += ch
                 line = self.line+b'\n'
                 self.line = b''
                 print()
                 return line
+            else:
+                self.line += ch
+                sys.stdout.buffer.write(ch)
+                sys.stdout.flush()
 
 
 class _UnixConsoleInput(_BaseConsoleInput):
