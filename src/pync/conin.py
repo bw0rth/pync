@@ -49,7 +49,10 @@ class _WinConsoleInput(_BaseConsoleInput):
                 # then overwrite the character with a
                 # space before moving the cursor back
                 # again with '\b'.
-                sys.stdout.buffer.write(b'\b \b')
+                try:
+                    sys.stdout.buffer.write(b'\b \b')
+                except AttributeError:
+                    sys.stdout.write(b'\b \b')
                 sys.stdout.flush()
             elif ch == b'\r':
                 # User has pressed enter to send the line.
@@ -60,7 +63,10 @@ class _WinConsoleInput(_BaseConsoleInput):
                 return line
             else:
                 self.line += ch
-                sys.stdout.buffer.write(ch)
+                try:
+                    sys.stdout.buffer.write(ch)
+                except AttributeError:
+                    sys.stdout.write(ch)
                 sys.stdout.flush()
 
 
