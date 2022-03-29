@@ -9,8 +9,8 @@ Options
    help
    keep-server-open
    listen
-   shutdown-after-eof
    quit-after-eof
+   shutdown-after-eof
    udp
    verbose
    zero-io
