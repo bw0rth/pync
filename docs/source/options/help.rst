@@ -13,6 +13,12 @@ of the available options:
 
       pync -h
 
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -h
+
 .. tab:: Python
 
    .. code-block:: python

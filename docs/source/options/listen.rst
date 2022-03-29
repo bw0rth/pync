@@ -11,6 +11,12 @@ for incoming connections:
 
       pync -l localhost 8000
 
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -l localhost 8000
+
 .. tab:: Python
 
    .. code-block:: python
@@ -26,6 +32,12 @@ create a UDP server instead of the default TCP:
    .. code-block:: sh
 
       pync -lu localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -lu localhost 8000
 
 .. tab:: Python
 

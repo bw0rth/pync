@@ -2,14 +2,15 @@
 [-k]eeping the Server Open
 ==========================
 
-By default, pync's TCP server will accept one client before
+By default, **pync**'s TCP server will accept one client before
 closing the server's socket.
 
 By using the **-k** option, you can keep the server open
 to serve multiple clients one after another.
 
-For example, combining with the -l option and -e option,
-we can create a simple date/time server that stays
+For example, combining with the `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
+option and `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+option, we can create a simple date/time server that stays
 open between connections:
 
 .. tab:: Unix
@@ -18,10 +19,24 @@ open between connections:
 
       pync -kle date localhost 8000
 
+.. tab:: Windows
+
+   .. code-block:: sh
+   
+      py -m pync -kle "echo %date%-%time%" localhost 8000
+
 .. tab:: Python
 
    .. code-block:: python
       
+      # datetime_server.py
+      import platform
       from pync import pync
-      pync('-kle date localhost 8000')
+
+      if platform.system() == 'Windows':
+          command = "echo %date%-%time%"
+      else:
+          command = 'date'
+
+      pync('-kle {} localhost 8000'.format(command))
 
