@@ -3,7 +3,7 @@ Client/Server Model
 ===================
 
 To illustrate a basic client/server model, we can connect
-two pync instances together and send messages back and
+two **pync** instances together and send messages back and
 forth.
 
 1. Create a local server to listen for incoming connections
@@ -14,6 +14,12 @@ forth.
    .. code-block:: sh
 
       pync -l localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -l localhost 8000
 
 .. tab:: Python
 
@@ -30,6 +36,12 @@ forth.
    .. code-block:: sh
 
       pync localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync localhost 8000
 
 .. tab:: Python
 
