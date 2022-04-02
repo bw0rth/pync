@@ -5,7 +5,7 @@ Example of a simple port scan using pync.
 
 import argparse
 
-import pync
+from pync import Netcat
 
 
 def main():
@@ -14,19 +14,20 @@ def main():
             description=__doc__,
     )
     parser.add_argument('dest',
-            help='Destination hostname or ip to connect to',
+            help='Destination hostname or IP to connect to',
             metavar='DEST',
     )
     parser.add_argument('port',
-            help='Port list or range for scanning',
+            help='Port(s) to scan',
             metavar='PORT',
             nargs='+',
+            type=int,
     )
     args = parser.parse_args()
 
     # The "v" option is to turn verbose on, and "z" for
     # Zero-I/O mode (connect then close).
-    with pync.Netcat(args.port, dest=args.dest, v=True, z=True) as nc:
+    with Netcat(args.port, dest=args.dest, v=True, z=True) as nc:
         nc.run()
 
 
