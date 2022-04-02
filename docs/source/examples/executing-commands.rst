@@ -2,9 +2,9 @@
 Executing Commands
 ==================
 
-Using the -e option, you can execute a command and
-have the input/output of the command's process connected
-to Netcat's network socket.
+Using the `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+option, you can execute a command and have the input/output of
+the command's process connected to Netcat's network socket.
 
 Incoming network data will be fed to the processes stdin and
 any output from the process will be sent back over the network.
@@ -16,8 +16,10 @@ any output from the process will be sent back over the network.
 Creating a Date/Time Server
 ===========================
 
-1. Combining the **-e** option with the -k and -l options,
-   we can create a simple date/time server:
+1. Combining the `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+   option with the `-k <https://pync.readthedocs.io/en/latest/options/keep-server-open.html>`_
+   and `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
+   options, we can create a simple date/time server:
 
 .. tab:: Unix
 
