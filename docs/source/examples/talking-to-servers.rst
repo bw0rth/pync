@@ -19,7 +19,7 @@ to retrieve the home page:
 
    .. code-block:: sh
 
-      echo 'GET / HTTP/1.0\r\n\r\n' | py -m pync host.example.com 80
+      echo|set /p="GET / HTTP/1.0\r\n\r\n" | py -m pync host.example.com 80
 
 .. tab:: Python
 
