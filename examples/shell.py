@@ -15,7 +15,7 @@ def main():
             description=__doc__,
     )
     parser.add_argument('dest',
-            help='Hostname or IP to connect to',
+            help='Hostname or IP to connect or bind to',
             metavar='DEST',
             nargs='?',
             default='',
