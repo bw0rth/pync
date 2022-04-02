@@ -6,14 +6,20 @@ Sometimes it can be useful to interact with servers
 by hand for troubleshooting or to verify a servers
 response to certain commands.
 
-1. For example, we can pipe a get request to a web server
-   to retrieve the home page:
+For example, we can pipe a get request to a web server
+to retrieve the home page:
 
 .. tab:: Unix
 
    .. code-block:: sh
 
       printf "GET / HTTP/1.0\r\n\r\n" | pync host.example.com 80
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      echo 'GET / HTTP/1.0\r\n\r\n' | py -m pync host.example.com 80
 
 .. tab:: Python
 
