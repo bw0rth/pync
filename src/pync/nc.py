@@ -391,7 +391,8 @@ class NetcatTCPConnection(NetcatConnection):
            with NetcatTCPConnection.connect('localhost', 8000) as conn:
                conn.run()
         """
-        sock = socket.create_connection((dest, port))
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((dest, port))
         return cls(sock, **kwargs)
 
     @classmethod
@@ -603,8 +604,9 @@ class NetcatTCPClient(NetcatClient):
 
     def _create_connection(self, addr):
         dest, port = addr
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            sock = socket.create_connection(addr)
+            sock.connect(addr)
         except ConnectionRefusedError:
             self.print_verbose(
                     self.conn_refused.format(
