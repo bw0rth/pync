@@ -11,9 +11,10 @@ Scanning Multiple Ports
 By passing a range and/or list of ports, we can connect
 to multiple ports one after another.
 
-Combining this with the -v and -z options to turn on
-verbose and zero I/O mode, we can create a simple 
-port scanner:
+Combining this with the `-v <https://pync.readthedocs.io/en/latest/options/verbose.html>`_
+and `-z <https://pync.readthedocs.io/en/latest/options/zero-io.html>`_
+options to turn on verbose and zero I/O mode, we can create
+a simple port scanner:
 
 .. tab:: Unix
 
