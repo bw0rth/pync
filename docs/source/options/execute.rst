@@ -9,10 +9,10 @@ socket.
 Creating a Date/Time Server
 ===========================
 
-For example, by combining the -e option with both the -l
-option to [-l]isten for connections and the -k option
-to [-k]eep the server open, we can create a simple
-date/time server:
+For example, by combining the **-e** option with both the
+`-k <https://pync.readthedocs.io/en/latest/options/keep-server-open.html>`_
+and `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
+options, we can create a simple date/time server:
 
 .. tab:: Unix
 
