@@ -23,7 +23,7 @@ open between connections:
 
    .. code-block:: sh
    
-      py -m pync -kle "echo %date%-%time%" localhost 8000
+      py -m pync -kle "time /t && date /t" localhost 8000
 
 .. tab:: Python
 
@@ -33,10 +33,9 @@ open between connections:
       import platform
       from pync import pync
 
+      command = 'date'
       if platform.system() == 'Windows':
-          command = "echo %date%-%time%"
-      else:
-          command = 'date'
+          command = 'time /t && date /t'
 
       pync('-kle {} localhost 8000'.format(command))
 

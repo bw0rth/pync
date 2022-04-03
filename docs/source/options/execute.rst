@@ -24,7 +24,7 @@ date/time server:
 
    .. code-block:: sh
 
-      py -m pync -kle "echo %date%-%time%" localhost 8000
+      py -m pync -kle "time /t && date /t" localhost 8000
 
 .. tab:: Python
 
@@ -34,10 +34,9 @@ date/time server:
       import platform
       from pync import pync
 
+      command = 'date'
       if platform.system() == 'Windows':
-          command = "echo %date%-%time%"
-      else:
-          command = 'date'
+          command = 'time /t && date /t'
 
       pync('-kle {} localhost 8000'.format(command))
 
@@ -95,10 +94,9 @@ simple reverse shell that lets us execute commands remotely.
       import platform
       from pync import pync
 
+      command = "PS1='$ ' sh -i"
       if platform.system() == 'Windows':
           command = 'cmd /q'
-      else:
-          command = "PS1='$ ' sh -i"
 
       pync('-e {} localhost 8000'.format(command))
 
