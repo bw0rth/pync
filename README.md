@@ -1,5 +1,5 @@
-![License](https://img.shields.io/github/license/brenw0rth/pync?style=flat-square)
 ![Docs](https://readthedocs.org/projects/pync/badge/?version=latest&style=flat-square)
+![License](https://img.shields.io/github/license/brenw0rth/pync?style=flat-square)
 
 ## Name
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
