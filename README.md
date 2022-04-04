@@ -1,3 +1,5 @@
+![Docs](https://readthedocs.org/projects/pync/badge/?version=latest&style=flat-square)
+
 ## Name
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
