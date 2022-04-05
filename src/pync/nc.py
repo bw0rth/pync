@@ -264,13 +264,11 @@ class NetcatConnection(NetcatContext):
 
         .. code-block:: python
 
-           # Set the "q" option to 0 to quit the readwrite loop after EOF
-           # on stdin.
-           with NetcatConnection(sock, q=0) as nc:
-               nc.readwrite(stdin=file1)
-               # Set the "N" option to inform the other end of the connection
-               # that we have no more data to send after EOF on file2.
-               nc.readwrite(stdin=file2, N=True)
+           infile = ...
+           outfile = ...
+           errfile = ...
+           with NetcatConnection(sock) as nc:
+               nc.readwrite(stdin=infile, stdout=outfile, stderr=errfile)
         """
         stdin = stdin or self.stdin
         stdout = stdout or self.stdout

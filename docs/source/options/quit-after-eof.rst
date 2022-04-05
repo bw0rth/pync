@@ -64,8 +64,3 @@ send the message "Hello" and after EOF (End Of File) has
 been reached on the message, the connection will then close
 5 seconds after.
 
-.. note::
-   | Unlike some versions of Netcat, pync does not imply the -N option.
-   | If you would like to inform the other connection that EOF has been
-   | reached, you should explicitly use the -N option.
-
