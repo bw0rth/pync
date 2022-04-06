@@ -11,13 +11,13 @@ transfer file data from one machine to another.
 
    .. code-block:: sh
 
-      pync -lN 8000 < file.in
+      pync -l localhost 8000 < file.in
 
 .. tab:: Windows
 
    .. code-block:: sh
       
-      py -m pync -lN 8000 < file.in
+      py -m pync -l localhost 8000 < file.in
 
 .. tab:: Python
 
@@ -29,7 +29,7 @@ transfer file data from one machine to another.
       # Be sure to open files in binary mode
       # for the pync function.
       with open('file.in', 'rb') as f:
-          pync('-lN 8000', stdin=f)
+          pync('-l localhost 8000', stdin=f)
 
 2. On a separate console, connect to the server to
    download the file:

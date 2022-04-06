@@ -8,5 +8,5 @@ Examples
    data-transfer
    talking-to-servers
    port-scanning
-   executing-commands
+   remote-command-exec
 
