@@ -13,7 +13,7 @@ Common uses include:
 * [Interactive client/server communication](https://pync.readthedocs.io/en/latest/examples/client-server.html)
 * [Remote data transfer (upload/download)](https://pync.readthedocs.io/en/latest/examples/data-transfer.html)
 * [Port scanning](https://pync.readthedocs.io/en/latest/examples/port-scanning.html)
-* [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/examples/executing-commands.html)
+* [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/options/execute.html)
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
