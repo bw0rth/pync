@@ -1,49 +1,57 @@
 # -*- coding: utf-8 -*-
 '''
 Download client or server data to a file using pync.
+
+example client:
+    download.py localhost 8000 file.out
+
+example server:
+    download.py -l localhost 8000 file.out
 '''
 
 import argparse
+import contextlib
 import os
 
-import pync
+from pync import Netcat
 
 
 def main():
     parser = argparse.ArgumentParser('download.py',
             description=__doc__,
     )
-    parser.add_argument('host',
-            help='Hostname or ip to connect or bind to',
+    parser.add_argument('dest',
+            help='Destination hostname or ip to connect or bind to',
             nargs='?',
             default='',
-            metavar='HOST',
+            metavar='DEST',
     )
     parser.add_argument('port',
             help='Port to connect or bind to',
             metavar='PORT',
+            type=int,
     )
     parser.add_argument('filename',
             help='Filename to save the data to',
             metavar='FILENAME',
     )
-    parser.add_argument('--listen', '-l',
+    parser.add_argument('-l',
             help='Listen mode, for inbound connects',
             action='store_true',
     )
     args = parser.parse_args()
 
-    mode = pync.connect
-    if args.listen:
-        mode = pync.listen
+    if not os.path.exists('downloads'):
+        os.makedirs('downloads')
 
-    with mode(args.host, args.port) as conn:
-        if not os.path.exists('downloads'):
-            os.makedirs('downloads')
-
-        filepath = os.path.join('downloads', args.filename)
-        with open(filepath, 'wb') as f:
-            conn.readwrite(stdout=f)
+    filepath = os.path.join('downloads', args.filename)
+    with open(filepath, 'wb') as f:
+        nc = Netcat(args.port, dest=args.dest,
+                l=args.l,
+                stdout=f,
+        )
+        with contextlib.closing(nc):
+            nc.readwrite()
 
 
 if __name__ == '__main__':

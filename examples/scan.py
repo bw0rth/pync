@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 '''
-Example of a simple port scan using pync.
+Simple connect scan using pync.
+
+example:
+    scan.py localhost 7999 8000 8003
 '''
 
 import argparse
@@ -28,7 +31,7 @@ def main():
     # The "v" option is to turn verbose on, and "z" for
     # Zero-I/O mode (connect then close).
     with Netcat(args.port, dest=args.dest, v=True, z=True) as nc:
-        nc.run()
+        nc.readwrite()
 
 
 if __name__ == '__main__':

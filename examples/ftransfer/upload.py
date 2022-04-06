@@ -1,22 +1,29 @@
 # -*- coding: utf-8 -*-
 '''
 Upload a file to a client or server using pync.
+
+example client:
+    upload.py localhost 8000 file.in
+
+example server:
+    upload.py -l localhost 8000 file.in
 '''
 
 import argparse
+import contextlib
 
-import pync
+from pync import Netcat
 
 
 def main():
     parser = argparse.ArgumentParser('upload.py',
             description=__doc__,
     )
-    parser.add_argument('host',
-            help='Hostname or ip to connect or bind to',
+    parser.add_argument('dest',
+            help='Destination hostname or ip to connect or bind to',
             nargs='?',
             default='',
-            metavar='HOST',
+            metavar='DEST',
     )
     parser.add_argument('port',
             help='Port to connect or bind to',
@@ -27,21 +34,19 @@ def main():
             help='Filename to upload',
             metavar='FILENAME',
     )
-    parser.add_argument('--listen', '-l',
+    parser.add_argument('-l',
             help='Listen mode, for inbound connects',
             action='store_true',
     )
     args = parser.parse_args()
 
-    mode = pync.connect
-    if args.listen:
-        mode = pync.listen
-
-    with mode(args.host, args.port) as conn:
-        with open(args.filename, 'rb') as f:
-            # pass the open file to stdin.
-            # Shut down socket writes after EOF with the N option.
-            conn.readwrite(stdin=f, N=True)
+    with open(args.filename, 'rb') as f:
+        nc = Netcat(args.port, dest=args.dest,
+                l=args.l,
+                stdin=f,
+        )
+        with contextlib.closing(nc):
+            nc.readwrite()
 
 
 if __name__ == '__main__':

@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 '''
 A simple reverse or bind shell using pync.
+
+example bind shell:
+    shell.py -l localhost 8000
+
+example reverse shell:
+    shell.py localhost 8000
 '''
 
 import argparse
@@ -42,7 +48,7 @@ def main():
     )
 
     try:
-        nc.run()
+        nc.readwrite()
     finally:
         nc.close()
 
