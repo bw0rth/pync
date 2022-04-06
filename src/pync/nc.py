@@ -961,8 +961,7 @@ class Netcat(object):
        from pync import Netcat
        # Use the "k" option to keep the server open between connections.
        with Netcat(8000, dest='localhost', l=True, k=True) as nc:
-           for connection in nc:
-               connection.execute('echo "Hello, World!"')
+           nc.readwrite()
 
     .. code-block:: python
        :caption: Pass a list of ports to connect to one after the other.
@@ -972,8 +971,7 @@ class Netcat(object):
        # Use the "z" option to turn Zero i_o on (connect then close).
        # Use the "v" option to turn verbose output on to see connection success or failure.
        with Netcat([8000, 8003, 8002], dest='localhost', z=True, v=True) as nc:
-           for connection in nc:
-               connection.readwrite()
+           nc.readwrite()
     """
 
     name = 'pync'
