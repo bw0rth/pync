@@ -104,7 +104,7 @@ class NetcatConnection(NetcatContext):
     .. code-block:: python
 
        with NetcatConnection(...) as nc:
-           nc.run()
+           nc.readwrite()
 
     If you choose not to use the "with" statement, please make sure to use
     the close() method after use:
@@ -112,16 +112,14 @@ class NetcatConnection(NetcatContext):
     .. code-block:: python
 
        nc = NetcatConnection(...)
-       nc.run()
+       nc.readwrite()
        nc.close()
     """
 
-    e = None
     N = False
     q = -1
 
     def __init__(self, sock,
-            e=None,
             N=None,
             q=None,
             **kwargs):
@@ -129,17 +127,22 @@ class NetcatConnection(NetcatContext):
 
         self.sock = sock
 
-        if e is not None:
-            self.e = e
         if N is not None:
             self.N = N
         if q is not None:
             self.q = q
 
+        if self.q >= 0:
+            self.N = True
+
         self.dest, self.port = sock.getpeername()
         if self.dest == '127.0.0.1':
             self.dest = 'localhost'
         self.proto = '*'
+
+        # TODO: Move this.
+        if self.stdin is sys.__stdin__ and self.stdin.isatty():
+            self.stdin = NonBlockingConsoleInput()
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
@@ -165,7 +168,7 @@ class NetcatConnection(NetcatContext):
         .. code-block:: python
 
            with NetcatConnection.connect('localhost', 8000) as conn:
-               conn.run()
+               conn.readwrite()
         """
         raise NotImplementedError
 
@@ -193,32 +196,14 @@ class NetcatConnection(NetcatContext):
         .. code-block:: python
 
            with NetcatConnection.listen('localhost', 8000) as conn:
-               conn.run()
+               conn.readwrite()
         """
         raise NotImplementedError
-
-    def run(self, **kwargs):
-        """
-        This method runs Netcat respecting all arguments that have been passed.
-
-        :param kwargs: Any keyword arguments are passed to readwrite.
-
-        :Example:
-
-        .. code-block:: python
-           
-           with NetcatConnection(sock) as nc:
-               nc.run()
-        """
-        command = self.e
-        if command:
-            return self.execute(command)
-        self.readwrite(**kwargs)
 
     def recv(self, n, blocking=True):
         if blocking:
             return self.sock.recv(n)
-        can_read, _, _ = select.select([self.sock], [], [], .002)
+        can_read, _, _ = select.select([self.sock], [], [], .001)
 
         if self.sock in can_read:
             return self.sock.recv(1024)
@@ -232,132 +217,99 @@ class NetcatConnection(NetcatContext):
     def shutdown(self, how):
         return self.sock.shutdown(how)
 
-    def readwrite(self, stdin=None, stdout=None, stderr=None, N=None, q=None):
+    def readwrite(self):
         """
         The main loop to read and write i_o.
         Read from stdin and send to network.
         Receive from network and write to stdout.
         Write verbose/debug/error messages to stderr.
 
-        :param stdin: A file-like object to read outgoing network data from.
-        :type stdin: file, optional
-        
-        :param stdout: A file-like object to write incoming network data to.
-        :type stdout: file, optional
-
-        :param stderr: A file-like object to write verbose/debug/error messages
-            to.
-        :type stderr: file, optional
-
-        :param N: Set to True to shutdown socket writes after EOF is reached
-            on stdin.
-            This will inform the other end of the connection that no more
-            data will be sent.
-        :type N: bool
-
-        :param q: If set to a positive <number>, quit the readwrite loop after EOF
-            and <number> of seconds has elapsed.
-            If set to a negative number, readwrite until connection closes.
-        :type q: int
-
         :Example:
 
         .. code-block:: python
 
-           infile = ...
-           outfile = ...
-           errfile = ...
            with NetcatConnection(sock) as nc:
-               nc.readwrite(stdin=infile, stdout=outfile, stderr=errfile)
+               nc.readwrite()
         """
-        stdin = stdin or self.stdin
-        stdout = stdout or self.stdout
-        stderr = stderr or self.stderr
 
-        if stdin is sys.__stdin__ and stdin.isatty():
-            stdin = NonBlockingConsoleInput()
+        stdin_eof = None
+        stdin_eof_elapsed = None
 
-        # flag to shutdown socket writes on stdin EOF.
-        if N is None:
-            N = self.N
+        netin_eof = False
+        stdout_eof = False
 
-        # flag to quit after EOF on stdin.
-        if q is None:
-            q = self.q
-
-        eof_reached = None
-        eof_elapsed = None
+        def delay_exit():
+            self.close()
+            time.sleep(self.q)
+            raise StopReadWrite
 
         # (     )
         #   O O
         while(1<2):
             try:
-                net_data = self.recv(1024, blocking=False)
-                if net_data:
-                    try:
-                        try:
-                            stdout.buffer.write(net_data)
-                        except AttributeError:
-                            stdout.write(net_data)
-                        stdout.flush()
-                    except OSError:
-                        # TODO: Could I move this into the custom Process
-                        #       write method? raise StopReadWrite
-                        #
-                        # process terminated.
-                        break
-                else:
-                    if net_data is not None:
-                        # connection lost.
-                        break
+                # both inputs are gone, we are done.
+                if stdin_eof and netin_eof:
+                    if self.q <= 0:
+                        return
+                    delay_exit()
 
-                if not eof_reached:
+                # both outputs are gone, we can't continue
+                if stdin_eof and stdout_eof:
+                    if self.q <= 0:
+                        return
+                    delay_exit()
+
+                # try to read from stdin
+                if not stdin_eof:
                     try:
-                        stdin_data = stdin.buffer.read(1024)
+                        # py3 read bytes
+                        stdin_data = self.stdin.buffer.read(1024)
                     except AttributeError:
-                        stdin_data = stdin.read(1024)
+                        # py2 read bytes
+                        stdin_data = self.stdin.read(1024)
+
+                    # try to write to network
                     if stdin_data:
-                        self.send(stdin_data)
+                        try:
+                            self.send(stdin_data)
+                        except:
+                            # netin is gone
+                            netin_eof = True
                     elif stdin_data is not None:
                         # EOF reached on stdin.
                         # Store the time to calculate time elapsed.
-                        eof_reached = time.time()
-                        if N:
+                        stdin_eof = time.time()
+                        if self.N:
                             # shutdown socket writes.
                             # Some servers require this to finish their work.
                             try:
                                 self.shutdown(socket.SHUT_WR)
                             except OSError:
                                 pass
-                elif q >= 0:
-                    # exit on connection close or q seconds elapsed.
-                    eof_elapsed = time.time() - eof_reached
-                    if eof_elapsed >= q:
-                        # quit after elapsed eof time.
-                        break
-                # q is a negative number, run loop until end of
-                # connection.
+                    elif netin_eof:
+                        # No data to send on stdin and netin has closed.
+                        return
+
+                # try to read from network
+                if not netin_eof:
+                    net_data = self.recv(1024, blocking=False)
+                    if net_data:
+                        try:
+                            # py3 write bytes
+                            self.stdout.buffer.write(net_data)
+                        except AttributeError:
+                            # py2 write bytes
+                            self.stdout.write(net_data)
+                        self.stdout.flush()
+                    elif net_data is not None:
+                        # Remote EOF.
+                        netin_eof = True
+                        # stop writing to stdout.
+                else:
+                    time.sleep(.001)
             except StopReadWrite:
-                # IO has requested to stop the readwrite loop.
-                break
-
-    def execute(self, cmd):
-        """
-        Execute a command and connect i_o to the Netcat connection.
-
-        :param cmd: A string or list containing the command and any
-            arguments to run.
-        :type cmd: str, list
-
-        :Example:
-
-        .. code-block:: python
-
-           with NetcatConnection(sock) as nc:
-               nc.execute('echo "Hello, World!"')
-        """
-        proc = Process(cmd)
-        self.readwrite(stdin=proc.stdout, stdout=proc.stdin)
+                # I/O has requested to stop the readwrite loop.
+                return
 
 
 class NetcatTCPConnection(NetcatConnection):
@@ -387,7 +339,7 @@ class NetcatTCPConnection(NetcatConnection):
            
            from pync import NetcatTCPConnection
            with NetcatTCPConnection.connect('localhost', 8000) as conn:
-               conn.run()
+               conn.readwrite()
         """
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((dest, port))
@@ -415,7 +367,7 @@ class NetcatTCPConnection(NetcatConnection):
 
            from pync import NetcatTCPConnection
            with NetcatTCPConnection.listen('localhost', 8000) as conn:
-               conn.run()
+               conn.readwrite()
         """
         server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -473,9 +425,28 @@ class ConnectionRefused(ConnectionRefusedError):
 
 
 class NetcatIterator(NetcatContext):
+    '''
+    Base class for Netcat clients and servers.
 
-    def _init_kwargs(self, **kwargs):
+    NetcatClients can iterate through one or more ports
+    and NetcatServers can accept one or more connections.
+    '''
+    Connection = None
+
+    e = None
+
+    def _init_kwargs(self, e=None, **kwargs):
+        if e is not None:
+            self.e = e
         self._conn_kwargs = kwargs
+
+    def _init_connection(self, sock):
+        if self.e:
+            # Execute a command and plug I/O into NetcatConnection.
+            proc = Process(self.e)
+            inout = dict(stdin=proc.stdout, stdout=proc.stdin)
+            self._conn_kwargs.update(inout)
+        return self.Connection(sock, **self._conn_kwargs)
 
     def __iter__(self):
         raise NotImplementedError
@@ -505,7 +476,7 @@ class NetcatClient(NetcatIterator):
     .. code-block:: python
 
        with NetcatClient(...) as nc:
-           nc.run()
+           nc.readwrite()
 
     If you choose not to use the "with" statement, please make sure to use
     the close() method after use:
@@ -513,7 +484,7 @@ class NetcatClient(NetcatIterator):
     .. code-block:: python
 
        nc = NetcatClient(...)
-       nc.run()
+       nc.readwrite()
        nc.close()
 
     :Example:
@@ -524,13 +495,13 @@ class NetcatClient(NetcatIterator):
 
        with NetcatClient('localhost', [8000, 8001]) as nc:
            for connection in nc:
-               connection.run()
+               connection.readwrite()
 
     .. code-block:: python
        :caption: Using the "z" and "v" options, we can perform a simple port scan.
 
        with NetcatClient('localhost', [8000, 8002], z=True, v=True) as nc:
-           nc.run()
+           nc.readwrite()
     """
 
     conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
@@ -574,19 +545,9 @@ class NetcatClient(NetcatIterator):
         port = next(self._iterports)
         return self._create_connection((self.dest, port))
 
-    def run(self):
-        """
-        Convenience method to run each :class:`pync.NetcatConnection` one after another.
-
-        :Example:
-
-        .. code-block:: python
-
-           with NetcatClient('localhost', [8000, 8001]) as nc:
-               nc.run()
-        """
-        for conn in self:
-            conn.run()
+    def readwrite(self):
+        for nc_connection in self:
+            nc_connection.readwrite()
 
     def _create_connection(self, addr):
         raise NotImplementedError
@@ -596,6 +557,7 @@ class NetcatTCPClient(NetcatClient):
     """
     A :class:`pync.NetcatClient` for the Transmission Control Protocol.
     """
+    Connection = NetcatTCPConnection
 
     conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
@@ -616,7 +578,7 @@ class NetcatTCPClient(NetcatClient):
             self.print_verbose(str(e))
             raise
 
-        nc_conn = NetcatTCPConnection(sock, **self._conn_kwargs)
+        nc_conn = self._init_connection(sock)
         self.print_verbose(
                 self.conn_succeeded.format(
                     dest=nc_conn.dest,
@@ -635,6 +597,7 @@ class NetcatUDPClient(NetcatClient):
     """
     A :class:`pync.NetcatClient` for the User Datagram Protocol.
     """
+    Connection = NetcatUDPConnection
 
     conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
@@ -642,7 +605,7 @@ class NetcatUDPClient(NetcatClient):
     def _create_connection(self, addr):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(addr)
-        nc_conn = NetcatUDPConnection(sock, **self._conn_kwargs)
+        nc_conn = self._init_connection(sock)
         if self.z:
             # If zero io mode, close the connection.
             nc_conn.close()
@@ -651,7 +614,7 @@ class NetcatUDPClient(NetcatClient):
 
 class NetcatServer(NetcatIterator):
     """
-    A Netcat server is an iterable.
+    A Netcat server is iterable.
     You can iterate through each incoming connection.
 
     :param port: The port number to bind the server to.
@@ -671,7 +634,7 @@ class NetcatServer(NetcatIterator):
     .. code-block:: python
 
        with NetcatServer(...) as nc:
-           nc.run()
+           nc.readwrite()
 
     If you don't use the "with" statement, please make sure to use the
     close() method after use:
@@ -679,7 +642,7 @@ class NetcatServer(NetcatIterator):
     .. code-block:: python
        
        nc = NetcatServer(...)
-       nc.run()
+       nc.readwrite()
        nc.close()
 
     :Example:
@@ -690,13 +653,12 @@ class NetcatServer(NetcatIterator):
 
        with NetcatServer(8000, dest='localhost', k=True) as nc:
            for connection in nc:
-               connection.execute('echo "Hello, World!"')
+               connection.readwrite()
     """
 
     k = False
     address_family = None
     socket_type = None
-    Connection = None
 
     def __init__(self, port, dest='', k=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
@@ -750,7 +712,7 @@ class NetcatServer(NetcatIterator):
                 raise StopIteration
             if self.sock in can_read:
                 cli_sock, _ = self._get_request()
-                nc_conn = self.Connection(cli_sock, **self._conn_kwargs)
+                nc_conn = self._init_connection(cli_sock)
                 break
         if not self.k:
             # The "k" option keeps the server open.
@@ -758,7 +720,7 @@ class NetcatServer(NetcatIterator):
             self.close()
         return nc_conn
 
-    def run(self):
+    def readwrite(self):
         """
         Convenience method to run each :class:`pync.NetcatConnection` one
         after another.
@@ -768,10 +730,10 @@ class NetcatServer(NetcatIterator):
         .. code-block:: python
 
            with NetcatServer(8000, dest='localhost', k=True) as nc:
-               nc.run()
+               nc.readwrite()
         """
         for conn in self:
-            conn.run()
+            conn.readwrite()
 
     def _server_bind(self):
         raise NotImplementedError
@@ -796,13 +758,13 @@ class NetcatTCPServer(NetcatServer):
     """
     A :class:`pync.NetcatServer` for the Transmission Control Protocol.
     """
+    Connection = NetcatTCPConnection
 
     listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
     conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
     address_family = socket.AF_INET
     socket_type = socket.SOCK_STREAM
     request_queue_size = 1
-    Connection = NetcatTCPConnection
 
     def _server_bind(self):
         # This should raise any errors if problems with dest and port.
@@ -821,11 +783,11 @@ class NetcatUDPServer(NetcatServer):
     """
     A :class:`pync.NetcatServer` for the User Datagram Protocol.
     """
+    Connection = NetcatUDPConnection
 
     address_family = socket.AF_INET
     socket_type = socket.SOCK_DGRAM
     max_packet_size = 8192
-    Connection = NetcatUDPConnection
 
     def _server_close(self):
         pass
@@ -839,16 +801,35 @@ class NetcatUDPServer(NetcatServer):
 
 class StopReadWrite(Exception):
     """
+    Exception to stop the readwrite loop.
     """
 
 
 class Process(NonBlockingProcess):
     """
+    A non-blocking process to be used with Netcat classes.
+    Use this instead of <subprocess.Process>.
     """
 
     def __init__(self, *args, **kwargs):
         super(Process, self).__init__(*args, **kwargs)
+        self.stdin = _ProcStdin(self.stdin)
         self.stdout = _ProcStdout(self.stdout)
+
+
+class _ProcStdin(object):
+
+    def __init__(self, stdin):
+        self._stdin = stdin
+
+    def __getattr__(self, name):
+        return getattr(self._stdin, name)
+
+    def write(self, data):
+        try:
+            self._stdin.write(data)
+        except OSError:
+            raise StopReadWrite
 
 
 class _ProcStdout:
@@ -864,10 +845,6 @@ class _ProcStdout:
             return self._stdout.read(n)
         except ProcessTerminated:
             raise StopReadWrite
-
-
-connect = NetcatTCPConnection.connect
-listen = NetcatTCPConnection.listen
 
 
 def PORT(value):
@@ -949,7 +926,7 @@ class Netcat(object):
     .. code-block:: python
 
        with Netcat(...) as nc:
-           nc.run()
+           nc.readwrite()
 
     If you use it without the "with" statement, please make sure to use the
     close method after use:
@@ -957,7 +934,7 @@ class Netcat(object):
     .. code-block:: python
 
        nc = Netcat(...)
-       nc.run()
+       nc.readwrite()
        nc.close()
 
     :Examples:
@@ -968,7 +945,7 @@ class Netcat(object):
 
        from pync import Netcat
        with Netcat(8000, dest='localhost', l=True) as nc:
-           nc.run()
+           nc.readwrite()
 
     .. code-block:: python
        :caption: By default, without the "l" option, Netcat will return a
@@ -976,21 +953,21 @@ class Netcat(object):
 
        from pync import Netcat
        with Netcat(8000, dest='localhost') as nc:
-           nc.run()
+           nc.readwrite()
 
     .. code-block:: python
        :caption: Create a :class:`pync.NetcatUDPServer` with the "u" and "l" options.
 
        from pync import Netcat
        with Netcat(8000, dest='localhost', l=True, u=True) as nc:
-           nc.run()
+           nc.readwrite()
 
     .. code-block:: python
        :caption: And a :class:`pync.NetcatUDPClient` using only the "u" option.
 
        from pync import Netcat
        with Netcat(8000, dest='localhost', u=True) as nc:
-           nc.run()
+           nc.readwrite()
 
     .. code-block:: python
        :caption: Any other keyword arguments get passed to the underlying Netcat class.
@@ -1010,7 +987,7 @@ class Netcat(object):
        # Use the "v" option to turn verbose output on to see connection success or failure.
        with Netcat([8000, 8003, 8002], dest='localhost', z=True, v=True) as nc:
            for connection in nc:
-               connection.run()
+               connection.readwrite()
     """
 
     name = 'pync'
@@ -1064,7 +1041,7 @@ class Netcat(object):
 
            from pync import Netcat
            with Netcat.from_args('-l localhost 8000') as nc:
-               nc.run()
+               nc.readwrite()
         """
 
         try:
@@ -1218,7 +1195,7 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
         return 1
 
     try:
-        nc.run()
+        nc.readwrite()
     except KeyboardInterrupt:
         nc.stderr.write('\n')
     finally:

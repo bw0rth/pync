@@ -3,7 +3,7 @@
 from .helpers import makefile
 from .nc import (
         pync,
-        Netcat, connect, listen,
+        Netcat,
         NetcatConnection,
         NetcatClient,
         NetcatServer,
