@@ -92,10 +92,6 @@ class NetcatConnection(NetcatContext):
         Netcat i_o.
     :type e: str
 
-    :param N: Set to True to shutdown socket writes after EOF on stdin.
-        Some servers require this to perform properly.
-    :type N: bool
-
     :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
     :type q: int
 
@@ -116,24 +112,19 @@ class NetcatConnection(NetcatContext):
        nc.close()
     """
 
-    N = False
-    q = -1
+    q = 0
+    plen = 2048
 
-    def __init__(self, sock,
-            N=None,
-            q=None,
-            **kwargs):
+    def __init__(self, sock, q=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.sock = sock
 
-        if N is not None:
-            self.N = N
         if q is not None:
             self.q = q
 
-        if self.q >= 0:
-            self.N = True
+        self.i = False  # TODO
+        self.d = False  # TODO
 
         self.dest, self.port = sock.getpeername()
         if self.dest == '127.0.0.1':
@@ -215,7 +206,16 @@ class NetcatConnection(NetcatContext):
         self.sock.close()
 
     def shutdown(self, how):
-        return self.sock.shutdown(how)
+        try:
+            return self.sock.shutdown(how)
+        except OSError:
+            pass
+
+    def shutdown_rd(self):
+        self.shutdown(socket.SHUT_RD)
+
+    def shutdown_wr(self):
+        self.shutdown(socket.SHUT_WR)
 
     def readwrite(self):
         """
@@ -224,6 +224,8 @@ class NetcatConnection(NetcatContext):
         Receive from network and write to stdout.
         Write verbose/debug/error messages to stderr.
 
+        This loop is based on the netcat-openbsd 1.105-7 ubuntu version.
+
         :Example:
 
         .. code-block:: python
@@ -231,85 +233,68 @@ class NetcatConnection(NetcatContext):
            with NetcatConnection(sock) as nc:
                nc.readwrite()
         """
-
+        netin_eof = False
         stdin_eof = None
         stdin_eof_elapsed = None
-
-        netin_eof = False
-        stdout_eof = False
-
-        def delay_exit():
-            self.close()
-            time.sleep(self.q)
-            raise StopReadWrite
 
         # (     )
         #   O O
         while(1<2):
             try:
-                # both inputs are gone, we are done.
-                if stdin_eof and netin_eof:
-                    if self.q <= 0:
-                        return
-                    delay_exit()
+                if netin_eof:
+                    break
 
-                # both outputs are gone, we can't continue
-                if stdin_eof and stdout_eof:
-                    if self.q <= 0:
-                        return
-                    delay_exit()
+                if self.i:
+                    time.sleep(self.i)
 
-                # try to read from stdin
-                if not stdin_eof:
+                # netin
+                net_data = self.recv(self.plen, blocking=False)
+                if net_data:
+                    # stdout
+                    try:
+                        # py3 write bytes
+                        self.stdout.buffer.write(net_data)
+                    except AttributeError:
+                        # py2 write bytes
+                        self.stdout.write(net_data)
+                    self.stdout.flush()
+                elif net_data is not None:
+                    # netin EOF
+                    self.shutdown_rd()
+                    netin_eof = True
+
+                # stdin
+                if not self.d:
                     try:
                         # py3 read bytes
-                        stdin_data = self.stdin.buffer.read(1024)
+                        stdin_data = self.stdin.buffer.read(self.plen)
                     except AttributeError:
                         # py2 read bytes
-                        stdin_data = self.stdin.read(1024)
+                        stdin_data = self.stdin.read(self.plen)
 
-                    # try to write to network
+                    # netout
                     if stdin_data:
                         try:
                             self.send(stdin_data)
                         except:
-                            # netin is gone
-                            netin_eof = True
+                            # netin connection lost
+                            return
                     elif stdin_data is not None:
-                        # EOF reached on stdin.
-                        # Store the time to calculate time elapsed.
-                        stdin_eof = time.time()
-                        if self.N:
-                            # shutdown socket writes.
-                            # Some servers require this to finish their work.
-                            try:
-                                self.shutdown(socket.SHUT_WR)
-                            except OSError:
-                                pass
-                    elif netin_eof:
-                        # No data to send on stdin and netin has closed.
-                        return
-
-                # try to read from network
-                if not netin_eof:
-                    net_data = self.recv(1024, blocking=False)
-                    if net_data:
-                        try:
-                            # py3 write bytes
-                            self.stdout.buffer.write(net_data)
-                        except AttributeError:
-                            # py2 write bytes
-                            self.stdout.write(net_data)
-                        self.stdout.flush()
-                    elif net_data is not None:
-                        # Remote EOF.
-                        netin_eof = True
-                        # stop writing to stdout.
-                else:
-                    time.sleep(.001)
+                        # stdin EOF
+                        if not stdin_eof:
+                            stdin_eof = time.time()
+                        # If the user asked to exit on EOF, do it
+                        if self.q == 0:
+                            self.shutdown_wr()
+                            #self.stdin.close()
+                        # If the user asked to die after a while, arrange for it
+                        if self.q > 0:
+                            stdin_eof_elapsed = time.time() - stdin_eof
+                            if stdin_eof_elapsed >= self.q:
+                                return
             except StopReadWrite:
                 # I/O has requested to stop the readwrite loop.
-                return
+                break
 
 
 class NetcatTCPConnection(NetcatConnection):
@@ -441,11 +426,12 @@ class NetcatIterator(NetcatContext):
         self._conn_kwargs = kwargs
 
     def _init_connection(self, sock):
+        inout = dict(stdin=self.stdin, stdout=self.stdout, stderr=self.stderr)
         if self.e:
             # Execute a command and plug I/O into NetcatConnection.
             proc = Process(self.e)
-            inout = dict(stdin=proc.stdout, stdout=proc.stdin)
-            self._conn_kwargs.update(inout)
+            inout.update(stdin=proc.stdout, stdout=proc.stdin)
+        self._conn_kwargs.update(inout)
         return self.Connection(sock, **self._conn_kwargs)
 
     def __iter__(self):
@@ -1103,10 +1089,6 @@ class Netcat(object):
                 help='Listen mode, for inbound connects',
                 action='store_true',
         )
-        parser.add_argument('-N',
-                help='Shutdown socket on EOF',
-                action='store_true',
-        )
         parser.add_argument('-e',
                 help='Execute a command over the connection',
                 metavar='CMD',
@@ -1114,7 +1096,7 @@ class Netcat(object):
         parser.add_argument('-q',
                 help='quit after EOF on stdin and delay of SECS',
                 metavar='SECS',
-                default=-1,
+                default=0,
                 type=int,
         )
         parser.add_argument('-v',
