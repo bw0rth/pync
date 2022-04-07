@@ -3,11 +3,11 @@ Remote Command Execution
 ========================
 
 Using the `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
-option, we can execute a shell command and have it's i_o
+option, we can execute a command and have it's i_o
 (input/output) connect to Netcat's network socket.
 
-Using this idea, we can execute commands on a remote
-system.
+Using this idea, we can create an interactive shell
+to execute commands on a remote machine.
 
 .. warning::
    | Please BE CAREFUL with this functionality as it could expose your system to attackers.
@@ -37,8 +37,8 @@ A Simple Reverse Shell
       from pync import pync
       pync('-l localhost 8000')
 
-2. On another console, create the reverse shell to connect back
-   to our server:
+2. On another console, connect back to our server and
+   execute the shell:
 
 .. tab:: Unix
 
@@ -101,7 +101,8 @@ A Simple Bind Shell
 
       pync('-le {} localhost 8000'.format(command))
 
-2. On another console, connect to the bind shell server:
+2. On another console, connect to the server to
+   interact with the shell:
 
 .. tab:: Unix
 

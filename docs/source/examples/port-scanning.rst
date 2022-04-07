@@ -60,7 +60,7 @@ hoping for a response:
 
    .. code-block:: sh
 
-      echo QUIT | pync host.example.com 20-30
+      echo QUIT | py -m pync host.example.com 20-30
 
 .. tab:: Python
 
