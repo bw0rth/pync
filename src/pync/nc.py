@@ -88,12 +88,8 @@ class NetcatConnection(NetcatContext):
     """
     Wraps a socket object to provide Netcat-like functionality.
 
-    :param e: A string containing a process command to run and attach to the
-        Netcat i_o.
-    :type e: str
-
     :param q: Quit the readwrite loop after EOF on stdin and delay of secs.
-    :type q: int
+    :type q: int, optional
 
     You can use sub-classes of this class as a context manager using the "with" statement:
 
@@ -417,12 +413,9 @@ class NetcatIterator(NetcatContext):
     and NetcatServers can accept one or more connections.
     '''
     Connection = None
-
     e = None
 
-    def _init_kwargs(self, e=None, **kwargs):
-        if e is not None:
-            self.e = e
+    def _init_kwargs(self, **kwargs):
         self._conn_kwargs = kwargs
 
     def _init_connection(self, sock):
@@ -452,6 +445,9 @@ class NetcatClient(NetcatIterator):
 
     :param port: The port number(s) to connect to.
     :type port: int, list(int)
+
+    :param e: Execute a command upon connection.
+    :type e: str, optional
 
     :param z: Set to True to turn Zero i_o on (connect then close).
         Useful for simple port scanning.
@@ -492,12 +488,16 @@ class NetcatClient(NetcatIterator):
 
     conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
     conn_refused = 'connect to {dest} port {port} failed: Connection refused'
+
+    e = None
     z = False
 
-    def __init__(self, dest, port, z=None, **kwargs):
+    def __init__(self, dest, port, e=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
+        if e is not None:
+            self.e = e
         if z is not None:
             self.z = z
         
@@ -607,10 +607,13 @@ class NetcatServer(NetcatIterator):
     :type port: int
 
     :param dest: The hostname or IP address to bind the server to.
-    :type dest: str
+    :type dest: str, optional
+
+    :param e: Execute a command upon connection.
+    :type e: str, optional
 
     :param k: Set to True to keep the server open between connections.
-    :type k: bool
+    :type k: bool, optional
 
     :param kwargs: Any other keyword arguments get passed to each
         connection.
@@ -642,11 +645,13 @@ class NetcatServer(NetcatIterator):
                connection.readwrite()
     """
 
-    k = False
     address_family = None
     socket_type = None
 
-    def __init__(self, port, dest='', k=None, **kwargs):
+    e = None
+    k = False
+
+    def __init__(self, port, dest='', e=None, k=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
         bind_and_activate = True
 
@@ -663,6 +668,8 @@ class NetcatServer(NetcatIterator):
             # All objects have __repr__ so call repr to get string.
             self.port = repr(port)
 
+        if e is not None:
+            self.e = e
         if k is not None:
             self.k = k
 
