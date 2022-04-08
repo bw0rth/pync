@@ -12,7 +12,7 @@ provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for P
 Common uses include:
 * [Interactive client/server communication](https://pync.readthedocs.io/en/latest/examples/client-server.html)
 * [Remote data transfer (upload/download)](https://pync.readthedocs.io/en/latest/examples/data-transfer.html)
-* [Port scanning](https://pync.readthedocs.io/en/latest/examples/port-scanning.html)
+* [Port scanning (simple connect scan)](https://pync.readthedocs.io/en/latest/examples/port-scanning.html)
 * [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/examples/remote-command-exec.html)
 
 ## Installation
