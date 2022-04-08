@@ -4,6 +4,32 @@
 ## Name
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
 
+## Synopsis
+<details open>
+<summary>Unix</summary>
+
+```sh
+pync [-hkluvz] [-e command] [dest] [port]
+```
+</details>
+
+<details>
+<summary>Windows</summary>
+
+```sh
+py -m pync [-hkluvz] [-e command] [dest] [port]
+```
+</details>
+
+<details>
+<summary>Python</summary>
+
+```python
+from pync import pync
+pync('[-hkluvz] [-e command] [dest] [port]', stdin, stdout, stderr)
+```
+</details>
+
 ## Description
 Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
 the goal of **pync** was to create an easy to use library that
@@ -20,9 +46,21 @@ Common uses include:
 installed (version 2.7 or higher).
 
 Use Python's pip command to install **pync** straight from github:
-   ```sh
-   pip install https://github.com/brenw0rth/pync/archive/main.zip
-   ```
+<details open>
+<summary>Unix</summary>
+
+```sh
+pip install https://github.com/brenw0rth/pync/archive/main.zip
+```
+</details>
+
+<details>
+<summary>Windows</summary>
+
+```sh
+py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
+```
+</details>
 
 ## Documentation
 For full documentation, please visit https://pync.readthedocs.io.
