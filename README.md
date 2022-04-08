@@ -1,4 +1,4 @@
-<img src="logo.png" alt="pync" width=200>
+<img src="logo.png" alt="pync" width=300>
 
 [![Docs](https://readthedocs.org/projects/pync/badge/?version=latest&style=flat-square)](https://readthedocs.org/projects/pync/)
 [![License](https://img.shields.io/github/license/brenw0rth/pync?style=flat-square)](https://github.com/brenw0rth/pync/blob/main/LICENSE)
