@@ -1,7 +1,15 @@
-<img src="logo.png" alt="pync" width=300>
+<h1 align="center">
+  <a href="https://github.com/brenw0rth/pync"><img src="logo.png" alt="pync" width=300></a>
+</h1>
 
-[![Docs](https://readthedocs.org/projects/pync/badge/?version=latest&style=flat-square)](https://readthedocs.org/projects/pync/)
-[![License](https://img.shields.io/github/license/brenw0rth/pync?style=flat-square)](https://github.com/brenw0rth/pync/blob/main/LICENSE)
+<p align="center">
+  <a href="https://readthedocs.org/projects/pync/">
+    <img src="https://readthedocs.org/projects/pync/badge/?version=latest&style=flat-square">
+  </a>
+  <a href="https://github.com/brenw0rth/pync/blob/main/LICENSE">
+      <img src="https://img.shields.io/github/license/brenw0rth/pync?style=flat-square">
+  </a>
+</p>
 
 ## Name
 **pync** - arbitrary TCP and UDP connections and listens ([Netcat](https://en.wikipedia.org/wiki/Netcat) for Python).
