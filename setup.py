@@ -6,7 +6,7 @@ setuptools.setup(
     name='pync',
     version='0.0.1',
     author='brenw0rth',
-    description='An attempt at creating netcat with Python.',
+    description='arbitrary TCP and UDP connections and listens (Netcat for Python).',
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
     python_requires=">=2.7",
