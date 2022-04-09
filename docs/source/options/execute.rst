@@ -67,6 +67,7 @@ Hello World
 
 .. toctree::
    :caption: See Also
+   :maxdepth: 2
 
    ../examples/remote-command-exec
 

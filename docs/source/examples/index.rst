@@ -3,6 +3,7 @@ Examples
 ========
 
 .. toctree::
+   :maxdepth: 2
 
    client-server
    data-transfer
