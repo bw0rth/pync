@@ -10,6 +10,7 @@ example reverse shell:
 '''
 
 import argparse
+import contextlib
 import platform
 
 from pync import Netcat
@@ -46,11 +47,8 @@ def main():
             e=command,
             l=args.l,
     )
-
-    try:
+    with contextlib.closing(nc):
         nc.readwrite()
-    finally:
-        nc.close()
 
 
 if __name__ == '__main__':
