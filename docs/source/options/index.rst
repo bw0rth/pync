@@ -4,6 +4,7 @@ Options
 
 
 .. toctree::
+   :maxdepth: 2
 
    execute
    help
