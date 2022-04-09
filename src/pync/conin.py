@@ -84,7 +84,7 @@ class _UnixConsoleInput(_BaseConsoleInput):
 
 
 if _WINDOWS:
-    NonBlockingConsoleInput = _WinConsoleInput
+    ConsoleInput = _WinConsoleInput
 else:
-    NonBlockingConsoleInput = _UnixConsoleInput
+    ConsoleInput = _UnixConsoleInput
 

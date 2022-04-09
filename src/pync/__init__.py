@@ -10,4 +10,5 @@ from .nc import (
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
         Process, StopReadWrite, ConnectionRefused
 )
+from .conin import ConsoleInput
 

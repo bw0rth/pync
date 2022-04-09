@@ -18,7 +18,7 @@ import time
 
 from .argparsing import GroupingArgumentParser
 from .process import NonBlockingProcess, ProcessTerminated
-from .conin import NonBlockingConsoleInput
+from .conin import ConsoleInput
 
 if sys.version_info.major == 2:
     from socket import error as ConnectionRefusedError
@@ -129,7 +129,7 @@ class NetcatConnection(NetcatContext):
 
         # TODO: Move this.
         if self.stdin is sys.__stdin__ and self.stdin.isatty():
-            self.stdin = NonBlockingConsoleInput()
+            self.stdin = ConsoleInput()
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
@@ -1055,6 +1055,12 @@ class Netcat(object):
             kwargs.update(vars(server_args))
         else:
             kwargs.update(vars(client_args))
+
+        kwargs.update(dict(
+            stdin=stdin,
+            stdout=stdout,
+            stderr=stderr,
+        ))
 
         return cls(**kwargs)
 
