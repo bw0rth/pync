@@ -83,7 +83,7 @@ For full documentation, please visit https://pync.readthedocs.io.
 * [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 
 ## See Also
-* [Netcat man page](https://www.unix.com/man-page/Linux/1/nc/)
+* [Netcat man page](https://helpmanual.io/man1/netcat/)
 
 ## TODO
 * Add SSL support
