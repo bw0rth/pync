@@ -123,8 +123,6 @@ class NetcatConnection(NetcatContext):
         self.d = False  # TODO
 
         self.dest, self.port = sock.getpeername()
-        if self.dest == '127.0.0.1':
-            self.dest = 'localhost'
         self.proto = '*'
 
         # TODO: Move this.
@@ -433,6 +431,9 @@ class NetcatIterator(NetcatContext):
     def __next__(self):
         raise NotImplementedError
 
+    def next_connection(self):
+        return next(self)
+
 
 class NetcatClient(NetcatIterator):
     """
@@ -486,8 +487,8 @@ class NetcatClient(NetcatIterator):
            nc.readwrite()
     """
 
-    conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
-    conn_refused = 'connect to {dest} port {port} failed: Connection refused'
+    v_conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
+    v_conn_refused = 'connect to {dest} port {port} failed: Connection refused'
 
     e = None
     z = False
@@ -511,7 +512,7 @@ class NetcatClient(NetcatIterator):
     def __iter__(self):
         while True:
             try:
-                nc_conn = next(self)
+                nc_conn = self.next_connection()
             except StopIteration:
                 # No more ports to connect to.
                 # Exit loop
@@ -529,11 +530,38 @@ class NetcatClient(NetcatIterator):
     def __next__(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
-        return self._create_connection((self.dest, port))
+        try:
+            nc_conn = self._create_connection((self.dest, port))
+        except ConnectionRefusedError:
+            self.print_verbose(
+                    self.v_conn_refused.format(
+                        dest=self.dest, port=port,
+                        proto_name=self.protocol_name,
+                    ),
+            )
+            raise ConnectionRefused(self.dest, port)
+        except socket.error as e:
+            self.print_verbose(str(e))
+            raise
+
+        try:
+            proto = socket.getservbyport(nc_conn.port, self.protocol_name)
+        except OSError:
+            proto = '*'
+        self.print_verbose(
+                self.v_conn_succeeded.format(
+                    dest=nc_conn.dest,
+                    port=nc_conn.port,
+                    proto_name=self.protocol_name,
+                    proto=proto,
+                ),
+        )
+
+        return nc_conn
 
     def readwrite(self):
-        for nc_connection in self:
-            nc_connection.readwrite()
+        for nc_conn in self:
+            nc_conn.readwrite()
 
     def _create_connection(self, addr):
         raise NotImplementedError
@@ -543,36 +571,17 @@ class NetcatTCPClient(NetcatClient):
     """
     A :class:`pync.NetcatClient` for the Transmission Control Protocol.
     """
+    protocol_name = 'tcp'
     Connection = NetcatTCPConnection
 
-    conn_succeeded = 'Connection to {dest} {port} port [tcp/{proto}] succeeded!'
-    conn_refused = 'connect to {dest} port {port} (tcp) failed: Connection refused'
+    v_conn_succeeded = 'Connection to {dest} {port} port [{proto_name}/{proto}] succeeded!'
+    v_conn_refused = 'connect to {dest} port {port} ({proto_name}) failed: Connection refused'
 
     def _create_connection(self, addr):
         dest, port = addr
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            sock.connect(addr)
-        except ConnectionRefusedError:
-            self.print_verbose(
-                    self.conn_refused.format(
-                        dest=dest, port=port,
-                    ),
-            )
-            raise ConnectionRefused(dest, port)
-        except socket.error as e:
-            self.print_verbose(str(e))
-            raise
-
+        sock.connect(addr)
         nc_conn = self._init_connection(sock)
-        self.print_verbose(
-                self.conn_succeeded.format(
-                    dest=nc_conn.dest,
-                    port=nc_conn.port,
-                    proto=nc_conn.proto,
-                ),
-        )
-
         if self.z:
             # If zero io mode, close the connection.
             nc_conn.close()
@@ -585,8 +594,8 @@ class NetcatUDPClient(NetcatClient):
     """
     Connection = NetcatUDPConnection
 
-    conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
-    conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
+    v_conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
+    v_conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
 
     def _create_connection(self, addr):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -648,12 +657,13 @@ class NetcatServer(NetcatIterator):
     address_family = None
     socket_type = None
 
+    v_listening = 'Listening on [{dest}] (family {family}, port {port})'
+
     e = None
     k = False
 
     def __init__(self, port, dest='', e=None, k=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
-        bind_and_activate = True
 
         self.dest = dest
         if dest == '':
@@ -675,6 +685,7 @@ class NetcatServer(NetcatIterator):
 
         self.sock = socket.socket(self.address_family, self.socket_type)
 
+        bind_and_activate = True
         if bind_and_activate:
             try:
                 self._server_bind()
@@ -682,6 +693,12 @@ class NetcatServer(NetcatIterator):
             except:
                 self._server_close()
                 raise
+            else:
+                self.print_verbose(self.v_listening.format(
+                    dest=self.dest,
+                    family=self.address_family,
+                    port=self.port,
+                ))
 
     def __iter__(self):
         while True:
@@ -751,13 +768,14 @@ class NetcatTCPServer(NetcatServer):
     """
     A :class:`pync.NetcatServer` for the Transmission Control Protocol.
     """
+    protocol_name = 'tcp'
     Connection = NetcatTCPConnection
 
-    listening_msg = 'Listening on [{dest}] (family {fam}, port {port})'
-    conn_msg = 'Connection from [{dest}] port {port} [tcp/{proto}] accepted (family {fam}, sport {sport})'
     address_family = socket.AF_INET
     socket_type = socket.SOCK_STREAM
     request_queue_size = 1
+
+    v_conn_accepted = 'Connection from [{dest}] port {port} [{proto_name}/{proto}] accepted (family {family}, sport {sport})'
 
     def _server_bind(self):
         # This should raise any errors if problems with dest and port.
@@ -769,13 +787,29 @@ class NetcatTCPServer(NetcatServer):
         self.sock.listen(self.request_queue_size)
 
     def _get_request(self):
-        return self.sock.accept()
+        request = self.sock.accept()
+        cli_sock, cli_addr = request
+        cli_dest, cli_port = cli_addr
+        try:
+            proto = socket.getservbyport(self.port, self.protocol_name)
+        except OSError:
+            proto = '*'
+        self.print_verbose(self.v_conn_accepted.format(
+            dest=cli_dest,
+            port=self.port,
+            proto_name=self.protocol_name,
+            proto=proto,
+            family=self.address_family,
+            sport=cli_port,
+        ))
+        return request
 
 
 class NetcatUDPServer(NetcatServer):
     """
     A :class:`pync.NetcatServer` for the User Datagram Protocol.
     """
+    protocol_name = 'udp'
     Connection = NetcatUDPConnection
 
     address_family = socket.AF_INET
@@ -986,11 +1020,9 @@ class Netcat(object):
 
     TCPServer = NetcatTCPServer
     TCPClient = NetcatTCPClient
-    TCPConnection = NetcatTCPConnection
 
     UDPServer = NetcatUDPServer
     UDPClient = NetcatUDPClient
-    UDPConnection = NetcatUDPConnection
 
     def __new__(cls, port, dest='', l=False, u=False, **kwargs):
         if l:
