@@ -123,3 +123,13 @@ A Simple Bind Shell
       from pync import pync
       pync('localhost 8000')
 
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/execute`
+* :doc:`../options/listen`
+

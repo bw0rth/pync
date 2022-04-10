@@ -74,3 +74,13 @@ hoping for a response:
       message = io.BytesIO(b'QUIT')
       pync('host.example.com 20-30', stdin=message)
 
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/verbose`
+* :doc:`../options/zero-io`
+

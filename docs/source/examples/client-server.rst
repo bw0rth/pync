@@ -58,3 +58,12 @@ other and vice-versa.
 When finished, hit Ctrl+C from either console to close the
 connection.
 
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/listen`
+

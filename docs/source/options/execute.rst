@@ -63,11 +63,8 @@ Hello World
 
    <br>
    <hr>
-   <br>
 
-.. toctree::
-   :caption: See Also
-   :maxdepth: 2
+:SEE ALSO:
 
-   ../examples/remote-command-exec
+* :doc:`../examples/remote-command-exec`
 

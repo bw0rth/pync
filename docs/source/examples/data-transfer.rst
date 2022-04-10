@@ -123,4 +123,13 @@ You can also upload files by swapping the client/server roles.
       with open('file.in', 'rb') as f:
           pync('localhost 8000', stdin=f)
 
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/listen`
+
 

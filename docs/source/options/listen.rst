@@ -1,9 +1,10 @@
 ============================
-[-l]istening For Connections
+[-l]istening for Connections
 ============================
 
-To create a server, you can use the **-l** option to listen
-for incoming connections:
+To create a TCP server, you can use the
+`-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
+option to listen for incoming connections:
 
 .. tab:: Unix
 
@@ -24,8 +25,9 @@ for incoming connections:
       from pync import pync
       pync('-l localhost 8000')
 
-By combining the -l option with the -u option, you can
-create a UDP server instead of the default TCP:
+If instead you want a UDP server, combine the
+`-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_ and
+`-u <https://pync.readthedocs.io/en/latest/options/udp.html>`_ options:
 
 .. tab:: Unix
 
@@ -45,4 +47,14 @@ create a UDP server instead of the default TCP:
 
       from pync import pync
       pync('-lu localhost 8000')
+
+.. raw:: html
+   
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`keep-server-open`
+* :doc:`udp`
 

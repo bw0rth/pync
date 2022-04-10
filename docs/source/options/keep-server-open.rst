@@ -75,12 +75,9 @@ When you're finished, hit Ctrl+C on the server console to close the server.
 
    <br>
    <hr>
-   <br>
 
-.. toctree::
-   :caption: See Also
-   :maxdepth: 2
+:SEE ALSO:
 
-   execute
-   listen
+* :doc:`execute`
+* :doc:`listen`
 
