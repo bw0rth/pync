@@ -2,18 +2,9 @@
 [-q]uit After EOF
 =================
 
-If you want **pync** to stay connected after reaching
-EOF (End Of File) on stdin, then the :doc:`-q <quit-after-eof>`
-option is what you're looking for.
-
-By default, this is set to 0 to shudown and quit immediately
-after EOF has been reached on stdin.
-
-Passing a number greater than 0 will tell **pync** to wait
-for that number of seconds before shutting down and quitting.
-
-Or if you would like to wait forever until the connection
-closes, set -q to a negative number.
+| By default, :doc:`-q <quit-after-eof>` is set to 0 to tell **pync** to quit immediately after reaching EOF (End Of File) on stdin.
+| If you want to have it wait after EOF, set :doc:`-q <quit-after-eof>` to the number of seconds you want to wait.
+| Or if you would like to wait forever until the connection closes, set :doc:`-q <quit-after-eof>` to a negative number.
 
 An Example
 ==========
