@@ -2,9 +2,8 @@
 [-u]ser Datagram Protocol
 =========================
 
-By default, **pync** uses TCP (Transmission Control Protocol) for transport.
-Using the :doc:`-u <udp>` option, you can set the transport to UDP
-(User Datagram Protocol) instead.
+| By default, **pync** uses TCP (Transmission Control Protocol) for transport.
+| Using the :doc:`-u <udp>` option, you can set the transport to UDP (User Datagram Protocol) instead.
 
 A Client/Server Example
 =======================
