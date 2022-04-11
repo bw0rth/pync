@@ -61,6 +61,10 @@ class NetcatContext(object):
         self._init_kwargs(**kwargs)
 
     def _init_kwargs(self, **kwargs):
+        """
+        Override this to parse and initialize
+        any unknown keyword arguments
+        """
         if kwargs:
             raise ValueError(kwargs)
 
@@ -71,6 +75,9 @@ class NetcatContext(object):
         self.close()
 
     def close(self):
+        """
+        Override to add any cleanup code.
+        """
         pass
 
     def print_verbose(self, message):
@@ -123,9 +130,8 @@ class NetcatConnection(NetcatContext):
         self.d = False  # TODO
 
         self.dest, self.port = sock.getpeername()
-        self.proto = '*'
 
-        # TODO: Move this.
+        # TODO: Move this into a property.setter?
         if self.stdin is sys.__stdin__ and self.stdin.isatty():
             self.stdin = ConsoleInput()
 
@@ -191,7 +197,7 @@ class NetcatConnection(NetcatContext):
         can_read, _, _ = select.select([self.sock], [], [], .001)
 
         if self.sock in can_read:
-            return self.sock.recv(1024)
+            return self.sock.recv(n)
 
     def send(self, data):
         self.sock.sendall(data)
@@ -410,7 +416,7 @@ class NetcatIterator(NetcatContext):
     NetcatClients can iterate through one or more ports
     and NetcatServers can accept one or more connections.
     '''
-    Connection = None
+    Connection = None    # Override in subclass
     e = None
 
     def _init_kwargs(self, **kwargs):
@@ -426,9 +432,16 @@ class NetcatIterator(NetcatContext):
         return self.Connection(sock, **self._conn_kwargs)
 
     def __iter__(self):
+        ''' Override in subclass
+        Iterate through each connection.
+        Close each connection before moving on to the next.
+        '''
         raise NotImplementedError
 
     def __next__(self):
+        ''' Override in subclass
+        Return the next NetcatConnection.
+        '''
         raise NotImplementedError
 
     def next_connection(self):
@@ -486,6 +499,7 @@ class NetcatClient(NetcatIterator):
        with NetcatClient('localhost', [8000, 8002], z=True, v=True) as nc:
            nc.readwrite()
     """
+    protocol_name = ''    # Override in subclass
 
     v_conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
     v_conn_refused = 'connect to {dest} port {port} failed: Connection refused'
@@ -557,6 +571,10 @@ class NetcatClient(NetcatIterator):
                 ),
         )
 
+        if self.z:
+            # If zero io mode, close the connection.
+            nc_conn.close()
+
         return nc_conn
 
     def readwrite(self):
@@ -564,6 +582,9 @@ class NetcatClient(NetcatIterator):
             nc_conn.readwrite()
 
     def _create_connection(self, addr):
+        ''' Override in subclass
+        Create socket connection and return self._init_connection(sock).
+        '''
         raise NotImplementedError
 
 
@@ -582,9 +603,6 @@ class NetcatTCPClient(NetcatClient):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect(addr)
         nc_conn = self._init_connection(sock)
-        if self.z:
-            # If zero io mode, close the connection.
-            nc_conn.close()
         return nc_conn
 
 
@@ -592,6 +610,7 @@ class NetcatUDPClient(NetcatClient):
     """
     A :class:`pync.NetcatClient` for the User Datagram Protocol.
     """
+    protocol_name = 'udp'
     Connection = NetcatUDPConnection
 
     v_conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
@@ -601,9 +620,6 @@ class NetcatUDPClient(NetcatClient):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(addr)
         nc_conn = self._init_connection(sock)
-        if self.z:
-            # If zero io mode, close the connection.
-            nc_conn.close()
         return nc_conn
 
 
@@ -653,6 +669,7 @@ class NetcatServer(NetcatIterator):
            for connection in nc:
                connection.readwrite()
     """
+    protocol_name = ''
 
     address_family = None
     socket_type = None
@@ -746,6 +763,9 @@ class NetcatServer(NetcatIterator):
             conn.readwrite()
 
     def _server_bind(self):
+        ''' Override in subclass
+        Bind socket to address.
+        '''
         raise NotImplementedError
 
     def _server_activate(self):
@@ -755,6 +775,10 @@ class NetcatServer(NetcatIterator):
         self.sock.close()
 
     def _get_request(self):
+        ''' Override in subclass
+        Accept connection.
+        Return (socket, addr) tuple.
+        '''
         raise NotImplementedError
 
     def close(self):
