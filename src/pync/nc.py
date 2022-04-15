@@ -416,8 +416,10 @@ class NetcatIterator(NetcatContext):
     NetcatClients can iterate through one or more ports
     and NetcatServers can accept one or more connections.
     '''
-    Connection = None    # Override in subclass
+    Connection = None
     e = None
+
+    allow_reuse_port = True
 
     def _init_kwargs(self, **kwargs):
         self._conn_kwargs = kwargs
@@ -502,20 +504,23 @@ class NetcatClient(NetcatIterator):
        with NetcatClient('localhost', [8000, 8002], z=True, v=True) as nc:
            nc.readwrite()
     """
-    protocol_name = ''    # Override in subclass
+    protocol_name = ''
 
     v_conn_succeeded = 'Connection to {dest} {port} port [{proto_name}/{proto}] succeeded!'
     v_conn_refused = 'connect to {dest} port {port} ({proto_name}) failed: Connection refused'
 
     e = None
+    p = None
     z = False
 
-    def __init__(self, dest, port, e=None, z=None, **kwargs):
+    def __init__(self, dest, port, e=None, p=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
         if e is not None:
             self.e = e
+        if p is not None:
+            self.p = p
         if z is not None:
             self.z = z
         
@@ -583,12 +588,25 @@ class NetcatClient(NetcatIterator):
     def readwrite(self):
         for nc_conn in self:
             nc_conn.readwrite()
-
+    
     def _create_connection(self, addr):
-        ''' Override in subclass
-        Create socket connection and return self._init_connection(sock).
-        '''
-        raise NotImplementedError
+        sock = self._client_init()
+        self._client_bind(sock)
+        self._client_connect(sock, addr)
+        nc_conn = self._init_connection(sock)
+        return nc_conn
+
+    def _client_init(self):
+        return socket.socket(self.address_family, self.socket_type)
+
+    def _client_bind(self, sock):
+        if self.allow_reuse_port:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.p is not None:
+            sock.bind(('', self.p))
+
+    def _client_connect(self, sock, addr):
+        sock.connect(addr)
 
 
 class NetcatTCPClient(NetcatClient):
@@ -598,12 +616,8 @@ class NetcatTCPClient(NetcatClient):
     protocol_name = 'tcp'
     Connection = NetcatTCPConnection
 
-    def _create_connection(self, addr):
-        dest, port = addr
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect(addr)
-        nc_conn = self._init_connection(sock)
-        return nc_conn
+    address_family = socket.AF_INET
+    socket_type = socket.SOCK_STREAM
 
 
 class NetcatUDPClient(NetcatClient):
@@ -613,14 +627,14 @@ class NetcatUDPClient(NetcatClient):
     protocol_name = 'udp'
     Connection = NetcatUDPConnection
 
+    address_family = socket.AF_INET
+    socket_type = socket.SOCK_DGRAM
+
     udp_scan_timeout = 3
 
-    def _create_connection(self, addr):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.connect(addr)
+    def _client_connect(self, sock, addr):
+        super(NetcatUDPClient, self)._client_connect(sock, addr)
         self._udptest(sock)
-        nc_conn = self._init_connection(sock)
-        return nc_conn
 
     def _udptest(self, sock):
         for i in range(2):
@@ -797,7 +811,8 @@ class NetcatServer(NetcatIterator):
     def _server_bind(self):
         # This should raise any errors if problems with dest and port.
         socket.getaddrinfo(self.dest, self.port)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.allow_reuse_port:
+            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((self.dest, self.port))
 
     def _server_activate(self):
@@ -963,6 +978,9 @@ class PortAction(argparse.Action):
         # If one port is given on the command line, set that as value.
         # If more that one is given, sort and chain as one iterator.
 
+        if not values:
+            return
+
         if len(values) == 1 and values[0].start == (values[0].stop - 1):
             # Only one port given.
             setattr(namespace, self.dest, values[0].start)
@@ -981,18 +999,21 @@ class Netcat(object):
     Factory class that returns the correct Netcat object based
     on the arguments given.
 
-    :param port: The port number to connect or bind to depending on the "l" parameter.
-    :type port: int, list(int)
-
     :param dest: The IP address or hostname to connect or bind to depending
         on the "l" parameter.
     :type dest: str, optional
+
+    :param port: The port number to connect or bind to depending on the "l" parameter.
+    :type port: int, list(int)
 
     :param l: Set to True to create a server and listen for incoming connections.
     :type l: bool, optional
 
     :param u: Set to True to use UDP for transport instead of the default TCP.
     :type u: bool, optional
+
+    :param p: The source port number to bind to.
+    :type p: int, optional
 
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
@@ -1020,7 +1041,7 @@ class Netcat(object):
            object.
 
        from pync import Netcat
-       with Netcat(8000, dest='localhost', l=True) as nc:
+       with Netcat(dest='localhost', port=8000, l=True) as nc:
            nc.readwrite()
 
     .. code-block:: python
@@ -1028,21 +1049,21 @@ class Netcat(object):
            :class:`pync.NetcatTCPClient` object.
 
        from pync import Netcat
-       with Netcat(8000, dest='localhost') as nc:
+       with Netcat(dest='localhost', port=8000) as nc:
            nc.readwrite()
 
     .. code-block:: python
        :caption: Create a :class:`pync.NetcatUDPServer` with the "u" and "l" options.
 
        from pync import Netcat
-       with Netcat(8000, dest='localhost', l=True, u=True) as nc:
+       with Netcat(dest='localhost', port=8000, l=True, u=True) as nc:
            nc.readwrite()
 
     .. code-block:: python
        :caption: And a :class:`pync.NetcatUDPClient` using only the "u" option.
 
        from pync import Netcat
-       with Netcat(8000, dest='localhost', u=True) as nc:
+       with Netcat(dest='localhost', port=8000, u=True) as nc:
            nc.readwrite()
 
     .. code-block:: python
@@ -1050,7 +1071,7 @@ class Netcat(object):
 
        from pync import Netcat
        # Use the "k" option to keep the server open between connections.
-       with Netcat(8000, dest='localhost', l=True, k=True) as nc:
+       with Netcat(dest='localhost', port=8000, l=True, k=True) as nc:
            nc.readwrite()
 
     .. code-block:: python
@@ -1060,7 +1081,8 @@ class Netcat(object):
        from pync import Netcat
        # Use the "z" option to turn Zero i_o on (connect then close).
        # Use the "v" option to turn verbose output on to see connection success or failure.
-       with Netcat([8000, 8003, 8002], dest='localhost', z=True, v=True) as nc:
+       ports = [8000, 8003, 8002]
+       with Netcat(dest='localhost', port=ports, z=True, v=True) as nc:
            nc.readwrite()
     """
 
@@ -1073,17 +1095,19 @@ class Netcat(object):
     UDPServer = NetcatUDPServer
     UDPClient = NetcatUDPClient
 
-    def __new__(cls, port, dest='', l=False, u=False, **kwargs):
+    def __new__(cls, dest='', port=None, l=False, u=False, p=None, **kwargs):
         if l:
+            if p is not None:
+                port = p
             if u:
                 return cls.UDPServer(port, dest=dest, **kwargs)
             else:
                 return cls.TCPServer(port, dest=dest, **kwargs)
         else:
             if u:
-                return cls.UDPClient(dest, port, **kwargs)
+                return cls.UDPClient(dest, port, p=p, **kwargs)
             else:
-                return cls.TCPClient(dest, port, **kwargs)
+                return cls.TCPClient(dest, port, p=p, **kwargs)
 
     @classmethod
     def from_args(cls, args,
@@ -1130,6 +1154,9 @@ class Netcat(object):
         client_args = parsed_args['client arguments']
         server_args = parsed_args['server arguments']
 
+        # Check for args misuse.
+        pass
+
         kwargs = dict()
         kwargs.update(vars(general_args))
         if server_args.l:
@@ -1164,7 +1191,7 @@ class Netcat(object):
                 help='The port number to connect or bind to',
                 type=PORT,
                 metavar='PORT',
-                nargs='+',
+                nargs='*',
                 action=PortAction,
         )
         parser.add_argument('-D',
@@ -1203,6 +1230,11 @@ class Netcat(object):
         parser.add_argument('-u',
                 help='UDP mode. [default: TCP]',
                 action='store_true',
+        )
+        parser.add_argument('-p',
+                help='Source port to use when binding the socket.',
+                metavar='SPORT',
+                type=int,
         )
         return parser
 
