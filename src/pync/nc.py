@@ -1155,8 +1155,8 @@ class Netcat(object):
         server_args = parsed_args['server arguments']
 
         if general_args.port is None and general_args.p is None:
-            parser.print_help()
-            raise SystemExit
+            general_args.port = int(general_args.dest)
+            general_args.dest = ''
 
         kwargs = dict()
         kwargs.update(vars(general_args))
