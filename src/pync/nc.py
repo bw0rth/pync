@@ -432,20 +432,23 @@ class NetcatIterator(NetcatContext):
         return self.Connection(sock, **self._conn_kwargs)
 
     def __iter__(self):
+        return self.iter_connections()
+
+    def __next__(self):
+        return self.next_connection()
+
+    def iter_connections(self):
         ''' Override in subclass
-        Iterate through each connection.
+        Iterate through and yield each connection.
         Close each connection before moving on to the next.
         '''
         raise NotImplementedError
 
-    def __next__(self):
+    def next_connection(self):
         ''' Override in subclass
         Return the next NetcatConnection.
         '''
         raise NotImplementedError
-
-    def next_connection(self):
-        return next(self)
 
 
 class NetcatClient(NetcatIterator):
@@ -501,8 +504,8 @@ class NetcatClient(NetcatIterator):
     """
     protocol_name = ''    # Override in subclass
 
-    v_conn_succeeded = 'Connection to {dest} {port} port [{proto}] succeeded!'
-    v_conn_refused = 'connect to {dest} port {port} failed: Connection refused'
+    v_conn_succeeded = 'Connection to {dest} {port} port [{proto_name}/{proto}] succeeded!'
+    v_conn_refused = 'connect to {dest} port {port} ({proto_name}) failed: Connection refused'
 
     e = None
     z = False
@@ -523,7 +526,7 @@ class NetcatClient(NetcatIterator):
 
         self._iterports = iter(self.port)
 
-    def __iter__(self):
+    def iter_connections(self):
         while True:
             try:
                 nc_conn = self.next_connection()
@@ -541,7 +544,7 @@ class NetcatClient(NetcatIterator):
             finally:
                 nc_conn.close()
 
-    def __next__(self):
+    def next_connection(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
         try:
@@ -595,9 +598,6 @@ class NetcatTCPClient(NetcatClient):
     protocol_name = 'tcp'
     Connection = NetcatTCPConnection
 
-    v_conn_succeeded = 'Connection to {dest} {port} port [{proto_name}/{proto}] succeeded!'
-    v_conn_refused = 'connect to {dest} port {port} ({proto_name}) failed: Connection refused'
-
     def _create_connection(self, addr):
         dest, port = addr
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -613,14 +613,23 @@ class NetcatUDPClient(NetcatClient):
     protocol_name = 'udp'
     Connection = NetcatUDPConnection
 
-    v_conn_succeeded = 'Connection to {dest} {port} port [udp/{proto}] succeeded!'
-    v_conn_refused = 'connect to {dest} port {port} (udp) failed: Connection refused'
+    udp_scan_timeout = 3
 
     def _create_connection(self, addr):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.connect(addr)
+        self._udptest(sock)
         nc_conn = self._init_connection(sock)
         return nc_conn
+
+    def _udptest(self, sock):
+        for i in range(2):
+            sock.sendall(b'X')
+
+        # Give the remote host some time to reply.
+        for i in range(0, self.udp_scan_timeout):
+            time.sleep(1)
+            sock.sendall(b'X')
 
 
 class NetcatServer(NetcatIterator):
@@ -675,6 +684,8 @@ class NetcatServer(NetcatIterator):
     socket_type = None
 
     v_listening = 'Listening on [{dest}] (family {family}, port {port})'
+    v_conn_accepted = 'Connection from [{dest}] port {port} [{proto_name}/{proto}] accepted (family {family}, sport {sport})'
+    v_listening_again = 'Connection closed, listening again.'
 
     e = None
     k = False
@@ -717,19 +728,31 @@ class NetcatServer(NetcatIterator):
                     port=self.port,
                 ))
 
-    def __iter__(self):
-        while True:
-            try:
-                nc_conn = next(self)
-            except StopIteration:
-                return
+    def iter_connections(self):
+        try:
+            nc_conn = self.next_connection()
+        except StopIteration:
+            return
 
-            try:
-                yield nc_conn
-            finally:
-                nc_conn.close()
+        try:
+            yield nc_conn
+        finally:
+            self._close_request(nc_conn)
 
-    def __next__(self):
+        if self.k:
+            while True:
+                self.print_verbose(self.v_listening_again)
+                try:
+                    nc_conn = self.next_connection()
+                except StopIteration:
+                    return
+
+                try:
+                    yield nc_conn
+                finally:
+                    self._close_request(nc_conn)
+
+    def next_connection(self):
         while True:
             try:
                 can_read, _, _ = select.select([self.sock], [], [], .002)
@@ -738,13 +761,22 @@ class NetcatServer(NetcatIterator):
                 # This can occur when the server is closed.
                 raise StopIteration
             if self.sock in can_read:
-                cli_sock, _ = self._get_request()
+                cli_sock, cli_addr = self._get_request()
+                cli_dest, cli_port = cli_addr
                 nc_conn = self._init_connection(cli_sock)
                 break
-        if not self.k:
-            # The "k" option keeps the server open.
-            # In this case, "k" is set to False so close the server.
-            self.close()
+        try:
+            proto = socket.getservbyport(self.port, self.protocol_name)
+        except OSError:
+            proto = '*'
+        self.print_verbose(self.v_conn_accepted.format(
+            dest=cli_dest,
+            port=self.port,
+            proto_name=self.protocol_name,
+            proto=proto,
+            family=self.address_family,
+            sport=cli_port,
+        ))
         return nc_conn
 
     def readwrite(self):
@@ -763,10 +795,10 @@ class NetcatServer(NetcatIterator):
             conn.readwrite()
 
     def _server_bind(self):
-        ''' Override in subclass
-        Bind socket to address.
-        '''
-        raise NotImplementedError
+        # This should raise any errors if problems with dest and port.
+        socket.getaddrinfo(self.dest, self.port)
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.sock.bind((self.dest, self.port))
 
     def _server_activate(self):
         pass
@@ -780,6 +812,9 @@ class NetcatServer(NetcatIterator):
         Return (socket, addr) tuple.
         '''
         raise NotImplementedError
+
+    def _close_request(self, request):
+        request.close()
 
     def close(self):
         """
@@ -799,34 +834,17 @@ class NetcatTCPServer(NetcatServer):
     socket_type = socket.SOCK_STREAM
     request_queue_size = 1
 
-    v_conn_accepted = 'Connection from [{dest}] port {port} [{proto_name}/{proto}] accepted (family {family}, sport {sport})'
-
-    def _server_bind(self):
-        # This should raise any errors if problems with dest and port.
-        socket.getaddrinfo(self.dest, self.port)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.dest, self.port))
+    def next_connection(self):
+        nc_conn = super(NetcatTCPServer, self).next_connection()
+        if not self.k:
+            self.close()
+        return nc_conn
 
     def _server_activate(self):
         self.sock.listen(self.request_queue_size)
 
     def _get_request(self):
-        request = self.sock.accept()
-        cli_sock, cli_addr = request
-        cli_dest, cli_port = cli_addr
-        try:
-            proto = socket.getservbyport(self.port, self.protocol_name)
-        except OSError:
-            proto = '*'
-        self.print_verbose(self.v_conn_accepted.format(
-            dest=cli_dest,
-            port=self.port,
-            proto_name=self.protocol_name,
-            proto=proto,
-            family=self.address_family,
-            sport=cli_port,
-        ))
-        return request
+        return self.sock.accept()
 
 
 class NetcatUDPServer(NetcatServer):
@@ -840,14 +858,21 @@ class NetcatUDPServer(NetcatServer):
     socket_type = socket.SOCK_DGRAM
     max_packet_size = 8192
 
-    def _server_close(self):
-        pass
-
     def _get_request(self):
         data, addr = self.sock.recvfrom(self.max_packet_size)
-        self.stdout.write(data.decode())
+        try:
+            # py3
+            self.stdout.buffer.write(data)
+        except AttributeError:
+            # py2
+            self.stdout.write(data)
+
         self.sock.connect(addr)
         return self.sock, addr
+
+    def _close_request(self, request):
+        if not self.k:
+            request.close()
 
 
 class StopReadWrite(Exception):
