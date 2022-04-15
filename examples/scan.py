@@ -30,7 +30,13 @@ def main():
 
     # The "v" option is to turn verbose on, and "z" for
     # Zero-I/O mode (connect then close).
-    with Netcat(args.port, dest=args.dest, v=True, z=True) as nc:
+    nc = Netcat(
+            dest=args.dest,
+            port=args.port,
+            v=True,
+            z=True
+    )
+    with nc:
         nc.readwrite()
 
 

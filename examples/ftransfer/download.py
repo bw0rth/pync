@@ -46,7 +46,9 @@ def main():
 
     filepath = os.path.join('downloads', args.filename)
     with open(filepath, 'wb') as f:
-        nc = Netcat(args.port, dest=args.dest,
+        nc = Netcat(
+                dest=args.dest,
+                port=args.port,
                 l=args.l,
                 stdout=f,
         )

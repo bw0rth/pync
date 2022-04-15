@@ -41,7 +41,9 @@ def main():
     args = parser.parse_args()
 
     with open(args.filename, 'rb') as f:
-        nc = Netcat(args.port, dest=args.dest,
+        nc = Netcat(
+                dest=args.dest,
+                port=args.port,
                 l=args.l,
                 stdin=f,
         )

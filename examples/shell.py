@@ -42,8 +42,9 @@ def main():
     if platform.system() == 'Windows':
         command = 'cmd /q'
 
-    nc = Netcat(args.port,
+    nc = Netcat(
             dest=args.dest,
+            port=args.port,
             e=command,
             l=args.l,
     )
