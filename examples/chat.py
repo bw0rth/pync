@@ -20,6 +20,9 @@ class ChatInput(ConsoleInput):
 
 
 def main():
+    # Still Under Construction.
+    raise NotImplementedError
+
     parser = argparse.ArgumentParser('chat.py')
 
     chatin = ChatInput(b'bren')
