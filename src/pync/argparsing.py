@@ -20,6 +20,9 @@ class GroupingArgumentParser(object):
                 action='help',
         )
 
+    def __getattr__(self, name):
+        return getattr(self._parser, name)
+
     def add_argument(self, name, group='general arguments', **kwargs):
         if group not in self._group_parsers:
             self._group_parsers[group] = self._parser.add_argument_group(group)

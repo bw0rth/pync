@@ -1154,8 +1154,9 @@ class Netcat(object):
         client_args = parsed_args['client arguments']
         server_args = parsed_args['server arguments']
 
-        # Check for args misuse.
-        pass
+        if general_args.port is None and general_args.p is None:
+            parser.print_help()
+            raise SystemExit
 
         kwargs = dict()
         kwargs.update(vars(general_args))
