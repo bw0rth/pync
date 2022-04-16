@@ -1087,6 +1087,8 @@ class Netcat(object):
     """
 
     name = 'pync'
+    usage = ('pync [-hkluvz] [-e command] [-p source_port] [-q seconds]\n'
+            '            [dest] [port]')
     description = 'pync - arbitrary TCP and UDP connections and listens (Netcat for Python).'
 
     TCPServer = NetcatTCPServer
@@ -1155,6 +1157,7 @@ class Netcat(object):
         server_args = parsed_args['server arguments']
 
         if server_args.l:
+            # Server mode.
             if args.dest and args.port and not args.p:
                 # pync -l localhost 8000
                 pass
@@ -1172,9 +1175,10 @@ class Netcat(object):
                 # pync -lp 8000 localhost 8001
                 pass
             else:
-                parser.print_help()
+                parser.print_usage()
                 raise SystemExit
         else:
+            # Client mode.
             if args.dest and args.port:
                 # pync localhost 8000
                 pass
@@ -1182,7 +1186,7 @@ class Netcat(object):
                 # pync -p 1234 localhost 8000
                 pass
             else:
-                parser.print_help()
+                parser.print_usage()
                 raise SystemExit
 
         kwargs = dict()
@@ -1204,47 +1208,45 @@ class Netcat(object):
     def makeparser(cls):
         parser = GroupingArgumentParser(cls.name,
                 description=cls.description,
-                usage='''
-       {name} [OPTIONS] DEST PORT
-       {name} [OPTIONS] -l [DEST] PORT
-    '''.strip().format(name=cls.name),
-        )
-        parser.add_argument('dest',
-                help='The host name or ip to connect or bind to',
-                nargs='?',
-                default='',
-                metavar='DEST',
-        )
-        parser.add_argument('port',
-                help='The port number to connect or bind to',
-                type=PORT,
-                metavar='PORT',
-                nargs='*',
-                action=PortAction,
+                usage=cls.usage,
+                add_help=False,
         )
         parser.add_argument('-D',
-                help='Enable debugging output to stderr',
+                help='Enable debugging output to stderr.',
                 action='store_true',
+        )
+        parser.add_argument('-e',
+                help='Execute a command over the connection.',
+                metavar='command',
+        )
+        parser.add_argument('-h',
+                help='show this help message and exit.',
+                action='help',
         )
         parser.add_argument('-k',
                 group='server arguments',
-                help='Keep inbound sockets open for multiple connects',
+                help='Keep inbound sockets open for multiple connects.',
                 action='store_true',
         )
         parser.add_argument('-l',
                 group='server arguments',
-                help='Listen mode, for inbound connects',
+                help='Listen mode, for inbound connects.',
                 action='store_true',
         )
-        parser.add_argument('-e',
-                help='Execute a command over the connection',
-                metavar='CMD',
+        parser.add_argument('-p',
+                help='Source port to use when binding the socket.',
+                metavar='source_port',
+                type=int,
         )
         parser.add_argument('-q',
-                help='quit after EOF on stdin and delay of SECS',
-                metavar='SECS',
+                help='quit after EOF on stdin and delay of seconds.',
+                metavar='seconds',
                 default=0,
                 type=int,
+        )
+        parser.add_argument('-u',
+                help='UDP mode. [default: TCP]',
+                action='store_true',
         )
         parser.add_argument('-v',
                 help='Verbose',
@@ -1252,17 +1254,21 @@ class Netcat(object):
         )
         parser.add_argument('-z',
                 group='client arguments',
-                help='Zero-I/O mode (useful for scanning)',
+                help='Zero-I/O mode (useful for scanning).',
                 action='store_true',
         )
-        parser.add_argument('-u',
-                help='UDP mode. [default: TCP]',
-                action='store_true',
+        parser.add_argument('dest',
+                help='The destination host name or ip to connect or bind to.',
+                nargs='?',
+                default='',
+                metavar='dest',
         )
-        parser.add_argument('-p',
-                help='Source port to use when binding the socket.',
-                metavar='SPORT',
-                type=int,
+        parser.add_argument('port',
+                help='The port number to connect or bind to.',
+                type=PORT,
+                metavar='port',
+                nargs='*',
+                action=PortAction,
         )
         return parser
 

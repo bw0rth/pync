@@ -9,16 +9,10 @@ class GroupingArgumentParser(object):
     def __init__(self, *args, **kwargs):
         self._parser = argparse.ArgumentParser(
                 *args,
-                add_help=False,
                 **kwargs,
         )
         self._group_args = defaultdict(list)
         self._group_parsers = dict()
-
-        self.add_argument('-h',
-                help='show this help message and exit.',
-                action='help',
-        )
 
     def __getattr__(self, name):
         return getattr(self._parser, name)
