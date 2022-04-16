@@ -8,7 +8,8 @@ from .nc import (
         NetcatServer,
         NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
-        Process, StopReadWrite, ConnectionRefused
+        Process, StopReadWrite, ConnectionRefused,
+        ArgumentParser, ArgumentError,
+        ConsoleInput,
 )
-from .conin import ConsoleInput
 
