@@ -28,13 +28,11 @@ def main():
     )
     args = parser.parse_args()
 
-    # The "v" option is to turn verbose on, and "z" for
-    # Zero-I/O mode (connect then close).
     nc = Netcat(
             dest=args.dest,
             port=args.port,
-            v=True,
-            z=True
+            v=True,          # Print connection status messages to stderr.
+            z=True,          # Zero I/O mode (connect then close).
     )
     with nc:
         nc.readwrite()

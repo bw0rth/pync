@@ -49,8 +49,8 @@ def main():
         nc = Netcat(
                 dest=args.dest,
                 port=args.port,
-                l=args.l,
-                stdout=f,
+                l=args.l,        # Listen for connections (server mode).
+                stdout=f,        # Write network data to stdout (f).
         )
         with contextlib.closing(nc):
             nc.readwrite()
