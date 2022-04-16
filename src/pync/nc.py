@@ -16,9 +16,12 @@ import subprocess
 import sys
 import time
 
-from .argparsing import GroupingArgumentParser
+from .argparsing import (
+        GroupingArgumentParser as ArgumentParser,
+        ArgumentError,
+)
 from .process import NonBlockingProcess, ProcessTerminated
-from .conin import ConsoleInput
+from .conin import NonBlockingConsoleInput as ConsoleInput
 
 if sys.version_info.major == 2:
     from socket import error as ConnectionRefusedError
@@ -1182,7 +1185,7 @@ class Netcat(object):
                 pass
             else:
                 parser.print_usage()
-                raise SystemExit
+                raise ArgumentError
         else:
             # Client mode.
             if args.dest and args.port:
@@ -1193,7 +1196,7 @@ class Netcat(object):
                 pass
             else:
                 parser.print_usage()
-                raise SystemExit
+                raise ArgumentError
 
         kwargs = dict()
         kwargs.update(vars(args))
@@ -1212,7 +1215,7 @@ class Netcat(object):
 
     @classmethod
     def makeparser(cls):
-        parser = GroupingArgumentParser(cls.name,
+        parser = ArgumentParser(cls.name,
                 description=cls.description,
                 usage=cls.usage,
                 add_help=False,
@@ -1338,6 +1341,9 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     except socket.error as e:
         # NetcatServer may raise a socket error on bad address.
         stderr.write('pync: {}\n'.format(e))
+        return 1
+    except ArgumentError:
+        # Can raise when invalid arguments have been passed.
         return 1
 
     try:
