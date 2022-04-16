@@ -1150,16 +1150,43 @@ class Netcat(object):
         parser = cls.makeparser()
         parsed_args = parser.parse_args(args)
 
-        general_args = parsed_args['general arguments']
+        args = parsed_args['general arguments']
         client_args = parsed_args['client arguments']
         server_args = parsed_args['server arguments']
 
-        if general_args.port is None and general_args.p is None:
-            general_args.port = int(general_args.dest)
-            general_args.dest = ''
+        if server_args.l:
+            if args.dest and args.port and not args.p:
+                # pync -l localhost 8000
+                pass
+            elif args.dest and not args.port and not args.p:
+                # pync -l 8000
+                args.port = int(args.dest)
+                args.dest = ''
+            elif not args.dest and not args.port and args.p:
+                # pync -lp 8000
+                pass
+            elif args.dest and not args.port and args.p:
+                # pync -lp 8000 localhost
+                pass
+            elif args.dest and args.port and args.p:
+                # pync -lp 8000 localhost 8001
+                pass
+            else:
+                parser.print_help()
+                raise SystemExit
+        else:
+            if args.dest and args.port:
+                # pync localhost 8000
+                pass
+            elif args.dest and args.port and args.p:
+                # pync -p 1234 localhost 8000
+                pass
+            else:
+                parser.print_help()
+                raise SystemExit
 
         kwargs = dict()
-        kwargs.update(vars(general_args))
+        kwargs.update(vars(args))
         if server_args.l:
             kwargs.update(vars(server_args))
         else:
