@@ -19,7 +19,7 @@
 <summary>Unix</summary>
 
 ```sh
-pync [-hkluvz] [-e command] [-q seconds] [dest] [port]
+pync [-hkluvz] [-e command] [-p source_port] [-q seconds] [dest] [port]
 ```
 </details>
 
@@ -27,7 +27,7 @@ pync [-hkluvz] [-e command] [-q seconds] [dest] [port]
 <summary>Windows</summary>
 
 ```sh
-py -m pync [-hkluvz] [-e command] [-q seconds] [dest] [port]
+py -m pync [-hkluvz] [-e command] [-p source_port] [-q seconds] [dest] [port]
 ```
 </details>
 
@@ -36,7 +36,7 @@ py -m pync [-hkluvz] [-e command] [-q seconds] [dest] [port]
 
 ```python
 from pync import pync
-pync('[-hkluvz] [-e command] [-q seconds] [dest] [port]',
+pync('[-hkluvz] [-e command] [-p source_port] [-q seconds] [dest] [port]',
     stdin, stdout, stderr,
 )
 ```
