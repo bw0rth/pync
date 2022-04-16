@@ -1163,6 +1163,9 @@ class Netcat(object):
                 pass
             elif args.dest and not args.port and not args.p:
                 # pync -l 8000
+                # Get the port from args.dest.
+                # This will need feeding through the parser
+                # again to detect any port number errors.
                 args.port = args.dest
                 args.dest = ''
                 test_args = ['dest', args.port]
