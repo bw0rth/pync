@@ -1212,11 +1212,11 @@ class Netcat(object):
                 add_help=False,
         )
         parser.add_argument('-D',
-                help='Enable debugging output to stderr.',
+                help='Enable debugging output to stderr',
                 action='store_true',
         )
         parser.add_argument('-e',
-                help='Execute a command over the connection.',
+                help='Execute a command over the connection',
                 metavar='command',
         )
         parser.add_argument('-h',
@@ -1225,27 +1225,27 @@ class Netcat(object):
         )
         parser.add_argument('-k',
                 group='server arguments',
-                help='Keep inbound sockets open for multiple connects.',
+                help='Keep inbound sockets open for multiple connects',
                 action='store_true',
         )
         parser.add_argument('-l',
                 group='server arguments',
-                help='Listen mode, for inbound connects.',
+                help='Listen mode, for inbound connects',
                 action='store_true',
         )
         parser.add_argument('-p',
-                help='Source port to use when binding the socket.',
+                help='Specify local port for remote connects',
                 metavar='source_port',
                 type=int,
         )
         parser.add_argument('-q',
-                help='quit after EOF on stdin and delay of seconds.',
+                help='quit after EOF on stdin and delay of seconds',
                 metavar='seconds',
                 default=0,
                 type=int,
         )
         parser.add_argument('-u',
-                help='UDP mode. [default: TCP]',
+                help='UDP mode [default: TCP]',
                 action='store_true',
         )
         parser.add_argument('-v',
@@ -1254,17 +1254,17 @@ class Netcat(object):
         )
         parser.add_argument('-z',
                 group='client arguments',
-                help='Zero-I/O mode (useful for scanning).',
+                help='Zero-I/O mode [used for scanning]',
                 action='store_true',
         )
         parser.add_argument('dest',
-                help='The destination host name or ip to connect or bind to.',
+                help='The destination host name or ip to connect or bind to',
                 nargs='?',
                 default='',
                 metavar='dest',
         )
         parser.add_argument('port',
-                help='The port number to connect or bind to.',
+                help='The port number to connect or bind to',
                 type=PORT,
                 metavar='port',
                 nargs='*',
