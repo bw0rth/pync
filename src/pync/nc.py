@@ -938,7 +938,7 @@ class _ProcStdout:
             raise StopReadWrite
 
 
-def PORT(value):
+def port(value):
     # This should always return a range of ports.
     # Even if only one port is given.
     #
@@ -1163,8 +1163,11 @@ class Netcat(object):
                 pass
             elif args.dest and not args.port and not args.p:
                 # pync -l 8000
-                args.port = int(args.dest)
+                args.port = args.dest
                 args.dest = ''
+                test_args = ['dest', args.port]
+                test_args = parser.parse_args(test_args)['general arguments']
+                args.port = test_args.port
             elif not args.dest and not args.port and args.p:
                 # pync -lp 8000
                 pass
@@ -1265,7 +1268,7 @@ class Netcat(object):
         )
         parser.add_argument('port',
                 help='The port number to connect or bind to',
-                type=PORT,
+                type=port,
                 metavar='port',
                 nargs='*',
                 action=PortAction,
