@@ -10,6 +10,10 @@ class ArgumentError(Exception):
 
 
 class ArgumentParser(argparse.ArgumentParser):
+    '''
+    ArgumentParser that accepts custom stdout and
+    stderr file-like objects.
+    '''
     stdout = sys.stdout
     stderr = sys.stderr
 
@@ -25,6 +29,7 @@ class ArgumentParser(argparse.ArgumentParser):
             file = self.stdout
         elif file is sys.stderr:
             file = self.stderr
+
         if message:
             if file is None:
                 file = self.stderr
@@ -36,6 +41,11 @@ class ArgumentParser(argparse.ArgumentParser):
 
 
 class GroupingArgumentParser(object):
+    '''
+    ArgumentParser that separates parsed arguments
+    by custom group names.
+    '''
+    default_group = 'general arguments'
 
     def __init__(self, *args, **kwargs):
         self._parser = ArgumentParser(*args, **kwargs)
@@ -45,7 +55,9 @@ class GroupingArgumentParser(object):
     def __getattr__(self, name):
         return getattr(self._parser, name)
 
-    def add_argument(self, name, group='general arguments', **kwargs):
+    def add_argument(self, name, group='', **kwargs):
+        if not group:
+            group = self.default_group
         if group not in self._group_parsers:
             self._group_parsers[group] = self._parser.add_argument_group(group)
         parser = self._group_parsers[group]
