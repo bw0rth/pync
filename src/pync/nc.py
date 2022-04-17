@@ -7,6 +7,7 @@ pync - arbitrary TCP and UDP connections and listens (Netcat for Python).
 from __future__ import unicode_literals
 import argparse
 import contextlib
+import errno
 import itertools
 import logging
 import select
@@ -121,10 +122,10 @@ class NetcatConnection(NetcatContext):
     q = 0
     plen = 2048
 
-    def __init__(self, sock, q=None, **kwargs):
+    def __init__(self, net, q=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
-        self.sock = sock
+        self.net = net
 
         if q is not None:
             self.q = q
@@ -132,7 +133,7 @@ class NetcatConnection(NetcatContext):
         self.i = False  # TODO
         self.d = False  # TODO
 
-        self.dest, self.port = sock.getpeername()
+        self.dest, self.port = net.getpeername()
 
         # TODO: Move this into a property.setter?
         if self.stdin is sys.__stdin__ and self.stdin.isatty():
@@ -196,21 +197,21 @@ class NetcatConnection(NetcatContext):
 
     def recv(self, n, blocking=True):
         if blocking:
-            return self.sock.recv(n)
-        can_read, _, _ = select.select([self.sock], [], [], .001)
+            return self.net.recv(n)
+        can_read, _, _ = select.select([self.net], [], [], .001)
 
-        if self.sock in can_read:
-            return self.sock.recv(n)
+        if self.net in can_read:
+            return self.net.recv(n)
 
     def send(self, data):
-        self.sock.sendall(data)
+        self.net.sendall(data)
 
     def close(self):
-        self.sock.close()
+        self.net.close()
 
     def shutdown(self, how):
         try:
-            return self.sock.shutdown(how)
+            return self.net.shutdown(how)
         except OSError:
             pass
 
@@ -279,7 +280,11 @@ class NetcatConnection(NetcatContext):
                     if stdin_data:
                         try:
                             self.send(stdin_data)
-                        except:
+                        except socket.error as e:
+                            if e.errno != errno.EPIPE:
+                                # Not a broken pipe.
+                                raise
+                            # Broken pipe.
                             # netin connection lost
                             return
                     elif stdin_data is not None:
@@ -728,7 +733,7 @@ class NetcatServer(NetcatIterator):
         if k is not None:
             self.k = k
 
-        self.sock = socket.socket(self.address_family, self.socket_type)
+        self._sock = socket.socket(self.address_family, self.socket_type)
 
         bind_and_activate = True
         if bind_and_activate:
@@ -772,12 +777,12 @@ class NetcatServer(NetcatIterator):
     def next_connection(self):
         while True:
             try:
-                can_read, _, _ = select.select([self.sock], [], [], .002)
+                can_read, _, _ = select.select([self._sock], [], [], .002)
             except (ValueError, socket.error):
                 # Bad / closed socket.
                 # This can occur when the server is closed.
                 raise StopIteration
-            if self.sock in can_read:
+            if self._sock in can_read:
                 cli_sock, cli_addr = self._get_request()
                 cli_dest, cli_port = cli_addr
                 nc_conn = self._init_connection(cli_sock)
@@ -815,14 +820,14 @@ class NetcatServer(NetcatIterator):
         # This should raise any errors if problems with dest and port.
         socket.getaddrinfo(self.dest, self.port)
         if self.allow_reuse_port:
-            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.bind((self.dest, self.port))
+            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self._sock.bind((self.dest, self.port))
 
     def _server_activate(self):
         pass
 
     def _server_close(self):
-        self.sock.close()
+        self._sock.close()
 
     def _get_request(self):
         ''' Override in subclass
@@ -859,10 +864,10 @@ class NetcatTCPServer(NetcatServer):
         return nc_conn
 
     def _server_activate(self):
-        self.sock.listen(self.request_queue_size)
+        self._sock.listen(self.request_queue_size)
 
     def _get_request(self):
-        return self.sock.accept()
+        return self._sock.accept()
 
 
 class NetcatUDPServer(NetcatServer):
@@ -877,7 +882,7 @@ class NetcatUDPServer(NetcatServer):
     max_packet_size = 8192
 
     def _get_request(self):
-        data, addr = self.sock.recvfrom(self.max_packet_size)
+        data, addr = self._sock.recvfrom(self.max_packet_size)
         try:
             # py3
             self.stdout.buffer.write(data)
@@ -885,8 +890,8 @@ class NetcatUDPServer(NetcatServer):
             # py2
             self.stdout.write(data)
 
-        self.sock.connect(addr)
-        return self.sock, addr
+        self._sock.connect(addr)
+        return self._sock, addr
 
     def _close_request(self, request):
         if not self.k:
@@ -1152,7 +1157,10 @@ class Netcat(object):
             # args is not a string, assume it's a list.
             pass
 
-        parser = cls.makeparser()
+        parser = cls.create_parser(
+                stdout=stdout,
+                stderr=stderr,
+        )
         parsed_args = parser.parse_args(args)
 
         args = parsed_args['general arguments']
@@ -1214,11 +1222,12 @@ class Netcat(object):
         return cls(**kwargs)
 
     @classmethod
-    def makeparser(cls):
+    def create_parser(cls, **kwargs):
         parser = ArgumentParser(cls.name,
                 description=cls.description,
                 usage=cls.usage,
                 add_help=False,
+                **kwargs,
         )
         parser.add_argument('-D',
                 help='Enable debugging output to stderr',
