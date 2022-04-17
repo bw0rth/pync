@@ -9,10 +9,36 @@ class ArgumentError(Exception):
     pass
 
 
+class ArgumentParser(argparse.ArgumentParser):
+    stdout = sys.stdout
+    stderr = sys.stderr
+
+    def __init__(self, *args, stdout=None, stderr=None, **kwargs):
+        super(ArgumentParser, self).__init__(*args, **kwargs)
+        if stdout is not None:
+            self.stdout = stdout
+        if stderr is not None:
+            self.stderr = stderr
+
+    def _print_message(self, message, file=None):
+        if file is sys.stdout:
+            file = self.stdout
+        elif file is sys.stderr:
+            file = self.stderr
+        if message:
+            if file is None:
+                file = self.stderr
+            try:
+                file.write(message)
+            except TypeError:
+                file.write(message.encode())
+            file.flush()
+
+
 class GroupingArgumentParser(object):
 
     def __init__(self, *args, **kwargs):
-        self._parser = argparse.ArgumentParser(*args, **kwargs)
+        self._parser = ArgumentParser(*args, **kwargs)
         self._group_args = defaultdict(list)
         self._group_parsers = dict()
 
