@@ -55,7 +55,7 @@ Common uses include:
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
-installed (version 2.7 or higher).
+installed (version 3.3 or higher).
 
 Use Python's pip command to install **pync** straight from github:
 <details open>
