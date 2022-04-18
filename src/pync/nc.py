@@ -1376,3 +1376,5 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
     finally:
         nc.close()
 
+    return 0
+
