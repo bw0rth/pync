@@ -29,10 +29,16 @@ if sys.version_info.major == 2:
     
     class range(object):
 
-        def __init__(self, start, stop, *args, **kwargs):
-            self.start = start
-            self.stop = stop
-            self._rng = xrange(start, stop, *args, **kwargs)
+        def __init__(self, start=None, stop=None, **kwargs):
+            if start is not None:
+                _start = 0
+                _stop = start
+                if stop is not None:
+                    _start = start
+                    _stop = stop
+            self.start = _start
+            self.stop = _stop
+            self._rng = xrange(_start, _stop, **kwargs)
 
         def __getattr__(self, name):
             return getattr(self._rng, name)
@@ -576,7 +582,7 @@ class NetcatClient(NetcatIterator):
 
         try:
             proto = socket.getservbyport(nc_conn.port, self.protocol_name)
-        except OSError:
+        except (socket.error, OSError):
             proto = '*'
         self.print_verbose(
                 self.v_conn_succeeded.format(
@@ -789,7 +795,7 @@ class NetcatServer(NetcatIterator):
                 break
         try:
             proto = socket.getservbyport(self.port, self.protocol_name)
-        except OSError:
+        except (socket.error, OSError):
             proto = '*'
         self.print_verbose(self.v_conn_accepted.format(
             dest=cli_dest,
@@ -1227,7 +1233,7 @@ class Netcat(object):
                 description=cls.description,
                 usage=cls.usage,
                 add_help=False,
-                **kwargs,
+                **kwargs
         )
         parser.add_argument('-D',
                 help='Enable debugging output to stderr',

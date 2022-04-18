@@ -17,8 +17,8 @@ class ArgumentParser(argparse.ArgumentParser):
     stdout = sys.stdout
     stderr = sys.stderr
 
-    def __init__(self, *args, stdout=None, stderr=None, **kwargs):
-        super(ArgumentParser, self).__init__(*args, **kwargs)
+    def __init__(self, name, stdout=None, stderr=None, **kwargs):
+        super(ArgumentParser, self).__init__(name, **kwargs)
         if stdout is not None:
             self.stdout = stdout
         if stderr is not None:
