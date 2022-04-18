@@ -38,7 +38,7 @@ if sys.version_info.major == 2:
                     _stop = stop
             self.start = _start
             self.stop = _stop
-            self._rng = xrange(_start, _stop, **kwargs)
+            self._rng = xrange(_start, _stop, **kwargs)  # noqa: F821
 
         def __getattr__(self, name):
             return getattr(self._rng, name)
