@@ -90,15 +90,23 @@ class NetcatContext(object):
         """
         pass
 
+    def _print_message(self, message, file=None):
+        if message:
+            if file is None:
+                file = self.stderr
+            try:
+                file.write(message+'\n')
+            except TypeError:
+                file.write(message.encode()+b'\n')
+            file.flush()
+
     def print_verbose(self, message):
         if self.v:
-            self.stderr.write(message+'\n')
-            self.stderr.flush()
+            self._print_message(message, file=self.stderr)
 
     def print_debug(self, message):
         if self.D:
-            self.stderr.write(message+'\n')
-            self.stderr.flush()
+            self._print_message(message, file=self.stderr)
 
 
 class NetcatConnection(NetcatContext):
