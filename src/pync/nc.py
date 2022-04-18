@@ -218,7 +218,7 @@ class NetcatConnection(NetcatContext):
     def shutdown(self, how):
         try:
             return self.net.shutdown(how)
-        except OSError:
+        except (socket.error, OSError):
             pass
 
     def shutdown_rd(self):
