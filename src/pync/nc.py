@@ -1305,7 +1305,7 @@ class Netcat(object):
         return parser
 
 
-def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr):
+def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Netcat):
     """
     Create and run a Netcat instance.
     This is similar to running **pync** from the command-line.
