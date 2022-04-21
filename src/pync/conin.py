@@ -1,14 +1,5 @@
 # -*- coding: utf-8 -*-
 
-''' conin.py
-
-This module contains classes to get non-blocking input from
-the console.
-
-You shouldn't have to use them directly. The nc.py module
-will use them when input is (stdin and stdin.isatty).
-'''
-
 from __future__ import print_function
 
 try:
@@ -30,8 +21,9 @@ class _BaseConsoleInput(object):
 class _WinConsoleInput(_BaseConsoleInput):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(_WinConsoleInput, self).__init__(*args, **kwargs)
         self.line = b''
+        self._stdout = sys.__stdout__
     
     def readline(self):
         # Non-blocking console input for Windows.
@@ -49,38 +41,43 @@ class _WinConsoleInput(_BaseConsoleInput):
                 # then overwrite the character with a
                 # space before moving the cursor back
                 # again with '\b'.
-                try:
-                    sys.stdout.buffer.write(b'\b \b')
-                except AttributeError:
-                    sys.stdout.write(b'\b \b')
-                sys.stdout.flush()
+                self._stdout_write(b'\b \b')
             elif ch == b'\r':
                 # User has pressed enter to send the line.
                 self.line += ch
                 line = self.line+b'\n'
                 self.line = b''
-                print()
+                self._stdout_write(b'\n')
                 return line
             else:
                 self.line += ch
-                try:
-                    sys.stdout.buffer.write(ch)
-                except AttributeError:
-                    sys.stdout.write(ch)
-                sys.stdout.flush()
+                self._stdout_write(ch)
+
+    def _stdout_write(self, data):
+        try:
+            self._stdout.buffer.write(data)
+        except AttributeError:
+            self._stdout.write(data)
+        self._stdout.flush()
 
 
 class _UnixConsoleInput(_BaseConsoleInput):
 
+    def __init__(self, *args, **kwargs):
+        super(_UnixConsoleInput, self).__init__(*args, **kwargs)
+        self._stdin = sys.__stdin__
+
     def readline(self):
-        stdin = sys.__stdin__
         # Non-blocking console input for *nix.
-        readables, _, _ = select.select([stdin], [], [], .002)
-        if stdin in readables:
-            try:
-                return stdin.buffer.readline()
-            except AttributeError:
-                return stdin.readline()
+        readables, _, _ = select.select([self._stdin], [], [], .002)
+        if self._stdin in readables:
+            return self._stdin_readline()
+
+    def _stdin_readline(self):
+        try:
+            return self._stdin.buffer.readline()
+        except AttributeError:
+            return self._stdin.readline()
 
 
 if _WINDOWS:

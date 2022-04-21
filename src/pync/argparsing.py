@@ -5,10 +5,6 @@ from collections import defaultdict
 import sys
 
 
-class ArgumentError(Exception):
-    pass
-
-
 class ArgumentParser(argparse.ArgumentParser):
     '''
     ArgumentParser that accepts custom stdout and
@@ -81,14 +77,10 @@ class GroupingArgumentParser(object):
         return arg_groups
 
 
-if __name__ == '__main__':
-    # For test purposes.
-    import sys
-
-    parser = GroupingArgumentParser()
-    parser.add_argument('-a')
-    parser.add_argument('-b', 'server arguments')
-    parser.add_argument('-c', 'client arguments')
-
-    args = parser.parse_args(sys.argv[1:])
+class ArgumentError(Exception):
+    '''
+    Raised by GroupingArgumentParser().parse_args()
+    to indicate an error while parsing the arguments.
+    '''
+    pass
 

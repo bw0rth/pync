@@ -21,30 +21,9 @@ from .argparsing import (
         GroupingArgumentParser as ArgumentParser,
         ArgumentError,
 )
-from .process import NonBlockingProcess, ProcessTerminated
+from . import compat
 from .conin import NonBlockingConsoleInput as ConsoleInput
-
-if sys.version_info.major == 2:
-    from socket import error as ConnectionRefusedError
-    
-    class range(object):
-
-        def __init__(self, start=None, stop=None, **kwargs):
-            if start is not None:
-                _start = 0
-                _stop = start
-                if stop is not None:
-                    _start = start
-                    _stop = stop
-            self.start = _start
-            self.stop = _stop
-            self._rng = xrange(_start, _stop, **kwargs)  # noqa: F821
-
-        def __getattr__(self, name):
-            return getattr(self._rng, name)
-
-        def __iter__(self):
-            return iter(self._rng)
+from .process import NonBlockingProcess, ProcessTerminated
 
 
 class NetcatContext(object):
@@ -416,11 +395,11 @@ class NetcatUDPConnection(NetcatConnection):
     def recv(self, *args, **kwargs):
         try:
             return super(NetcatUDPConnection, self).recv(*args, **kwargs)
-        except ConnectionRefusedError:
+        except (socket.error, compat.ConnectionRefusedError):
             raise StopReadWrite
 
 
-class ConnectionRefused(ConnectionRefusedError):
+class ConnectionRefused(Exception):
     '''
     Same as ConnectionRefusedError but passes back the
     dest and port of the refused connection.
@@ -571,22 +550,26 @@ class NetcatClient(NetcatIterator):
             finally:
                 nc_conn.close()
 
+    def _conn_refused(self, port):
+        self.print_verbose(
+                self.v_conn_refused.format(
+                    dest=self.dest, port=port,
+                    proto_name=self.protocol_name,
+                ),
+        )
+        raise ConnectionRefused(self.dest, port)
+
     def next_connection(self):
         # This will raise StopIteration when no more ports.
         port = next(self._iterports)
         try:
             nc_conn = self._create_connection((self.dest, port))
-        except ConnectionRefusedError:
-            self.print_verbose(
-                    self.v_conn_refused.format(
-                        dest=self.dest, port=port,
-                        proto_name=self.protocol_name,
-                    ),
-            )
-            raise ConnectionRefused(self.dest, port)
+        except compat.ConnectionRefusedError:
+            self._conn_refused(port)
         except socket.error as e:
-            self.print_verbose(str(e))
-            raise
+            if e.errno != errno.ECONNREFUSED:
+                raise e
+            self._conn_refused(port)
 
         try:
             proto = socket.getservbyport(nc_conn.port, self.protocol_name)
@@ -659,11 +642,11 @@ class NetcatUDPClient(NetcatClient):
         self._udptest(sock)
 
     def _udptest(self, sock):
-        for i in range(2):
+        for i in compat.range(2):
             sock.sendall(b'X')
 
         # Give the remote host some time to reply.
-        for i in range(0, self.udp_scan_timeout):
+        for i in compat.range(0, self.udp_scan_timeout):
             time.sleep(1)
             sock.sendall(b'X')
 
@@ -964,7 +947,7 @@ def port(value):
     # This should always return a range of ports.
     # Even if only one port is given.
     #
-    # The port action then turns it into a single port
+    # The PortAction then turns it into a single port
     # if one port is given or a chain of sorted port
     # ranges if more than one port is given.
 
@@ -982,7 +965,7 @@ def port(value):
         value = int(value)
         if not valid_port(value):
             raise ValueError(invalid_msg)
-        return range(value, value+1)
+        return compat.range(value, value+1)
 
     if start_port > end_port:
         start_port, end_port = end_port, start_port
@@ -991,7 +974,7 @@ def port(value):
         if not valid_port(p):
             raise ValueError(invalid_msg)
 
-    return range(start_port, end_port+1)
+    return compat.range(start_port, end_port+1)
 
 
 class PortAction(argparse.Action):
