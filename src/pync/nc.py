@@ -576,25 +576,28 @@ class NetcatClient(NetcatIterator):
             if e.errno != errno.ECONNREFUSED:
                 raise e
             self._conn_refused(port)
-
-        try:
-            proto = socket.getservbyport(nc_conn.port, self.protocol_name)
-        except (socket.error, OSError):
-            proto = '*'
-        self.print_verbose(
-                self.v_conn_succeeded.format(
-                    dest=nc_conn.dest,
-                    port=nc_conn.port,
-                    proto_name=self.protocol_name,
-                    proto=proto,
-                ),
-        )
+        else:
+            self._conn_succeeded(port)
 
         if self.z:
             # If zero io mode, close the connection.
             nc_conn.close()
 
         return nc_conn
+
+    def _conn_succeeded(self, port):
+        try:
+            proto = socket.getservbyport(port, self.protocol_name)
+        except (socket.error, OSError):
+            proto = '*'
+        self.print_verbose(
+                self.v_conn_succeeded.format(
+                    dest=self.dest,
+                    port=port,
+                    proto_name=self.protocol_name,
+                    proto=proto,
+                ),
+        )
 
     def readwrite(self):
         for nc_conn in self:
@@ -746,14 +749,19 @@ class NetcatServer(NetcatIterator):
             except:
                 self._server_close()
                 raise
-            else:
-                self.print_verbose(self.v_listening.format(
-                    dest=self.dest,
-                    family=self.address_family,
-                    port=self.port,
-                ))
+
+    def _listening(self):
+        self.print_verbose(self.v_listening.format(
+            dest=self.dest,
+            family=self.address_family,
+            port=self.port,
+        ))
+
+    def _listening_again(self):
+        self.print_verbose(self.v_listening_again)
 
     def iter_connections(self):
+        self._listening()
         try:
             nc_conn = self.next_connection()
         except StopIteration:
@@ -766,7 +774,7 @@ class NetcatServer(NetcatIterator):
 
         if self.k:
             while True:
-                self.print_verbose(self.v_listening_again)
+                self._listening_again()
                 try:
                     nc_conn = self.next_connection()
                 except StopIteration:
@@ -776,6 +784,20 @@ class NetcatServer(NetcatIterator):
                     yield nc_conn
                 finally:
                     self._close_request(nc_conn)
+
+    def _conn_accepted(self, cli_dest, cli_port):
+        try:
+            proto = socket.getservbyport(self.port, self.protocol_name)
+        except (socket.error, OSError):
+            proto = '*'
+        self.print_verbose(self.v_conn_accepted.format(
+            dest=cli_dest,
+            port=self.port,
+            proto_name=self.protocol_name,
+            proto=proto,
+            family=self.address_family,
+            sport=cli_port,
+        ))
 
     def next_connection(self):
         while True:
@@ -790,18 +812,7 @@ class NetcatServer(NetcatIterator):
                 cli_dest, cli_port = cli_addr
                 nc_conn = self._init_connection(cli_sock)
                 break
-        try:
-            proto = socket.getservbyport(self.port, self.protocol_name)
-        except (socket.error, OSError):
-            proto = '*'
-        self.print_verbose(self.v_conn_accepted.format(
-            dest=cli_dest,
-            port=self.port,
-            proto_name=self.protocol_name,
-            proto=proto,
-            family=self.address_family,
-            sport=cli_port,
-        ))
+        self._conn_accepted(cli_dest, cli_port)
         return nc_conn
 
     def readwrite(self):
@@ -1343,7 +1354,42 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
-    status = 1
+    exit = argparse.Namespace()
+    exit.status = 1
+
+
+    class _PyncTCPClient(Netcat.TCPClient):
+
+        def _conn_succeeded(self, port):
+            super(_PyncTCPClient, self)._conn_succeeded(port)
+            exit.status = 0
+
+
+    class _PyncTCPServer(Netcat.TCPServer):
+
+        def _listening(self):
+            super(_PyncTCPServer, self)._listening()
+            exit.status = 0
+
+
+    class _PyncUDPClient(Netcat.UDPClient):
+        
+        def _conn_succeeded(self, port):
+            super(_PyncUDPClient, self)._conn_succeeded(port)
+            exit.status = 0
+
+
+    class _PyncUDPServer(Netcat.UDPServer):
+
+        def _listening(self):
+            super(_PyncUDPServer, self)._listening()
+            exit.status = 0
+
+
+    Netcat.TCPClient = _PyncTCPClient
+    Netcat.TCPServer = _PyncTCPServer
+    Netcat.UDPClient = _PyncUDPClient
+    Netcat.UDPServer = _PyncUDPServer
 
     try:
         nc = Netcat.from_args(args,
@@ -1354,29 +1400,18 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
     except socket.error as e:
         # NetcatServer may raise a socket error on bad address.
         stderr.write('pync: {}\n'.format(e))
-        return status
+        return exit.status
     except ArgumentError:
         # Can raise when invalid arguments have been passed.
-        return status
+        return exit.status
 
     try:
-        while True:
-            try:
-                conn = nc.next_connection()
-            except StopIteration:
-                break
-            except ConnectionRefused:
-                continue
-            else:
-                status = 0
-
-            with contextlib.closing(conn):
-                conn.readwrite()
+        nc.readwrite()
     except KeyboardInterrupt:
         nc.stderr.write('\n')
-        status = 130
+        exit.status = 130
     finally:
         nc.close()
 
-    return status
+    return exit.status
 
