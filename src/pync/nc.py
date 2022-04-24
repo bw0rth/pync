@@ -191,7 +191,10 @@ class NetcatConnection(NetcatContext):
     def recv(self, n, blocking=True):
         if blocking:
             return self.net.recv(n)
-        can_read, _, _ = select.select([self.net], [], [], .001)
+        try:
+            can_read, _, _ = select.select([self.net], [], [], .001)
+        except ValueError:
+            return self.net.recv(n)
 
         if self.net in can_read:
             return self.net.recv(n)
@@ -245,7 +248,10 @@ class NetcatConnection(NetcatContext):
                     time.sleep(self.i)
 
                 # netin
-                net_data = self.recv(self.plen, blocking=False)
+                try:
+                    net_data = self.recv(self.plen, blocking=False)
+                except (socket.error, OSError):
+                    return
                 if net_data:
                     # stdout
                     try:
@@ -1337,6 +1343,7 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
+    status = 1
 
     try:
         nc = Netcat.from_args(args,
@@ -1347,17 +1354,29 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
     except socket.error as e:
         # NetcatServer may raise a socket error on bad address.
         stderr.write('pync: {}\n'.format(e))
-        return 1
+        return status
     except ArgumentError:
         # Can raise when invalid arguments have been passed.
-        return 1
+        return status
 
     try:
-        nc.readwrite()
+        while True:
+            try:
+                conn = nc.next_connection()
+            except StopIteration:
+                break
+            except ConnectionRefused:
+                continue
+            else:
+                status = 0
+
+            with contextlib.closing(conn):
+                conn.readwrite()
     except KeyboardInterrupt:
         nc.stderr.write('\n')
+        status = 130
     finally:
         nc.close()
 
-    return 0
+    return status
 
