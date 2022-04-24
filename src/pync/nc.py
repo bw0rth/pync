@@ -1358,41 +1358,43 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
     exit.status = 1
 
 
-    class _PyncTCPClient(Netcat.TCPClient):
+    class PyncTCPClient(Netcat.TCPClient):
 
         def _conn_succeeded(self, port):
-            super(_PyncTCPClient, self)._conn_succeeded(port)
+            super(PyncTCPClient, self)._conn_succeeded(port)
             exit.status = 0
 
 
-    class _PyncTCPServer(Netcat.TCPServer):
+    class PyncTCPServer(Netcat.TCPServer):
 
         def _listening(self):
-            super(_PyncTCPServer, self)._listening()
+            super(PyncTCPServer, self)._listening()
             exit.status = 0
 
 
-    class _PyncUDPClient(Netcat.UDPClient):
+    class PyncUDPClient(Netcat.UDPClient):
         
         def _conn_succeeded(self, port):
-            super(_PyncUDPClient, self)._conn_succeeded(port)
+            super(PyncUDPClient, self)._conn_succeeded(port)
             exit.status = 0
 
 
-    class _PyncUDPServer(Netcat.UDPServer):
+    class PyncUDPServer(Netcat.UDPServer):
 
         def _listening(self):
-            super(_PyncUDPServer, self)._listening()
+            super(PyncUDPServer, self)._listening()
             exit.status = 0
 
 
-    Netcat.TCPClient = _PyncTCPClient
-    Netcat.TCPServer = _PyncTCPServer
-    Netcat.UDPClient = _PyncUDPClient
-    Netcat.UDPServer = _PyncUDPServer
+    class PyncNetcat(Netcat):
+        TCPClient = PyncTCPClient
+        TCPServer = PyncTCPServer
+        UDPClient = PyncUDPClient
+        UDPServer = PyncUDPServer
+
 
     try:
-        nc = Netcat.from_args(args,
+        nc = PyncNetcat.from_args(args,
                 stdin=stdin,
                 stdout=stdout,
                 stderr=stderr,
