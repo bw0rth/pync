@@ -535,8 +535,9 @@ class NetcatClient(NetcatIterator):
             # Only one port passed, wrap it in a list
             # for the __iter__ function.
             self.port = [self.port]
-
         self._iterports = iter(self.port)
+
+        self._addrinfo = socket.getaddrinfo(self.dest, None)
 
     def iter_connections(self):
         while True:
@@ -739,6 +740,7 @@ class NetcatServer(NetcatIterator):
         if k is not None:
             self.k = k
 
+        self._addrinfo = socket.getaddrinfo(self.dest, self.port)
         self._sock = socket.socket(self.address_family, self.socket_type)
 
         bind_and_activate = True
@@ -831,8 +833,6 @@ class NetcatServer(NetcatIterator):
             conn.readwrite()
 
     def _server_bind(self):
-        # This should raise any errors if problems with dest and port.
-        socket.getaddrinfo(self.dest, self.port)
         if self.allow_reuse_port:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._sock.bind((self.dest, self.port))
