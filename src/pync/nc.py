@@ -29,9 +29,9 @@ from .process import NonBlockingProcess, ProcessTerminated
 class NetcatContext(object):
     D = False
     v = False
-    stdin = sys.stdin
-    stdout = sys.stdout
-    stderr = sys.stderr
+    stdin = sys.__stdin__
+    stdout = sys.__stdout__
+    stderr = sys.__stderr__
 
     def __init__(self,
             D=None,
@@ -1108,18 +1108,29 @@ class Netcat(object):
            nc.readwrite()
     """
 
-    name = 'pync'
-    usage = ('pync [-hkluvz] [-e command] [-p source_port] [-q seconds]\n'
-            '            [dest] [port]')
-    description = 'pync - arbitrary TCP and UDP connections and listens (Netcat for Python).'
+    name = None
+    description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
 
-    TCPServer = NetcatTCPServer
+    stdin = sys.__stdin__
+    stdout = sys.__stdout__
+    stderr = sys.__stderr__
+
     TCPClient = NetcatTCPClient
-
-    UDPServer = NetcatUDPServer
+    TCPServer = NetcatTCPServer
     UDPClient = NetcatUDPClient
+    UDPServer = NetcatUDPServer
 
-    def __new__(cls, dest='', port=None, l=False, u=False, p=None, **kwargs):
+    def __new__(cls, dest='', port=None, l=False, u=False, p=None,
+            stdin=None, stdout=None, stderr=None, **kwargs):
+        stdin = stdin or cls.stdin
+        stdout = stdout or cls.stdout
+        stderr = stderr or cls.stderr
+
+        kwargs.update(dict(
+            stdin=stdin,
+            stdout=stdout,
+            stderr=stderr))
+
         if l:
             if p is not None:
                 port = p
@@ -1134,10 +1145,7 @@ class Netcat(object):
                 return cls.TCPClient(dest, port, p=p, **kwargs)
 
     @classmethod
-    def from_args(cls, args,
-            stdin=sys.stdin,
-            stdout=sys.stdout,
-            stderr=sys.stderr):
+    def from_args(cls, args, stdin=None, stdout=None, stderr=None):
         """
         Create a Netcat object from command-line arguments instead of keyword
         arguments.
@@ -1163,6 +1171,9 @@ class Netcat(object):
            with Netcat.from_args('-l localhost 8000') as nc:
                nc.readwrite()
         """
+        stdin = stdin or cls.stdin
+        stdout = stdout or cls.stdout
+        stderr = stderr or cls.stderr
 
         try:
             # Assume args is a string and try to split it.
@@ -1236,10 +1247,20 @@ class Netcat(object):
         return cls(**kwargs)
 
     @classmethod
-    def create_parser(cls, **kwargs):
-        parser = ArgumentParser(cls.name,
+    def create_parser(cls, stdout=None, stderr=None, **kwargs):
+        stdout = stdout or cls.stdout
+        stderr = stderr or cls.stderr
+
+        kwargs.update(dict(
+            stdout=stdout,
+            stderr=stderr))
+
+        name = cls.name
+        if name is None:
+            name = cls.__name__
+            
+        parser = ArgumentParser(name,
                 description=cls.description,
-                usage=cls.usage,
                 add_help=False,
                 **kwargs
         )
@@ -1305,7 +1326,7 @@ class Netcat(object):
         return parser
 
 
-def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Netcat):
+def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     """
     Create and run a Netcat instance.
     This is similar to running **pync** from the command-line.
@@ -1354,6 +1375,10 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
+    stdin = stdin or sys.__stdin__
+    stdout = stdout or sys.__stdout__
+    stderr = stderr or sys.__stderr__
+
     exit = argparse.Namespace()
     exit.status = 1
 
@@ -1387,6 +1412,8 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
 
 
     class PyncNetcat(Netcat):
+        name = 'pync'
+
         TCPClient = PyncTCPClient
         TCPServer = PyncTCPServer
         UDPClient = PyncUDPClient
@@ -1397,10 +1424,10 @@ def pync(args, stdin=sys.stdin, stdout=sys.stdout, stderr=sys.stderr, Netcat=Net
         nc = PyncNetcat.from_args(args,
                 stdin=stdin,
                 stdout=stdout,
-                stderr=stderr,
-        )
+                stderr=stderr)
     except socket.error as e:
-        # NetcatServer may raise a socket error on bad address.
+        # NetcatServer or NetcatClient may raise a socket error
+        # on bad address.
         stderr.write('pync: {}\n'.format(e))
         return exit.status
     except ArgumentError:
