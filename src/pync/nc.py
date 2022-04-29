@@ -1416,7 +1416,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
             exit.status = 0
 
 
-    class PyncArgumentParser(ArgumentParser):
+    class PyncArgumentParser(Netcat.ArgumentParser):
 
         def print_help(self, *args, **kwargs):
             super(PyncArgumentParser, self).print_help(*args, **kwargs)
