@@ -109,19 +109,21 @@ class NetcatConnection(NetcatContext):
        nc.close()
     """
 
+    d = False
     q = 0
     plen = 2048
 
-    def __init__(self, net, q=None, **kwargs):
+    def __init__(self, net, d=None, q=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.net = net
 
+        if d is not None:
+            self.d = d
         if q is not None:
             self.q = q
 
         self.i = False  # TODO
-        self.d = False  # TODO
 
         self.dest, self.port = net.getpeername()
 
@@ -1267,6 +1269,10 @@ class Netcat(object):
         #        help='Enable debugging output to stderr',
         #        action='store_true',
         #)
+        parser.add_argument('-d',
+                help='Detach from stdin',
+                action='store_true',
+        )
         parser.add_argument('-e',
                 help='Execute a command over the connection',
                 metavar='command',
