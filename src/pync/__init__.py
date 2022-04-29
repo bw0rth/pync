@@ -8,7 +8,7 @@ from .nc import (
         NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
         Process, StopReadWrite, ConnectionRefused,
-        ArgumentParser, ArgumentError,
+        ArgumentParser,
         ConsoleInput,
 )
 
