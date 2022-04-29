@@ -55,7 +55,6 @@ class GroupingArgumentParser(argparse.ArgumentParser):
 
     def parse_args(self, argv):
         args = super(GroupingArgumentParser, self).parse_args(argv)
-        print(args)
         arg_groups = defaultdict(argparse.Namespace)
         for group_name, arg_names in self._group_args.items():
             for arg_name in arg_names:

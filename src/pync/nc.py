@@ -1265,6 +1265,16 @@ class Netcat(object):
                 add_help=False,
                 **kwargs
         )
+        parser.add_argument('-4',
+                help='Use IPv4',
+                action='store_true',
+                dest='_4',
+        )
+        parser.add_argument('-6',
+                help='Use IPv6',
+                action='store_true',
+                dest='_6',
+        )
         #parser.add_argument('-D',
         #        help='Enable debugging output to stderr',
         #        action='store_true',
