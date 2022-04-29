@@ -29,9 +29,9 @@ from .process import NonBlockingProcess, ProcessTerminated
 class NetcatContext(object):
     D = False
     v = False
-    stdin = sys.__stdin__
-    stdout = sys.__stdout__
-    stderr = sys.__stderr__
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
 
     def __init__(self,
             D=None,
@@ -1111,9 +1111,9 @@ class Netcat(object):
     name = None
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
 
-    stdin = sys.__stdin__
-    stdout = sys.__stdout__
-    stderr = sys.__stderr__
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
 
     TCPClient = NetcatTCPClient
     TCPServer = NetcatTCPServer
@@ -1375,9 +1375,9 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
-    stdin = stdin or sys.__stdin__
-    stdout = stdout or sys.__stdout__
-    stderr = stderr or sys.__stderr__
+    stdin = stdin or sys.stdin
+    stdout = stdout or sys.stdout
+    stderr = stderr or sys.stderr
 
     exit = argparse.Namespace()
     exit.status = 1
