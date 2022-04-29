@@ -80,9 +80,6 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 </details>
 
 ## Documentation
-For full documentation, please visit https://pync.readthedocs.io.
-
-## Useful Links
 * [Getting Started](https://pync.readthedocs.io/en/latest/getting-started.html)
 * [Options](https://pync.readthedocs.io/en/latest/options/index.html)
 * [Examples](https://pync.readthedocs.io/en/latest/examples/index.html)
