@@ -19,7 +19,7 @@
 <summary>Unix</summary>
 
 ```sh
-pync [-D] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
+pync [-d] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
      [-u] [-v] [-z]
      [dest] [port [port ...]]
 ```
@@ -29,7 +29,7 @@ pync [-D] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
 <summary>Windows</summary>
 
 ```sh
-py -m pync [-D] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
+py -m pync [-d] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
            [-u] [-v] [-z]
            [dest] [port [port ...]]
 ```
@@ -40,7 +40,7 @@ py -m pync [-D] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
 
 ```python
 from pync import pync
-args = '''[-D] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
+args = '''[-d] [-e command] [-h] [-k] [-l] [-p source_port] [-q seconds]
           [-u] [-v] [-z]
           [dest] [port [port ...]]'''
 pync(args, stdin, stdout, stderr)
