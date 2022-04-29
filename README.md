@@ -89,9 +89,5 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ## See Also
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
 
-## TODO
-* Add SSL support
-* Add PTY support
-
 ## License
 See [LICENSE](https://github.com/brenw0rth/pync/blob/main/LICENSE)
