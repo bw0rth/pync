@@ -17,10 +17,7 @@ import subprocess
 import sys
 import time
 
-from .argparsing import (
-        GroupingArgumentParser as ArgumentParser,
-        ArgumentError,
-)
+from .argparsing import GroupingArgumentParser as ArgumentParser
 from . import compat
 from .conin import NonBlockingConsoleInput as ConsoleInput
 from .process import NonBlockingProcess, ProcessTerminated
@@ -1111,6 +1108,8 @@ class Netcat(object):
     name = None
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
 
+    ArgumentParser = ArgumentParser
+
     stdin = sys.stdin
     stdout = sys.stdout
     stderr = sys.stderr
@@ -1218,7 +1217,7 @@ class Netcat(object):
                 pass
             else:
                 parser.print_usage()
-                raise ArgumentError
+                raise SystemExit
         else:
             # Client mode.
             if args.dest and args.port:
@@ -1229,7 +1228,7 @@ class Netcat(object):
                 pass
             else:
                 parser.print_usage()
-                raise ArgumentError
+                raise SystemExit
 
         kwargs = dict()
         kwargs.update(vars(args))
@@ -1259,15 +1258,15 @@ class Netcat(object):
         if name is None:
             name = cls.__name__
             
-        parser = ArgumentParser(name,
+        parser = cls.ArgumentParser(name,
                 description=cls.description,
                 add_help=False,
                 **kwargs
         )
-        parser.add_argument('-D',
-                help='Enable debugging output to stderr',
-                action='store_true',
-        )
+        #parser.add_argument('-D',
+        #        help='Enable debugging output to stderr',
+        #        action='store_true',
+        #)
         parser.add_argument('-e',
                 help='Execute a command over the connection',
                 metavar='command',
@@ -1411,8 +1410,17 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
             exit.status = 0
 
 
+    class PyncArgumentParser(ArgumentParser):
+
+        def print_help(self, *args, **kwargs):
+            super(PyncArgumentParser, self).print_help(*args, **kwargs)
+            exit.status = 0
+
+
     class PyncNetcat(Netcat):
         name = 'pync'
+
+        ArgumentParser = PyncArgumentParser
 
         TCPClient = PyncTCPClient
         TCPServer = PyncTCPServer
@@ -1430,8 +1438,8 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
         # on bad address.
         stderr.write('pync: {}\n'.format(e))
         return exit.status
-    except ArgumentError:
-        # Can raise when invalid arguments have been passed.
+    except SystemExit:
+        # ArgumentParser may raise when error or help.
         return exit.status
 
     try:
