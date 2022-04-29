@@ -2,30 +2,54 @@
 
 import io
 
-from pync import pync
-from .server import Server
+import pytest
 
+from pync import pync
+from .server import PyncServer
+
+SERVER_PORT = 8000
 HELLO_WORLD = b'Hello, World!\n'
 
 
-def test_tcp_upload():
-    # Create test pync server.
-    server = Server()
+@pytest.fixture
+def server():
+    server = PyncServer(port=SERVER_PORT)
     server.start()
-
-    # Wait until the server is ready to accept
-    # a connection.
     server.ready_event.wait()
+    return server
 
+
+@pytest.fixture
+def hello_server():
+    server = PyncServer(
+            port=SERVER_PORT,
+            stdin=io.BytesIO(HELLO_WORLD))
+    server.start()
+    server.ready_event.wait()
+    return server
+
+
+def test_tcp_upload(server):
     # Connect to the server and send some data.
-    client_inout = dict(
+    ret = pync('localhost {}'.format(SERVER_PORT),
             stdin=io.BytesIO(HELLO_WORLD),
             stdout=io.BytesIO(),
-            stderr=io.StringIO(),
-    )
-    ret = pync('localhost 8000', **client_inout)
+            stderr=io.StringIO())
     assert ret == 0
 
     server.stdout.seek(0)
     assert server.stdout.read() == HELLO_WORLD
+
+
+def test_tcp_download(hello_server):
+    # Connect to the server and download some data.
+    # -d -- Detach from stdin to prevent closing on EOF.
+    stdout = io.BytesIO()
+    ret = pync('-d localhost {}'.format(SERVER_PORT),
+            stdout=stdout,
+            stderr=io.StringIO())
+    assert ret == 0
+
+    stdout.seek(0)
+    assert stdout.read() == HELLO_WORLD
 

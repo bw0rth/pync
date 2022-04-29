@@ -6,26 +6,30 @@ import threading
 import pync
 
 
-class MockStdin(object):
-    '''
-    A stdin that never returns EOF.
-    This is to prevent the server from
-    shutting down prematurely.
-    '''
+class PyncServer(threading.Thread):
+    port = 8000
 
-    def read(self, n):
-        return None
-
-
-class Server(threading.Thread):
-
-    def __init__(self):
-        super(Server, self).__init__()
+    def __init__(self, port=None, stdin=None, stdout=None, stderr=None):
+        super(PyncServer, self).__init__()
         self.daemon = True
 
-        self.stdin = MockStdin()
+        if port is not None:
+            self.port = port
+
+        self.stdin = None
         self.stdout = io.BytesIO()
         self.stderr = io.StringIO()
+
+        if stdin is not None:
+            self.stdin = stdin
+        if stdout is not None:
+            self.stdout = stdout
+        if stderr is not None:
+            self.stderr = stderr
+
+        self.d = False
+        if self.stdin is None:
+            self.d = True
 
         self.ready_event = threading.Event()
         self.Netcat = self._create_netcat(self.ready_event)
@@ -39,10 +43,10 @@ class Server(threading.Thread):
         '''
 
         class NetcatTCPServer(pync.NetcatTCPServer):
-            
-            def next_connection(self):
+
+            def _listening(self):
+                super(NetcatTCPServer, self)._listening()
                 ready_event.set()
-                return super(NetcatTCPServer, self).next_connection()
 
 
         class Netcat(pync.Netcat):
@@ -51,7 +55,12 @@ class Server(threading.Thread):
         return Netcat
 
     def run(self):
-        pync.pync('-l localhost 8000',
+        # -d -- Detach from stdin to prevent server from closing on EOF.
+        # -l -- Server mode.
+        args = '-l localhost {}'.format(self.port)
+        if self.d:
+            args = '-d ' + args
+        pync.pync(args,
                 stdin=self.stdin,
                 stdout=self.stdout,
                 stderr=self.stderr,
