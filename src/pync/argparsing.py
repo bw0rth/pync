@@ -48,10 +48,14 @@ class GroupingArgumentParser(argparse.ArgumentParser):
             self._group_parsers[group] = self.add_argument_group(group)
         parser = self._group_parsers[group]
         parser.add_argument(name, **kwargs)
-        self._group_args[group].append(name.lstrip('-'))
+        dest = name.lstrip('-')
+        if 'dest' in kwargs:
+            dest = kwargs['dest']
+        self._group_args[group].append(dest)
 
     def parse_args(self, argv):
         args = super(GroupingArgumentParser, self).parse_args(argv)
+        print(args)
         arg_groups = defaultdict(argparse.Namespace)
         for group_name, arg_names in self._group_args.items():
             for arg_name in arg_names:
