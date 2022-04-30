@@ -536,11 +536,13 @@ class NetcatClient(NetcatIterator):
     _6 = False
     e = None
     I = None
+    O = None
     p = None
     z = False
 
     def __init__(self, dest, port,
-            _4=None, _6=None, e=None, I=None, p=None, z=None, **kwargs):
+            _4=None, _6=None, e=None, I=None, O=None, p=None,
+            z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -552,6 +554,8 @@ class NetcatClient(NetcatIterator):
             self.e = e
         if I is not None:
             self.I = I
+        if O is not None:
+            self.O = O
         if p is not None:
             self.p = p
         if z is not None:
@@ -650,6 +654,8 @@ class NetcatClient(NetcatIterator):
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         if self.I:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
+        if self.O:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
         if self.p is not None:
             sock.bind(('', self.p))
 
@@ -752,9 +758,10 @@ class NetcatServer(NetcatIterator):
     e = None
     I = None
     k = False
+    O = None
 
     def __init__(self, port, dest='',
-            _4=None, _6=None, e=None, I=None, k=None, **kwargs):
+            _4=None, _6=None, e=None, I=None, k=None, O=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -780,6 +787,8 @@ class NetcatServer(NetcatIterator):
             self.I = I
         if k is not None:
             self.k = k
+        if O is not None:
+            self.O = O
 
         if _6:
             self.address_family = socket.AF_INET6
@@ -885,6 +894,8 @@ class NetcatServer(NetcatIterator):
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         if self.I:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
+        if self.O:
+            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
         self._sock.bind((self.dest, self.port))
 
     def _server_activate(self):
