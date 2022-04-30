@@ -1356,10 +1356,10 @@ class Netcat(object):
                 help='Send CRLF as line-ending',
                 action='store_true',
         )
-        #parser.add_argument('-D',
-        #        help='Enable debugging output to stderr',
-        #        action='store_true',
-        #)
+        parser.add_argument('-D',
+                help='Enable debugging output to stderr',
+                action='store_true',
+        )
         parser.add_argument('-d',
                 help='Detach from stdin',
                 action='store_true',
