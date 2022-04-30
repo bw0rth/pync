@@ -1361,6 +1361,11 @@ class Netcat(object):
                 help='Listen mode, for inbound connects',
                 action='store_true',
         )
+        parser.add_argument('-O',
+                help='TCP send buffer length',
+                metavar='length',
+                type=int,
+        )
         parser.add_argument('-p',
                 help='Specify local port for remote connects',
                 metavar='source_port',
