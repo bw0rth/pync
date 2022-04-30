@@ -109,15 +109,18 @@ class NetcatConnection(NetcatContext):
        nc.close()
     """
 
+    C = False
     d = False
     q = 0
     plen = 2048
 
-    def __init__(self, net, d=None, q=None, **kwargs):
+    def __init__(self, net, C=None, d=None, q=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.net = net
 
+        if C is not None:
+            self.C = C
         if d is not None:
             self.d = d
         if q is not None:
@@ -285,6 +288,8 @@ class NetcatConnection(NetcatContext):
 
                     # netout
                     if stdin_data:
+                        if self.C:
+                            stdin_data = stdin_data.replace(b'\n', b'\r\n')
                         try:
                             self.send(stdin_data)
                         except socket.error as e:
