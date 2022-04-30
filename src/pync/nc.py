@@ -534,6 +534,7 @@ class NetcatClient(NetcatIterator):
 
     _4 = True
     _6 = False
+    b = None
     e = None
     I = None
     O = None
@@ -541,7 +542,7 @@ class NetcatClient(NetcatIterator):
     z = False
 
     def __init__(self, dest, port,
-            _4=None, _6=None, e=None, I=None, O=None, p=None,
+            _4=None, _6=None, b=None, e=None, I=None, O=None, p=None,
             z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
@@ -550,6 +551,8 @@ class NetcatClient(NetcatIterator):
             self._4 = _4
         if _6 is not None:
             self._6 = _6
+        if b is not None:
+            self.b = b
         if e is not None:
             self.e = e
         if I is not None:
@@ -652,6 +655,8 @@ class NetcatClient(NetcatIterator):
     def _client_bind(self, sock):
         if self.allow_reuse_port:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.b:
+            sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
         if self.I:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
         if self.O:
@@ -755,13 +760,15 @@ class NetcatServer(NetcatIterator):
 
     _4 = True
     _6 = False
+    b = None
     e = None
     I = None
     k = False
     O = None
 
     def __init__(self, port, dest='',
-            _4=None, _6=None, e=None, I=None, k=None, O=None, **kwargs):
+            _4=None, _6=None, b=None, e=None, I=None, k=None, O=None,
+            **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -781,6 +788,8 @@ class NetcatServer(NetcatIterator):
             self._4 = _4
         if _6 is not None:
             self._6 = _6
+        if b is not None:
+            self.b = b
         if e is not None:
             self.e = e
         if I is not None:
@@ -892,6 +901,8 @@ class NetcatServer(NetcatIterator):
     def _server_bind(self):
         if self.allow_reuse_port:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.b:
+            self._sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
         if self.I:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
         if self.O:
