@@ -125,7 +125,7 @@ class NetcatConnection(NetcatContext):
 
         self.i = False  # TODO
 
-        self.dest, self.port = net.getpeername()
+        self.dest, self.port = self._getpeername(net)
 
         # TODO: Move this into a property.setter?
         if self.stdin is sys.__stdin__ and self.stdin.isatty():
@@ -186,6 +186,15 @@ class NetcatConnection(NetcatContext):
                conn.readwrite()
         """
         raise NotImplementedError
+
+    def _getpeername(self, sock):
+        try:
+            # IPv4
+            dest, port = sock.getpeername()
+        except ValueError:
+            # IPv6
+            dest, port, _, _ = sock.getpeername()
+        return dest, port
 
     def recv(self, n, blocking=True):
         if blocking:
@@ -512,17 +521,27 @@ class NetcatClient(NetcatIterator):
     """
     protocol_name = ''
 
+    address_family = socket.AF_INET
+    socket_type = None
+
     v_conn_succeeded = 'Connection to {dest} {port} port [{proto_name}/{proto}] succeeded!'
     v_conn_refused = 'connect to {dest} port {port} ({proto_name}) failed: Connection refused'
 
+    _4 = True
+    _6 = False
     e = None
     p = None
     z = False
 
-    def __init__(self, dest, port, e=None, p=None, z=None, **kwargs):
+    def __init__(self, dest, port,
+            _4=None, _6=None, e=None, p=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
+        if _4 is not None:
+            self._4 = _4
+        if _6 is not None:
+            self._6 = _6
         if e is not None:
             self.e = e
         if p is not None:
@@ -536,7 +555,12 @@ class NetcatClient(NetcatIterator):
             self.port = [self.port]
         self._iterports = iter(self.port)
 
-        self._addrinfo = socket.getaddrinfo(self.dest, None)
+        if _6:
+            self.address_family = socket.AF_INET6
+        self._addrinfo = socket.getaddrinfo(
+                self.dest,
+                None,
+                self.address_family)
 
     def iter_connections(self):
         while True:
@@ -630,7 +654,6 @@ class NetcatTCPClient(NetcatClient):
     protocol_name = 'tcp'
     Connection = NetcatTCPConnection
 
-    address_family = socket.AF_INET
     socket_type = socket.SOCK_STREAM
 
 
@@ -641,7 +664,6 @@ class NetcatUDPClient(NetcatClient):
     protocol_name = 'udp'
     Connection = NetcatUDPConnection
 
-    address_family = socket.AF_INET
     socket_type = socket.SOCK_DGRAM
 
     udp_scan_timeout = 3
@@ -708,17 +730,20 @@ class NetcatServer(NetcatIterator):
     """
     protocol_name = ''
 
-    address_family = None
+    address_family = socket.AF_INET
     socket_type = None
 
     v_listening = 'Listening on [{dest}] (family {family}, port {port})'
     v_conn_accepted = 'Connection from [{dest}] port {port} [{proto_name}/{proto}] accepted (family {family}, sport {sport})'
     v_listening_again = 'Connection closed, listening again.'
 
+    _4 = True
+    _6 = False
     e = None
     k = False
 
-    def __init__(self, port, dest='', e=None, k=None, **kwargs):
+    def __init__(self, port, dest='',
+            _4=None, _6=None, e=None, k=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -734,12 +759,18 @@ class NetcatServer(NetcatIterator):
             # All objects have __repr__ so call repr to get string.
             self.port = repr(port)
 
+        if _4 is not None:
+            self._4 = _4
+        if _6 is not None:
+            self._6 = _6
         if e is not None:
             self.e = e
         if k is not None:
             self.k = k
 
-        self._addrinfo = socket.getaddrinfo(self.dest, self.port)
+        if _6:
+            self.address_family = socket.AF_INET6
+        self._addrinfo = socket.getaddrinfo(self.dest, self.port, self.address_family)
         self._sock = socket.socket(self.address_family, self.socket_type)
 
         bind_and_activate = True
@@ -810,7 +841,12 @@ class NetcatServer(NetcatIterator):
                 raise StopIteration
             if self._sock in can_read:
                 cli_sock, cli_addr = self._get_request()
-                cli_dest, cli_port = cli_addr
+                try:
+                    # IPv4
+                    cli_dest, cli_port = cli_addr
+                except ValueError:
+                    # IPv6
+                    cli_dest, cli_port, _, _ = cli_addr
                 nc_conn = self._init_connection(cli_sock)
                 break
         self._conn_accepted(cli_dest, cli_port)
