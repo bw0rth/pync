@@ -535,11 +535,12 @@ class NetcatClient(NetcatIterator):
     _4 = True
     _6 = False
     e = None
+    I = None
     p = None
     z = False
 
     def __init__(self, dest, port,
-            _4=None, _6=None, e=None, p=None, z=None, **kwargs):
+            _4=None, _6=None, e=None, I=None, p=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -549,6 +550,8 @@ class NetcatClient(NetcatIterator):
             self._6 = _6
         if e is not None:
             self.e = e
+        if I is not None:
+            self.I = I
         if p is not None:
             self.p = p
         if z is not None:
@@ -645,6 +648,8 @@ class NetcatClient(NetcatIterator):
     def _client_bind(self, sock):
         if self.allow_reuse_port:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.I:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
         if self.p is not None:
             sock.bind(('', self.p))
 
@@ -745,10 +750,11 @@ class NetcatServer(NetcatIterator):
     _4 = True
     _6 = False
     e = None
+    I = None
     k = False
 
     def __init__(self, port, dest='',
-            _4=None, _6=None, e=None, k=None, **kwargs):
+            _4=None, _6=None, e=None, I=None, k=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -770,6 +776,8 @@ class NetcatServer(NetcatIterator):
             self._6 = _6
         if e is not None:
             self.e = e
+        if I is not None:
+            self.I = I
         if k is not None:
             self.k = k
 
@@ -875,6 +883,8 @@ class NetcatServer(NetcatIterator):
     def _server_bind(self):
         if self.allow_reuse_port:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.I:
+            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
         self._sock.bind((self.dest, self.port))
 
     def _server_activate(self):
