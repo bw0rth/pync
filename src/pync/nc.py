@@ -1336,6 +1336,11 @@ class Netcat(object):
                 help='show this help message and exit.',
                 action='help',
         )
+        parser.add_argument('-I',
+                help='TCP receive buffer length',
+                metavar='length',
+                type=int,
+        )
         parser.add_argument('-k',
                 group='server arguments',
                 help='Keep inbound sockets open for multiple connects',
