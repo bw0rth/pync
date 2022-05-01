@@ -1496,9 +1496,9 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
-    stdin = stdin or sys.stdin
-    stdout = stdout or sys.stdout
-    stderr = stderr or sys.stderr
+    stdin = stdin or Netcat.stdin
+    stdout = stdout or Netcat.stdout
+    stderr = stderr or Netcat.stderr
 
     exit = argparse.Namespace()
     exit.status = 1
@@ -1550,13 +1550,10 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
         UDPServer = PyncUDPServer
 
 
-    nc = None
     try:
-        nc = PyncNetcat.from_args(args,
-                stdin=stdin,
-                stdout=stdout,
-                stderr=stderr)
-        nc.readwrite()
+        with PyncNetcat.from_args(args,
+                stdin=stdin, stdout=stdout, stderr=stderr) as nc:
+            nc.readwrite()
     except KeyboardInterrupt:
         nc.stderr.write('\n')
         exit.status = 130
@@ -1566,9 +1563,6 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     except SystemExit:
         # ArgumentParser may raise when error or help.
         return exit.status
-    finally:
-        if nc is not None:
-            nc.close()
 
     return exit.status
 
