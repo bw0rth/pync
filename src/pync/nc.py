@@ -534,7 +534,8 @@ class NetcatClient(NetcatIterator):
 
     _4 = True
     _6 = False
-    b = None
+    b = False
+    D = False
     e = None
     I = None
     O = None
@@ -542,8 +543,8 @@ class NetcatClient(NetcatIterator):
     z = False
 
     def __init__(self, dest, port,
-            _4=None, _6=None, b=None, e=None, I=None, O=None, p=None,
-            z=None, **kwargs):
+            _4=None, _6=None, b=None, D=None, e=None, I=None,
+            O=None, p=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -553,6 +554,8 @@ class NetcatClient(NetcatIterator):
             self._6 = _6
         if b is not None:
             self.b = b
+        if D is not None:
+            self.D = D
         if e is not None:
             self.e = e
         if I is not None:
@@ -585,7 +588,7 @@ class NetcatClient(NetcatIterator):
                 # No more ports to connect to.
                 # Exit loop
                 return
-            except (ConnectionRefused, socket.error):
+            except ConnectionRefused:
                 # Move onto next connection if any errors.
                 continue
 
@@ -641,6 +644,18 @@ class NetcatClient(NetcatIterator):
     def readwrite(self):
         for nc_conn in self:
             nc_conn.readwrite()
+
+    def _set_common_sockopts(self, sock):
+        if self.allow_reuse_port:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.b:
+            sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
+        if self.D:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_DEBUG, 1)
+        if self.I:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
+        if self.O:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
     
     def _create_connection(self, addr):
         sock = self._client_init()
@@ -653,14 +668,7 @@ class NetcatClient(NetcatIterator):
         return socket.socket(self.address_family, self.socket_type)
 
     def _client_bind(self, sock):
-        if self.allow_reuse_port:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        if self.b:
-            sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
-        if self.I:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
-        if self.O:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
+        self._set_common_sockopts(sock)
         if self.p is not None:
             sock.bind(('', self.p))
 
@@ -760,15 +768,15 @@ class NetcatServer(NetcatIterator):
 
     _4 = True
     _6 = False
-    b = None
+    b = False
+    D = False
     e = None
     I = None
     k = False
     O = None
 
-    def __init__(self, port, dest='',
-            _4=None, _6=None, b=None, e=None, I=None, k=None, O=None,
-            **kwargs):
+    def __init__(self, port, dest='', _4=None, _6=None, b=None,
+            D=None, e=None, I=None, k=None, O=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -790,6 +798,8 @@ class NetcatServer(NetcatIterator):
             self._6 = _6
         if b is not None:
             self.b = b
+        if D is not None:
+            self.D = D
         if e is not None:
             self.e = e
         if I is not None:
@@ -898,15 +908,20 @@ class NetcatServer(NetcatIterator):
         for conn in self:
             conn.readwrite()
 
-    def _server_bind(self):
+    def _set_common_sockopts(self):
         if self.allow_reuse_port:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         if self.b:
             self._sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
+        if self.D:
+            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_DEBUG, 1)
         if self.I:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
         if self.O:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
+
+    def _server_bind(self):
+        self._set_common_sockopts()
         self._sock.bind((self.dest, self.port))
 
     def _server_activate(self):
@@ -1356,10 +1371,10 @@ class Netcat(object):
                 help='Send CRLF as line-ending',
                 action='store_true',
         )
-        #parser.add_argument('-D',
-        #        help='Enable debugging output to stderr',
-        #        action='store_true',
-        #)
+        parser.add_argument('-D',
+                help='Enable the debug socket option',
+                action='store_true',
+        )
         parser.add_argument('-d',
                 help='Detach from stdin',
                 action='store_true',
@@ -1535,27 +1550,25 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
         UDPServer = PyncUDPServer
 
 
+    nc = None
     try:
         nc = PyncNetcat.from_args(args,
                 stdin=stdin,
                 stdout=stdout,
                 stderr=stderr)
-    except socket.error as e:
-        # NetcatServer or NetcatClient may raise a socket error
-        # on bad address.
-        stderr.write('pync: {}\n'.format(e))
-        return exit.status
-    except SystemExit:
-        # ArgumentParser may raise when error or help.
-        return exit.status
-
-    try:
         nc.readwrite()
     except KeyboardInterrupt:
         nc.stderr.write('\n')
         exit.status = 130
+    except socket.error as e:
+        stderr.write('pync: {}\n'.format(e))
+        exit.status = 1
+    except SystemExit:
+        # ArgumentParser may raise when error or help.
+        return exit.status
     finally:
-        nc.close()
+        if nc is not None:
+            nc.close()
 
     return exit.status
 
