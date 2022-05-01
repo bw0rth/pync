@@ -111,10 +111,11 @@ class NetcatConnection(NetcatContext):
 
     C = False
     d = False
+    i = 0
     q = 0
     plen = 2048
 
-    def __init__(self, net, C=None, d=None, q=None, **kwargs):
+    def __init__(self, net, C=None, d=None, i=None, q=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.net = net
@@ -123,10 +124,10 @@ class NetcatConnection(NetcatContext):
             self.C = C
         if d is not None:
             self.d = d
+        if i is not None:
+            self.i = i
         if q is not None:
             self.q = q
-
-        self.i = False  # TODO
 
         self.dest, self.port = self._getpeername(net)
 
@@ -1391,6 +1392,11 @@ class Netcat(object):
                 help='TCP receive buffer length',
                 metavar='length',
                 type=int,
+        )
+        parser.add_argument('-i',
+                help='Delay interval for lines sent, ports scanned',
+                type=int,
+                metavar='secs',
         )
         parser.add_argument('-k',
                 group='server arguments',
