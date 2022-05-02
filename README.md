@@ -19,9 +19,8 @@
 <summary>Unix</summary>
 
 ```sh
-pync [-4] [-6] [-b] [-C] [-D] [-d] [-e command] [-h] [-I length] [-k]
-     [-l] [-O length] [-p source_port] [-q seconds] [-u] [-v] [-z]
-     [dest] [port [port ...]]
+pync [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
+     [-O length] [-p source_port] [-q seconds] [dest] [port]
 ```
 </details>
 
@@ -29,9 +28,8 @@ pync [-4] [-6] [-b] [-C] [-D] [-d] [-e command] [-h] [-I length] [-k]
 <summary>Windows</summary>
 
 ```sh
-py -m pync [-4] [-6] [-b] [-C] [-D] [-d] [-e command] [-h] [-I length] [-k]
-           [-l] [-O length] [-p source_port] [-q seconds] [-u] [-v] [-z]
-           [dest] [port [port ...]]
+py -m pync [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
+           [-O length] [-p source_port] [-q seconds] [dest] [port]
 ```
 </details>
 
@@ -40,9 +38,8 @@ py -m pync [-4] [-6] [-b] [-C] [-D] [-d] [-e command] [-h] [-I length] [-k]
 
 ```python
 from pync import pync
-args = '''[-4] [-6] [-b] [-C] [-D] [-d] [-e command] [-h] [-I length] [-k]
-          [-l] [-O length] [-p source_port] [-q seconds] [-u] [-v] [-z]
-          [dest] [port [port ...]]'''
+args = '''[-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
+          [-O length] [-p source_port] [-q seconds] [dest] [port]'''
 pync(args, stdin, stdout, stderr)
 ```
 </details>
