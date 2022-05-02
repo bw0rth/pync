@@ -1533,6 +1533,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
 
     class PyncTCPClient(Netcat.TCPClient):
+        v_conn_refused = 'pync: ' + Netcat.TCPClient.v_conn_refused
 
         def _conn_succeeded(self, port):
             super(PyncTCPClient, self)._conn_succeeded(port)
@@ -1589,7 +1590,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
         stderr.write('pync: {}\n'.format(e))
         exit.status = 1
     except SystemExit:
-        # ArgumentParser may raise when error or help.
+        # ArgumentParser may raise SystemExit when error or help.
         return exit.status
 
     return exit.status
