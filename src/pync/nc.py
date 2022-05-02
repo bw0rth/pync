@@ -539,13 +539,14 @@ class NetcatClient(NetcatIterator):
     D = False
     e = None
     I = None
+    n = False
     O = None
     p = None
     z = False
 
     def __init__(self, dest, port,
             _4=None, _6=None, b=None, D=None, e=None, I=None,
-            O=None, p=None, z=None, **kwargs):
+            n=None, O=None, p=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -561,6 +562,8 @@ class NetcatClient(NetcatIterator):
             self.e = e
         if I is not None:
             self.I = I
+        if n is not None:
+            self.n = n
         if O is not None:
             self.O = O
         if p is not None:
@@ -576,10 +579,11 @@ class NetcatClient(NetcatIterator):
 
         if _6:
             self.address_family = socket.AF_INET6
-        self._addrinfo = socket.getaddrinfo(
-                self.dest,
-                None,
-                self.address_family)
+        flags = 0
+        if self.n:
+            flags = socket.AI_NUMERICHOST
+        self._addrinfo = socket.getaddrinfo(self.dest, None,
+                self.address_family, 0, 0, flags)
 
     def iter_connections(self):
         while True:
@@ -629,10 +633,12 @@ class NetcatClient(NetcatIterator):
         return nc_conn
 
     def _conn_succeeded(self, port):
-        try:
-            proto = socket.getservbyport(port, self.protocol_name)
-        except (socket.error, OSError):
-            proto = '*'
+        proto = '*'
+        if not self.n:
+            try:
+                proto = socket.getservbyport(port, self.protocol_name)
+            except (socket.error, OSError):
+                pass
         self.print_verbose(
                 self.v_conn_succeeded.format(
                     dest=self.dest,
@@ -774,10 +780,11 @@ class NetcatServer(NetcatIterator):
     e = None
     I = None
     k = False
+    n = False
     O = None
 
     def __init__(self, port, dest='', _4=None, _6=None, b=None,
-            D=None, e=None, I=None, k=None, O=None, **kwargs):
+            D=None, e=None, I=None, k=None, n=None, O=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -807,12 +814,18 @@ class NetcatServer(NetcatIterator):
             self.I = I
         if k is not None:
             self.k = k
+        if n is not None:
+            self.n = n
         if O is not None:
             self.O = O
 
         if _6:
             self.address_family = socket.AF_INET6
-        self._addrinfo = socket.getaddrinfo(self.dest, self.port, self.address_family)
+        flags = 0
+        if self.n:
+            flags = socket.AI_NUMERICHOST
+        self._addrinfo = socket.getaddrinfo(self.dest, self.port,
+                self.address_family, 0, 0, flags)
         self._sock = socket.socket(self.address_family, self.socket_type)
 
         bind_and_activate = True
@@ -860,10 +873,12 @@ class NetcatServer(NetcatIterator):
                     self._close_request(nc_conn)
 
     def _conn_accepted(self, cli_dest, cli_port):
-        try:
-            proto = socket.getservbyport(self.port, self.protocol_name)
-        except (socket.error, OSError):
-            proto = '*'
+        proto = '*'
+        if not self.n:
+            try:
+                proto = socket.getservbyport(self.port, self.protocol_name)
+            except (socket.error, OSError):
+                pass
         self.print_verbose(self.v_conn_accepted.format(
             dest=cli_dest,
             port=self.port,
@@ -1197,6 +1212,8 @@ class Netcat(object):
     """
 
     name = None
+    usage = ("%(prog)s [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]"
+             "\n\t    [-O length] [-p source_port] [-q seconds] [dest] [port]")
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
 
     ArgumentParser = ArgumentParser
@@ -1350,6 +1367,7 @@ class Netcat(object):
             name = cls.__name__
             
         parser = cls.ArgumentParser(name,
+                usage=cls.usage,
                 description=cls.description,
                 add_help=False,
                 **kwargs
@@ -1406,6 +1424,10 @@ class Netcat(object):
         parser.add_argument('-l',
                 group='server arguments',
                 help='Listen mode, for inbound connects',
+                action='store_true',
+        )
+        parser.add_argument('-n',
+                help='Suppress name/port resolutions',
                 action='store_true',
         )
         parser.add_argument('-O',
