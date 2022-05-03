@@ -17,7 +17,7 @@ import subprocess
 import sys
 import time
 
-from .argparsing import GroupingArgumentParser as ArgumentParser
+from .argparsing import GroupingArgumentParser
 from . import compat
 from .conin import NonBlockingConsoleInput as ConsoleInput
 from .process import NonBlockingProcess, ProcessTerminated
@@ -1063,41 +1063,7 @@ class _ProcStdout:
             raise StopReadWrite
 
 
-def port(value):
-    # This should always return a range of ports.
-    # Even if only one port is given.
-    #
-    # The PortAction then turns it into a single port
-    # if one port is given or a chain of sorted port
-    # ranges if more than one port is given.
-
-    invalid_msg = 'Given value is not a valid port number'
-    def valid_port(p):
-        # check if port is actually a valid port number.
-        return 1 <= p <= 65535
-
-    try:
-        # assume port value is a range.
-        # e.g 8000-8005
-        start_port, end_port = [int(x) for x in value.split('-')]
-    except ValueError:
-        # port value is not a range.
-        value = int(value)
-        if not valid_port(value):
-            raise ValueError(invalid_msg)
-        return compat.range(value, value+1)
-
-    if start_port > end_port:
-        start_port, end_port = end_port, start_port
-
-    for p in [start_port, end_port]:
-        if not valid_port(p):
-            raise ValueError(invalid_msg)
-
-    return compat.range(start_port, end_port+1)
-
-
-class PortAction(argparse.Action):
+class NetcatPortAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         # If one port is given on the command line, set that as value.
@@ -1117,6 +1083,228 @@ class PortAction(argparse.Action):
         chained_values = itertools.chain(*sorted_values)
         setattr(namespace, self.dest, chained_values)
         return
+
+
+class NetcatArgumentParser(GroupingArgumentParser):
+    prog = 'Netcat'
+    usage = ("%(prog)s [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]"
+             "\n\t    [-O length] [-p source_port] [-q seconds] [dest] [port]")
+    description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
+    add_help = False
+    
+    PortAction = NetcatPortAction
+
+    def __init__(self, *args, **kwargs):
+        super(NetcatArgumentParser, self).__init__(*args, **kwargs)
+
+        self.add_argument('-4',
+                help='Use IPv4',
+                action='store_true',
+                dest='_4',
+        )
+
+        self.add_argument('-6',
+                help='Use IPv6',
+                action='store_true',
+                dest='_6',
+        )
+
+        self.add_argument('-b',
+                help='Allow broadcast',
+                action='store_true',
+        )
+
+        self.add_argument('-C',
+                help='Send CRLF as line-ending',
+                action='store_true',
+        )
+
+        self.add_argument('-D',
+                help='Enable the debug socket option',
+                action='store_true',
+        )
+
+        self.add_argument('-d',
+                help='Detach from stdin',
+                action='store_true',
+        )
+
+        self.add_argument('-e',
+                help='Execute a command over the connection',
+                metavar='command',
+        )
+
+        self.add_argument('-h',
+                help='show this help message and exit.',
+                action='help',
+        )
+
+        self.add_argument('-I',
+                help='TCP receive buffer length',
+                metavar='length',
+                type=int,
+        )
+
+        self.add_argument('-i',
+                help='Delay interval for lines sent, ports scanned',
+                type=int,
+                metavar='secs',
+        )
+
+        self.add_argument('-k',
+                group='server arguments',
+                help='Keep inbound sockets open for multiple connects',
+                action='store_true',
+        )
+
+        self.add_argument('-l',
+                group='server arguments',
+                help='Listen mode, for inbound connects',
+                action='store_true',
+        )
+
+        self.add_argument('-n',
+                help='Suppress name/port resolutions',
+                action='store_true',
+        )
+
+        self.add_argument('-O',
+                help='TCP send buffer length',
+                metavar='length',
+                type=int,
+        )
+
+        self.add_argument('-p',
+                help='Specify local port for remote connects',
+                metavar='source_port',
+                type=int,
+        )
+
+        self.add_argument('-q',
+                help='quit after EOF on stdin and delay of seconds',
+                metavar='seconds',
+                default=0,
+                type=int,
+        )
+
+        self.add_argument('-u',
+                help='UDP mode [default: TCP]',
+                action='store_true',
+        )
+
+        self.add_argument('-v',
+                help='Verbose',
+                action='store_true',
+        )
+
+        self.add_argument('-z',
+                group='client arguments',
+                help='Zero-I/O mode [used for scanning]',
+                action='store_true',
+        )
+
+        self.add_argument('dest',
+                help='The destination host name or ip to connect or bind to',
+                nargs='?',
+                default='',
+                metavar='dest',
+        )
+
+        self.add_argument('port',
+                help='The port number to connect or bind to',
+                type=self.port,
+                metavar='port',
+                nargs='*',
+                action=self.PortAction,
+        )
+
+    def port(self, value):
+        # This should always return a range of ports.
+        # Even if only one port is given.
+        #
+        # The PortAction then turns it into a single port
+        # if one port is given or a chain of sorted port
+        # ranges if more than one port is given.
+
+        invalid_msg = 'Given value is not a valid port number'
+        def valid_port(p):
+            # check if port is actually a valid port number.
+            return 1 <= p <= 65535
+
+        try:
+            # assume port value is a range.
+            # e.g 8000-8005
+            start_port, end_port = [int(x) for x in value.split('-')]
+        except ValueError:
+            # port value is not a range.
+            value = int(value)
+            if not valid_port(value):
+                raise ValueError(invalid_msg)
+            return compat.range(value, value+1)
+
+        if start_port > end_port:
+            start_port, end_port = end_port, start_port
+
+        for p in [start_port, end_port]:
+            if not valid_port(p):
+                raise ValueError(invalid_msg)
+
+        return compat.range(start_port, end_port+1)
+
+    def parse_args(self, args):
+        grouped_args = self.group_parse_args(args)
+
+        args = grouped_args['general arguments']
+        client_args = grouped_args['client arguments']
+        server_args = grouped_args['server arguments']
+
+        if server_args.l:
+            # Server mode.
+            if args.dest and args.port and not args.p:
+                # pync -l localhost 8000
+                pass
+            elif args.dest and not args.port and not args.p:
+                # pync -l 8000
+                # Get the port from args.dest.
+                # This will need feeding through the parser
+                # again to detect any port number errors.
+                args.port = args.dest
+                args.dest = ''
+                test_args = ['dest', args.port]
+                test_args = self.group_parse_args(test_args)['general arguments']
+                args.port = test_args.port
+            elif not args.dest and not args.port and args.p:
+                # pync -lp 8000
+                pass
+            elif args.dest and not args.port and args.p:
+                # pync -lp 8000 localhost
+                pass
+            elif args.dest and args.port and args.p:
+                # pync -lp 8000 localhost 8001
+                pass
+            else:
+                self.print_usage()
+                self.exit()
+        else:
+            # Client mode.
+            if args.dest and args.port:
+                # pync localhost 8000
+                pass
+            elif args.dest and args.port and args.p:
+                # pync -p 1234 localhost 8000
+                pass
+            else:
+                self.print_usage()
+                self.exit()
+
+        kwargs = dict()
+        kwargs.update(vars(args))
+        if server_args.l:
+            kwargs.update(vars(server_args))
+        else:
+            kwargs.update(vars(client_args))
+
+        return argparse.Namespace(**kwargs)
 
 
 class Netcat(object):
@@ -1210,22 +1398,16 @@ class Netcat(object):
        with Netcat(dest='localhost', port=ports, z=True, v=True) as nc:
            nc.readwrite()
     """
-
-    name = None
-    usage = ("%(prog)s [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]"
-             "\n\t    [-O length] [-p source_port] [-q seconds] [dest] [port]")
-    description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
-
-    ArgumentParser = ArgumentParser
-
-    stdin = sys.stdin
-    stdout = sys.stdout
-    stderr = sys.stderr
+    ArgumentParser = NetcatArgumentParser
 
     TCPClient = NetcatTCPClient
     TCPServer = NetcatTCPServer
     UDPClient = NetcatUDPClient
     UDPServer = NetcatUDPServer
+
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
 
     def __new__(cls, dest='', port=None, l=False, u=False, p=None,
             stdin=None, stdout=None, stderr=None, **kwargs):
@@ -1289,61 +1471,11 @@ class Netcat(object):
             # args is not a string, assume it's a list.
             pass
 
-        parser = cls.create_parser(
-                stdout=stdout,
-                stderr=stderr,
-        )
-        parsed_args = parser.parse_args(args)
-
-        args = parsed_args['general arguments']
-        client_args = parsed_args['client arguments']
-        server_args = parsed_args['server arguments']
-
-        if server_args.l:
-            # Server mode.
-            if args.dest and args.port and not args.p:
-                # pync -l localhost 8000
-                pass
-            elif args.dest and not args.port and not args.p:
-                # pync -l 8000
-                # Get the port from args.dest.
-                # This will need feeding through the parser
-                # again to detect any port number errors.
-                args.port = args.dest
-                args.dest = ''
-                test_args = ['dest', args.port]
-                test_args = parser.parse_args(test_args)['general arguments']
-                args.port = test_args.port
-            elif not args.dest and not args.port and args.p:
-                # pync -lp 8000
-                pass
-            elif args.dest and not args.port and args.p:
-                # pync -lp 8000 localhost
-                pass
-            elif args.dest and args.port and args.p:
-                # pync -lp 8000 localhost 8001
-                pass
-            else:
-                parser.print_usage()
-                raise SystemExit
-        else:
-            # Client mode.
-            if args.dest and args.port:
-                # pync localhost 8000
-                pass
-            elif args.dest and args.port and args.p:
-                # pync -p 1234 localhost 8000
-                pass
-            else:
-                parser.print_usage()
-                raise SystemExit
+        parser = cls.ArgumentParser(stdout=stdout, stderr=stderr)
+        args = parser.parse_args(args)
 
         kwargs = dict()
         kwargs.update(vars(args))
-        if server_args.l:
-            kwargs.update(vars(server_args))
-        else:
-            kwargs.update(vars(client_args))
 
         kwargs.update(dict(
             stdin=stdin,
@@ -1352,127 +1484,6 @@ class Netcat(object):
         ))
 
         return cls(**kwargs)
-
-    @classmethod
-    def create_parser(cls, stdout=None, stderr=None, **kwargs):
-        stdout = stdout or cls.stdout
-        stderr = stderr or cls.stderr
-
-        kwargs.update(dict(
-            stdout=stdout,
-            stderr=stderr))
-
-        name = cls.name
-        if name is None:
-            name = cls.__name__
-            
-        parser = cls.ArgumentParser(name,
-                usage=cls.usage,
-                description=cls.description,
-                add_help=False,
-                **kwargs
-        )
-        parser.add_argument('-4',
-                help='Use IPv4',
-                action='store_true',
-                dest='_4',
-        )
-        parser.add_argument('-6',
-                help='Use IPv6',
-                action='store_true',
-                dest='_6',
-        )
-        parser.add_argument('-b',
-                help='Allow broadcast',
-                action='store_true',
-        )
-        parser.add_argument('-C',
-                help='Send CRLF as line-ending',
-                action='store_true',
-        )
-        parser.add_argument('-D',
-                help='Enable the debug socket option',
-                action='store_true',
-        )
-        parser.add_argument('-d',
-                help='Detach from stdin',
-                action='store_true',
-        )
-        parser.add_argument('-e',
-                help='Execute a command over the connection',
-                metavar='command',
-        )
-        parser.add_argument('-h',
-                help='show this help message and exit.',
-                action='help',
-        )
-        parser.add_argument('-I',
-                help='TCP receive buffer length',
-                metavar='length',
-                type=int,
-        )
-        parser.add_argument('-i',
-                help='Delay interval for lines sent, ports scanned',
-                type=int,
-                metavar='secs',
-        )
-        parser.add_argument('-k',
-                group='server arguments',
-                help='Keep inbound sockets open for multiple connects',
-                action='store_true',
-        )
-        parser.add_argument('-l',
-                group='server arguments',
-                help='Listen mode, for inbound connects',
-                action='store_true',
-        )
-        parser.add_argument('-n',
-                help='Suppress name/port resolutions',
-                action='store_true',
-        )
-        parser.add_argument('-O',
-                help='TCP send buffer length',
-                metavar='length',
-                type=int,
-        )
-        parser.add_argument('-p',
-                help='Specify local port for remote connects',
-                metavar='source_port',
-                type=int,
-        )
-        parser.add_argument('-q',
-                help='quit after EOF on stdin and delay of seconds',
-                metavar='seconds',
-                default=0,
-                type=int,
-        )
-        parser.add_argument('-u',
-                help='UDP mode [default: TCP]',
-                action='store_true',
-        )
-        parser.add_argument('-v',
-                help='Verbose',
-                action='store_true',
-        )
-        parser.add_argument('-z',
-                group='client arguments',
-                help='Zero-I/O mode [used for scanning]',
-                action='store_true',
-        )
-        parser.add_argument('dest',
-                help='The destination host name or ip to connect or bind to',
-                nargs='?',
-                default='',
-                metavar='dest',
-        )
-        parser.add_argument('port',
-                help='The port number to connect or bind to',
-                type=port,
-                metavar='port',
-                nargs='*',
-                action=PortAction,
-        )
-        return parser
 
 
 def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
@@ -1524,9 +1535,9 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
-    stdin = stdin or Netcat.stdin
-    stdout = stdout or Netcat.stdout
-    stderr = stderr or Netcat.stderr
+    _stdin = stdin or Netcat.stdin
+    _stdout = stdout or Netcat.stdout
+    _stderr = stderr or Netcat.stderr
 
     exit = argparse.Namespace()
     exit.status = 1
@@ -1562,6 +1573,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
 
     class PyncArgumentParser(Netcat.ArgumentParser):
+        prog = 'pync'
 
         def print_help(self, *args, **kwargs):
             super(PyncArgumentParser, self).print_help(*args, **kwargs)
@@ -1569,8 +1581,6 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
 
     class PyncNetcat(Netcat):
-        name = 'pync'
-
         ArgumentParser = PyncArgumentParser
 
         TCPClient = PyncTCPClient
@@ -1578,16 +1588,19 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
         UDPClient = PyncUDPClient
         UDPServer = PyncUDPServer
 
+        stdin = _stdin
+        stdout = _stdout
+        stderr = _stderr
+
 
     try:
-        with PyncNetcat.from_args(args,
-                stdin=stdin, stdout=stdout, stderr=stderr) as nc:
+        with PyncNetcat.from_args(args) as nc:
             nc.readwrite()
     except KeyboardInterrupt:
-        nc.stderr.write('\n')
+        _stderr.write('\n')
         exit.status = 130
     except socket.error as e:
-        stderr.write('pync: {}\n'.format(e))
+        _stderr.write('pync: {}\n'.format(e))
         exit.status = 1
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.

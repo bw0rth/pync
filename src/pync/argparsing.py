@@ -5,26 +5,40 @@ from collections import defaultdict
 import sys
 
 
-class GroupingArgumentParser(argparse.ArgumentParser):
+class ArgumentParser(argparse.ArgumentParser):
     '''
-    ArgumentParser that separates parsed arguments
-    by custom group names.
+    An ArgumentParser that can take custom stdout
+    and stderr file-like objects.
     '''
+    prog = ''
+    usage = None
+    description = None
+    add_help = True
+
     stdout = sys.stdout
     stderr = sys.stderr
 
-    default_group = 'general arguments'
-
-    def __init__(self, name, stdout=None, stderr=None, **kwargs):
-        super(GroupingArgumentParser, self).__init__(name, **kwargs)
+    def __init__(self, prog=None, usage=None, description=None,
+            add_help=None, stdout=None, stderr=None, **kwargs):
+        if prog is not None:
+            self.prog = prog
+        if usage is not None:
+            self.usage = usage
+        if description is not None:
+            self.description = description
+        if add_help is not None:
+            self.add_help = add_help
 
         if stdout is not None:
             self.stdout = stdout
         if stderr is not None:
             self.stderr = stderr
 
-        self._group_args = defaultdict(list)
-        self._group_parsers = dict()
+        super(ArgumentParser, self).__init__(self.prog,
+                usage=self.usage,
+                description=self.description,
+                add_help=self.add_help,
+                **kwargs)
 
     def _print_message(self, message, file=None):
         if file is sys.stdout:
@@ -41,6 +55,19 @@ class GroupingArgumentParser(argparse.ArgumentParser):
                 file.write(message.encode())
             file.flush()
 
+
+class GroupingArgumentParser(ArgumentParser):
+    '''
+    ArgumentParser that separates parsed arguments
+    by custom group names.
+    '''
+    default_group = 'general arguments'
+
+    def __init__(self, *args, **kwargs):
+        self._group_args = defaultdict(list)
+        self._group_parsers = dict()
+        super(GroupingArgumentParser, self).__init__(*args, **kwargs)
+
     def add_argument(self, name, group='', **kwargs):
         if not group:
             group = self.default_group
@@ -53,7 +80,7 @@ class GroupingArgumentParser(argparse.ArgumentParser):
             dest = kwargs['dest']
         self._group_args[group].append(dest)
 
-    def parse_args(self, argv):
+    def group_parse_args(self, argv):
         args = super(GroupingArgumentParser, self).parse_args(argv)
         arg_groups = defaultdict(argparse.Namespace)
         for group_name, arg_names in self._group_args.items():
