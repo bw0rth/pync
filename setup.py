@@ -4,7 +4,7 @@ import setuptools
 
 setuptools.setup(
     name='pync',
-    version='0.11.1',
+    version='0.12.0',
     author='Brendon Worthington',
     description='arbitrary TCP and UDP connections and listens (Netcat for Python).',
     package_dir={'': 'src'},
