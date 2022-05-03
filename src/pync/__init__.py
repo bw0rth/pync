@@ -3,12 +3,12 @@
 from .nc import (
         pync,
         Netcat,
+        NetcatArgumentParser,
         NetcatConnection,
         NetcatClient, NetcatServer,
         NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
         Process, StopReadWrite, ConnectionRefused,
-        ArgumentParser,
         ConsoleInput,
 )
 
