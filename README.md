@@ -3,14 +3,15 @@
 </h1>
 
 <p align="center">
+  <a href="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml">
+      <img src="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml/badge.svg">
+  </a>
+  <br>
   <a href="https://readthedocs.org/projects/pync/">
     <img src="https://readthedocs.org/projects/pync/badge/?version=latest&style=flat-square">
   </a>
   <a href="https://github.com/brenw0rth/pync/blob/main/LICENSE">
       <img src="https://img.shields.io/github/license/brenw0rth/pync?style=flat-square">
-  </a>
-  <a href="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml">
-      <img src="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml/badge.svg">
   </a>
 </p>
 
