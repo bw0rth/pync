@@ -23,7 +23,7 @@
 <summary>Unix</summary>
 
 ```sh
-pync [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
+pync [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
      [-O length] [-p source_port] [-q seconds] [dest] [port]
 ```
 </details>
@@ -32,7 +32,7 @@ pync [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
 <summary>Windows</summary>
 
 ```sh
-py -m pync [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
+py -m pync [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
            [-O length] [-p source_port] [-q seconds] [dest] [port]
 ```
 </details>
@@ -42,7 +42,7 @@ py -m pync [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
 
 ```python
 from pync import pync
-args = '''[-46bCDdhklnuvz] [-e command] [-I length] [-i interval]
+args = '''[-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
           [-O length] [-p source_port] [-q seconds] [dest] [port]'''
 pync(args, stdin, stdout, stderr)
 ```
