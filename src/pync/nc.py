@@ -10,6 +10,7 @@ import contextlib
 import errno
 import itertools
 import logging
+import random
 import select
 import shlex
 import socket
@@ -542,11 +543,12 @@ class NetcatClient(NetcatIterator):
     n = False
     O = None
     p = None
+    r = False
     z = False
 
     def __init__(self, dest, port,
             _4=None, _6=None, b=None, D=None, e=None, I=None,
-            n=None, O=None, p=None, z=None, **kwargs):
+            n=None, O=None, p=None, r=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -568,6 +570,8 @@ class NetcatClient(NetcatIterator):
             self.O = O
         if p is not None:
             self.p = p
+        if r is not None:
+            self.r = r
         if z is not None:
             self.z = z
         
@@ -575,9 +579,13 @@ class NetcatClient(NetcatIterator):
             # Only one port passed, wrap it in a list
             # for the __iter__ function.
             self.port = [self.port]
+
+        if self.r:
+            self.port = list(self.port)
+            random.shuffle(self.port)
         self._iterports = iter(self.port)
 
-        if _6:
+        if self._6:
             self.address_family = socket.AF_INET6
         flags = 0
         if self.n:
@@ -1087,7 +1095,7 @@ class NetcatPortAction(argparse.Action):
 
 class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
-    usage = ("%(prog)s [-46bCDdhklnuvz] [-e command] [-I length] [-i interval]"
+    usage = ("%(prog)s [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]"
              "\n\t    [-O length] [-p source_port] [-q seconds] [dest] [port]")
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
@@ -1185,6 +1193,12 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 metavar='seconds',
                 default=0,
                 type=int,
+        )
+
+        self.add_argument('-r',
+                group='client arguments',
+                help='Randomize remote ports',
+                action='store_true',
         )
 
         self.add_argument('-u',
@@ -1559,6 +1573,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
 
     class PyncUDPClient(Netcat.UDPClient):
+        v_conn_refused = 'pync: ' + Netcat.UDPClient.v_conn_refused
         
         def _conn_succeeded(self, port):
             super(PyncUDPClient, self)._conn_succeeded(port)
