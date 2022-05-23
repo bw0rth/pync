@@ -1,5 +1,6 @@
 <h1 align="center">
-  <a href="https://github.com/brenw0rth/pync"><img src="logo.png" alt="pync" width=300></a>
+  <a href="https://github.com/brenw0rth/pync"><img src="identicon.png" alt="pync" width=50></a>
+  pync
 </h1>
 
 <p align="center">
