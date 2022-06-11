@@ -542,13 +542,17 @@ class NetcatClient(NetcatIterator):
     I = None
     n = False
     O = None
+    P = None
     p = None
     r = False
+    X = None
+    x = None
     z = False
 
     def __init__(self, dest, port,
             _4=None, _6=None, b=None, D=None, e=None, I=None,
-            n=None, O=None, p=None, r=None, z=None, **kwargs):
+            n=None, O=None, P=None, p=None, r=None, X=None,
+            x=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -572,6 +576,10 @@ class NetcatClient(NetcatIterator):
             self.p = p
         if r is not None:
             self.r = r
+        if X is not None:
+            self.X = X
+        if x is not None:
+            self.x = x
         if z is not None:
             self.z = z
         
@@ -680,6 +688,10 @@ class NetcatClient(NetcatIterator):
         return nc_conn
 
     def _client_init(self):
+        if self.x:
+            # proxy socket
+            proxy_address, port = self.x.split(':', 1)
+            print(proxy_address, port)
         return socket.socket(self.address_family, self.socket_type)
 
     def _client_bind(self, sock):
@@ -1182,6 +1194,12 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 type=int,
         )
 
+        self.add_argument('-P',
+                group='client arguments',
+                help='Username for proxy authentication',
+                metavar='proxy_username',
+        )
+
         self.add_argument('-p',
                 help='Specify local port for remote connects',
                 metavar='source_port',
@@ -1209,6 +1227,18 @@ class NetcatArgumentParser(GroupingArgumentParser):
         self.add_argument('-v',
                 help='Verbose',
                 action='store_true',
+        )
+
+        self.add_argument('-X',
+                group='client arguments',
+                help='Proxy protocol: "4", "5" (SOCKS) or "connect"',
+                metavar='proxy_protocol',
+        )
+
+        self.add_argument('-x',
+                group='client arguments',
+                help='Specify proxy address and port',
+                metavar='proxy_address[:port]',
         )
 
         self.add_argument('-z',
