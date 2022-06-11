@@ -13,5 +13,8 @@ setuptools.setup(
     entry_points={
         'console_scripts': ['pync=pync.__main__:main'],
     },
+    install_requires=[
+        'pysocks',
+    ],
 )
 
