@@ -18,10 +18,40 @@ import subprocess
 import sys
 import time
 
+import socks
+
 from .argparsing import GroupingArgumentParser
 from . import compat
 from .conin import NonBlockingConsoleInput as ConsoleInput
 from .process import NonBlockingProcess, ProcessTerminated
+
+
+class NetcatError(Exception):
+    
+    def __init__(self, msg, *args):
+        super(NetcatError, self).__init__(msg, *args)
+        self.msg = msg 
+
+    def __str__(self):
+        return self.msg
+
+
+class NetcatSocketError(NetcatError):
+    
+    def __init__(self, socket_err, *args):
+        msg = str(socket_err)
+        super(NetcatSocketError, self).__init__(msg, socket_err, *args)
+        self.socket_err = socket_err
+
+
+class NetcatProxyError(NetcatError):
+    
+    def __init__(self, proxy_err, *args):
+        msg = str(proxy_err)
+        if proxy_err.socket_err is not None:
+            msg = str(proxy_err.socket_err)
+        super(NetcatProxyError, self).__init__(msg, proxy_err, *args)
+        self.proxy_err =  proxy_err
 
 
 class NetcatContext(object):
@@ -598,8 +628,19 @@ class NetcatClient(NetcatIterator):
         flags = 0
         if self.n:
             flags = socket.AI_NUMERICHOST
-        self._addrinfo = socket.getaddrinfo(self.dest, None,
-                self.address_family, 0, 0, flags)
+        try:
+            self._addrinfo = socket.getaddrinfo(self.dest, None,
+                    self.address_family, 0, 0, flags)
+        except socket.error as e:
+            raise NetcatSocketError(e)
+
+    @property
+    def proxy_address(self):
+        return self.x.split(':', 1)[0]
+
+    @property
+    def proxy_port(self):
+        return self.x.split(':', 1)[1]
 
     def iter_connections(self):
         while True:
@@ -619,10 +660,12 @@ class NetcatClient(NetcatIterator):
             finally:
                 nc_conn.close()
 
-    def _conn_refused(self, port):
+    def _conn_refused(self, port, dest=None):
+        if dest is None:
+            dest = self.dest
         self.print_verbose(
                 self.v_conn_refused.format(
-                    dest=self.dest, port=port,
+                    dest=dest, port=port,
                     proto_name=self.protocol_name,
                 ),
         )
@@ -637,8 +680,17 @@ class NetcatClient(NetcatIterator):
             self._conn_refused(port)
         except socket.error as e:
             if e.errno != errno.ECONNREFUSED:
-                raise e
+                raise NetcatSocketError(e)
             self._conn_refused(port)
+        except socks.ProxyError as e:
+            se = e.socket_err
+            if se is None:
+                raise NetcatProxyError(e)
+            if se.errno != errno.ECONNREFUSED:
+                raise NetcatProxyError(e)
+            self._conn_refused(self.proxy_port,
+                    dest=self.proxy_address,
+            )
         else:
             self._conn_succeeded(port)
 
@@ -648,7 +700,9 @@ class NetcatClient(NetcatIterator):
 
         return nc_conn
 
-    def _conn_succeeded(self, port):
+    def _conn_succeeded(self, port, dest=None):
+        if dest is None:
+            dest = self.dest
         proto = '*'
         if not self.n:
             try:
@@ -657,7 +711,7 @@ class NetcatClient(NetcatIterator):
                 pass
         self.print_verbose(
                 self.v_conn_succeeded.format(
-                    dest=self.dest,
+                    dest=dest,
                     port=port,
                     proto_name=self.protocol_name,
                     proto=proto,
@@ -690,8 +744,15 @@ class NetcatClient(NetcatIterator):
     def _client_init(self):
         if self.x:
             # proxy socket
+            s = socks.socksocket(self.address_family, self.socket_type)
             proxy_address, port = self.x.split(':', 1)
-            print(proxy_address, port)
+            port = int(port)
+            #proxy_args = [self.X, proxy_address, port]
+            proxy_args = [socks.HTTP, proxy_address, port]
+            if self.P:
+                pass
+            s.set_proxy(*proxy_args)
+            return s
         return socket.socket(self.address_family, self.socket_type)
 
     def _client_bind(self, sock):
@@ -844,8 +905,11 @@ class NetcatServer(NetcatIterator):
         flags = 0
         if self.n:
             flags = socket.AI_NUMERICHOST
-        self._addrinfo = socket.getaddrinfo(self.dest, self.port,
-                self.address_family, 0, 0, flags)
+        try:
+            self._addrinfo = socket.getaddrinfo(self.dest, self.port,
+                    self.address_family, 0, 0, flags)
+        except socket.error as e:
+            raise NetcatSocketError(e)
         self._sock = socket.socket(self.address_family, self.socket_type)
 
         bind_and_activate = True
@@ -1644,12 +1708,13 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     except KeyboardInterrupt:
         _stderr.write('\n')
         exit.status = 130
-    except socket.error as e:
+    except NetcatError as e:
         _stderr.write('pync: {}\n'.format(e))
         exit.status = 1
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.
         return exit.status
+    #except ParserExit:
 
     return exit.status
 
