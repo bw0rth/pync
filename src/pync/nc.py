@@ -640,7 +640,8 @@ class NetcatClient(NetcatIterator):
 
     @property
     def proxy_port(self):
-        return self.x.split(':', 1)[1]
+        port = int(self.x.split(':', 1)[1])
+        return port
 
     def iter_connections(self):
         while True:
@@ -745,10 +746,8 @@ class NetcatClient(NetcatIterator):
         if self.x:
             # proxy socket
             s = socks.socksocket(self.address_family, self.socket_type)
-            proxy_address, port = self.x.split(':', 1)
-            port = int(port)
             #proxy_args = [self.X, proxy_address, port]
-            proxy_args = [socks.HTTP, proxy_address, port]
+            proxy_args = [socks.HTTP, self.proxy_address, self.proxy_port]
             if self.P:
                 pass
             s.set_proxy(*proxy_args)
@@ -1714,7 +1713,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.
         return exit.status
-    #except ParserExit:
+    #TODO: except ParserExit:
 
     return exit.status
 
