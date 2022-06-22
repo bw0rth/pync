@@ -625,14 +625,9 @@ class NetcatClient(NetcatIterator):
 
         if self._6:
             self.address_family = socket.AF_INET6
-        flags = 0
+        self.flags = 0
         if self.n:
-            flags = socket.AI_NUMERICHOST
-        try:
-            self._addrinfo = socket.getaddrinfo(self.dest, None,
-                    self.address_family, 0, 0, flags)
-        except socket.error as e:
-            raise NetcatSocketError(e)
+            self.flags = socket.AI_NUMERICHOST
 
     @property
     def proxy_address(self):
@@ -736,6 +731,12 @@ class NetcatClient(NetcatIterator):
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
     
     def _create_connection(self, addr):
+        dest, port = addr
+        try:
+            addrinfo = socket.getaddrinfo(dest, port,
+                    self.address_family, 0, 0, self.flags)
+        except socket.error as e:
+            raise NetcatSocketError(e)
         sock = self._client_init()
         self._client_bind(sock)
         self._client_connect(sock, addr)
@@ -901,14 +902,10 @@ class NetcatServer(NetcatIterator):
 
         if _6:
             self.address_family = socket.AF_INET6
-        flags = 0
+        self.flags = 0
         if self.n:
-            flags = socket.AI_NUMERICHOST
-        try:
-            self._addrinfo = socket.getaddrinfo(self.dest, self.port,
-                    self.address_family, 0, 0, flags)
-        except socket.error as e:
-            raise NetcatSocketError(e)
+            self.flags = socket.AI_NUMERICHOST
+
         self._sock = socket.socket(self.address_family, self.socket_type)
 
         bind_and_activate = True
@@ -1020,6 +1017,11 @@ class NetcatServer(NetcatIterator):
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
 
     def _server_bind(self):
+        try:
+            addrinfo = socket.getaddrinfo(self.dest, self.port,
+                    self.address_family, 0, 0, self.flags)
+        except socket.error as e:
+            raise NetcatSocketError(e)
         self._set_common_sockopts()
         self._sock.bind((self.dest, self.port))
 
