@@ -651,7 +651,7 @@ class NetcatClient(NetcatIterator):
 
         try:
             port = int(port)
-        except ValueError:
+        except (TypeError, ValueError):
             port = repr(port)
         return port
 
