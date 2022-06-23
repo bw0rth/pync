@@ -575,7 +575,7 @@ class NetcatClient(NetcatIterator):
     P = None
     p = None
     r = False
-    X = None
+    X = '5'
     x = None
     z = False
 
@@ -630,12 +630,29 @@ class NetcatClient(NetcatIterator):
             self.flags = socket.AI_NUMERICHOST
 
     @property
+    def proxy_protocol(self):
+        protocols = {
+                '5': socks.SOCKS5,
+                '4': socks.SOCKS4,
+                'connect': socks.HTTP
+        }
+        return protocols[self.X]
+
+    @property
     def proxy_address(self):
         return self.x.split(':', 1)[0]
 
     @property
     def proxy_port(self):
-        port = int(self.x.split(':', 1)[1])
+        try:
+            port = self.x.split(':', 1)[1]
+        except IndexError:
+            port = None
+
+        try:
+            port = int(port)
+        except ValueError:
+            port = repr(port)
         return port
 
     def iter_connections(self):
@@ -746,9 +763,17 @@ class NetcatClient(NetcatIterator):
     def _client_init(self):
         if self.x:
             # proxy socket
+            try:
+                addrinfo = socket.getaddrinfo(
+                        self.proxy_address, self.proxy_port,
+                        self.address_family, 0, 0, self.flags,
+                )
+            except socket.error as e:
+                raise NetcatSocketError(e)
             s = socks.socksocket(self.address_family, self.socket_type)
-            #proxy_args = [self.X, proxy_address, port]
-            proxy_args = [socks.HTTP, self.proxy_address, self.proxy_port]
+            proxy_args = [self.proxy_protocol, self.proxy_address]
+            if self.proxy_port is not None:
+                proxy_args.append(self.proxy_port)
             if self.P:
                 pass
             s.set_proxy(*proxy_args)
