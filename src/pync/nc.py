@@ -691,6 +691,12 @@ class NetcatClient(NetcatIterator):
             nc_conn = self._create_connection((self.dest, port))
         except compat.ConnectionRefusedError:
             self._conn_refused(port)
+        except socks.ProxyConnectionError as e:
+            if e.socket_err and e.socket_err.errno == errno.ECONNREFUSED:
+                self._conn_refused(self.proxy_port,
+                        dest=self.proxy_address,
+                )
+            raise NetcatProxyError(e)
         except socket.error as e:
             if e.errno != errno.ECONNREFUSED:
                 raise NetcatSocketError(e)
@@ -1323,6 +1329,8 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 group='client arguments',
                 help='Proxy protocol: "4", "5" (SOCKS) or "connect"',
                 metavar='proxy_protocol',
+                choices=['5', '4', 'connect'],
+                default='5',
         )
 
         self.add_argument('-x',
