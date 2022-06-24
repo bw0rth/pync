@@ -25,7 +25,8 @@
 
 ```sh
 pync [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
-     [-O length] [-p source_port] [-q seconds] [dest] [port]
+     [-O length] [-P proxy_username] [-p source_port] [-q seconds]
+     [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]
 ```
 </details>
 
@@ -34,7 +35,8 @@ pync [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
 
 ```sh
 py -m pync [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
-           [-O length] [-p source_port] [-q seconds] [dest] [port]
+           [-O length] [-P proxy_username] [-p source_port] [-q seconds]
+           [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]
 ```
 </details>
 
@@ -44,7 +46,8 @@ py -m pync [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
 ```python
 from pync import pync
 args = '''[-46bCDdhklnruvz] [-e command] [-I length] [-i interval]
-          [-O length] [-p source_port] [-q seconds] [dest] [port]'''
+          [-O length] [-P proxy_username] [-p source_port] [-q seconds]
+          [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]'''
 pync(args, stdin, stdout, stderr)
 ```
 </details>
