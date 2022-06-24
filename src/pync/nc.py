@@ -644,10 +644,16 @@ class NetcatClient(NetcatIterator):
 
     @property
     def proxy_port(self):
+        defaults = {
+                '5': 1080,
+                '4': 1080,
+                'connect': 3128,
+        }
+
         try:
             port = self.x.split(':', 1)[1]
         except IndexError:
-            port = None
+            port = defaults[self.X]
 
         try:
             port = int(port)
@@ -691,7 +697,7 @@ class NetcatClient(NetcatIterator):
             nc_conn = self._create_connection((self.dest, port))
         except compat.ConnectionRefusedError:
             self._conn_refused(port)
-        except socks.ProxyConnectionError as e:
+        except socks.ProxyError as e:
             if e.socket_err and e.socket_err.errno == errno.ECONNREFUSED:
                 self._conn_refused(self.proxy_port,
                         dest=self.proxy_address,
@@ -701,15 +707,6 @@ class NetcatClient(NetcatIterator):
             if e.errno != errno.ECONNREFUSED:
                 raise NetcatSocketError(e)
             self._conn_refused(port)
-        except socks.ProxyError as e:
-            se = e.socket_err
-            if se is None:
-                raise NetcatProxyError(e)
-            if se.errno != errno.ECONNREFUSED:
-                raise NetcatProxyError(e)
-            self._conn_refused(self.proxy_port,
-                    dest=self.proxy_address,
-            )
         else:
             self._conn_succeeded(port)
 
