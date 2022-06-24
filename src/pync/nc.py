@@ -1202,7 +1202,8 @@ class NetcatPortAction(argparse.Action):
 class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
     usage = ("%(prog)s [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]"
-             "\n\t    [-O length] [-p source_port] [-q seconds] [dest] [port]")
+            "\n\t    [-O length] [-P proxy_username] [-p source_port] [-q seconds]"
+            "\n\t    [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]")
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
     
