@@ -773,13 +773,14 @@ class NetcatClient(NetcatIterator):
                 )
             except socket.error as e:
                 raise NetcatSocketError(e)
+
             s = socks.socksocket(self.address_family, self.socket_type)
-            proxy_args = [self.proxy_protocol, self.proxy_address]
-            if self.proxy_port is not None:
-                proxy_args.append(self.proxy_port)
-            if self.P:
-                pass
-            s.set_proxy(*proxy_args)
+            s.set_proxy(
+                    proxy_type=self.proxy_protocol,
+                    addr=self.proxy_address,
+                    port=self.proxy_port,
+                    username=self.P,
+            )
             return s
         return socket.socket(self.address_family, self.socket_type)
 
@@ -1736,16 +1737,15 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     try:
         with PyncNetcat.from_args(args) as nc:
             nc.readwrite()
-    except KeyboardInterrupt:
-        _stderr.write('\n')
-        exit.status = 130
     except NetcatError as e:
         _stderr.write('pync: {}\n'.format(e))
         exit.status = 1
+    except KeyboardInterrupt:
+        _stderr.write('\n')
+        exit.status = 130
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.
         return exit.status
-    #TODO: except ParserExit:
 
     return exit.status
 
