@@ -573,15 +573,16 @@ class NetcatClient(NetcatIterator):
     n = False
     O = None
     P = None
-    p = None
+    p = 0
     r = False
+    s = ''
     X = '5'
     x = None
     z = False
 
     def __init__(self, dest, port,
             _4=None, _6=None, b=None, D=None, e=None, I=None,
-            n=None, O=None, P=None, p=None, r=None, X=None,
+            n=None, O=None, P=None, p=None, r=None, s=None, X=None,
             x=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
@@ -606,6 +607,8 @@ class NetcatClient(NetcatIterator):
             self.p = p
         if r is not None:
             self.r = r
+        if s is not None:
+            self.s = s
         if X is not None:
             self.X = X
         if x is not None:
@@ -752,11 +755,7 @@ class NetcatClient(NetcatIterator):
     
     def _create_connection(self, addr):
         dest, port = addr
-        try:
-            addrinfo = socket.getaddrinfo(dest, port,
-                    self.address_family, 0, 0, self.flags)
-        except socket.error as e:
-            raise NetcatSocketError(e)
+        addrinfo = self._getaddrinfo(dest, port)
         sock = self._client_init()
         self._client_bind(sock)
         self._client_connect(sock, addr)
@@ -766,14 +765,7 @@ class NetcatClient(NetcatIterator):
     def _client_init(self):
         if self.x:
             # proxy socket
-            try:
-                addrinfo = socket.getaddrinfo(
-                        self.proxy_address, self.proxy_port,
-                        self.address_family, 0, 0, self.flags,
-                )
-            except socket.error as e:
-                raise NetcatSocketError(e)
-
+            addrinfo = self._getaddrinfo(self.proxy_address, self.proxy_port)
             s = socks.socksocket(self.address_family, self.socket_type)
             s.set_proxy(
                     proxy_type=self.proxy_protocol,
@@ -786,8 +778,21 @@ class NetcatClient(NetcatIterator):
 
     def _client_bind(self, sock):
         self._set_common_sockopts(sock)
-        if self.p is not None:
-            sock.bind(('', self.p))
+        if self.s or self.p:
+            source = self.s or None
+            port = self.p or None
+            addrinfo = self._getaddrinfo(source, port)
+        sock.bind((self.s, self.p))
+
+    def _getaddrinfo(self, addr, port):
+        # Used to raise socket error on bad address.
+        try:
+            return socket.getaddrinfo(
+                    addr, port,
+                    self.address_family, 0, 0, self.flags,
+            )
+        except socket.error as e:
+            raise NetcatSocketError(e)
 
     def _client_connect(self, sock, addr):
         sock.connect(addr)
@@ -1045,12 +1050,18 @@ class NetcatServer(NetcatIterator):
         if self.O:
             self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
 
-    def _server_bind(self):
+    def _getaddrinfo(self, addr, port):
+        # Used to raise socket error on bad address.
         try:
-            addrinfo = socket.getaddrinfo(self.dest, self.port,
-                    self.address_family, 0, 0, self.flags)
+            return socket.getaddrinfo(
+                    addr, port,
+                    self.address_family, 0, 0, self.flags,
+            )
         except socket.error as e:
             raise NetcatSocketError(e)
+
+    def _server_bind(self):
+        addrinfo = self._getaddrinfo(self.dest, self.port)
         self._set_common_sockopts()
         self._sock.bind((self.dest, self.port))
 
@@ -1203,7 +1214,8 @@ class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
     usage = ("%(prog)s [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]"
             "\n\t    [-O length] [-P proxy_username] [-p source_port] [-q seconds]"
-            "\n\t    [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]")
+            "\n\t    [-s source] [-X proxy_protocol] [-x proxy_address[:port]]"
+            "\n\t    [dest] [port]")
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
     
@@ -1298,7 +1310,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         self.add_argument('-p',
                 help='Specify local port for remote connects',
                 metavar='source_port',
-                type=int,
+                type=self.source_port,
         )
 
         self.add_argument('-q',
@@ -1312,6 +1324,12 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 group='client arguments',
                 help='Randomize remote ports',
                 action='store_true',
+        )
+
+        self.add_argument('-s',
+                group='client arguments',
+                help='Local source address',
+                metavar='source',
         )
 
         self.add_argument('-u',
@@ -1359,6 +1377,15 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 action=self.PortAction,
         )
 
+    def _valid_port(self, value):
+        return 1 <= int(value) <= 65535
+
+    def source_port(self, value):
+        msg = 'invalid source_port value: {}'
+        if not self._valid_port(value):
+            raise ValueError(msg.format(value))
+        return int(value)
+
     def port(self, value):
         # This should always return a range of ports.
         # Even if only one port is given.
@@ -1367,11 +1394,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         # if one port is given or a chain of sorted port
         # ranges if more than one port is given.
 
-        invalid_msg = 'Given value is not a valid port number'
-        def valid_port(p):
-            # check if port is actually a valid port number.
-            return 1 <= p <= 65535
-
+        msg = 'invalid port value: {}'
         try:
             # assume port value is a range.
             # e.g 8000-8005
@@ -1379,16 +1402,16 @@ class NetcatArgumentParser(GroupingArgumentParser):
         except ValueError:
             # port value is not a range.
             value = int(value)
-            if not valid_port(value):
-                raise ValueError(invalid_msg)
+            if not self._valid_port(value):
+                raise ValueError(msg.format(value))
             return compat.range(value, value+1)
 
         if start_port > end_port:
             start_port, end_port = end_port, start_port
 
         for p in [start_port, end_port]:
-            if not valid_port(p):
-                raise ValueError(invalid_msg)
+            if not self._valid_port(p):
+                raise ValueError(msg.format(p))
 
         return compat.range(start_port, end_port+1)
 
