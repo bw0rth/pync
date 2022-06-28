@@ -1,2 +1,3 @@
 furo
+socks
 sphinx-inline-tabs
