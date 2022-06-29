@@ -26,6 +26,37 @@ from .conin import NonBlockingConsoleInput as ConsoleInput
 from .process import NonBlockingProcess, ProcessTerminated
 
 
+TOSKEYWORDS = dict(
+        af11=0x28,
+        af12=0x30,
+        af21=0x38,
+        af22=0x50,
+        af23=0x58,
+        af31=0x68,
+        af32=0x70,
+        af33=0x78,
+        af41=0x88,
+        af42=0x90,
+        af43=0x98,
+        critical=0xa0,
+        cs0=0x00,
+        cs1=0x20,
+        cs2=0x40,
+        cs3=0x60,
+        cs4=0x80,
+        cs5=0xa0,
+        cs6=0xc0,
+        cs7=0xe0,
+        ef=0xb8,
+        inetcontrol=0xc0,
+        lowcost=0x02,
+        lowdelay=0x10,
+        netcontrol=0xe0,
+        reliability=0x04,
+        throughput=0x08,
+)
+
+
 class NetcatError(Exception):
     
     def __init__(self, msg, *args):
@@ -1330,6 +1361,11 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 group='client arguments',
                 help='Local source address',
                 metavar='source',
+        )
+
+        self.add_argument('-T',
+                help='Set IP Type of Service',
+                metavar='toskeyword',
         )
 
         self.add_argument('-u',
