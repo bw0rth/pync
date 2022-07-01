@@ -501,8 +501,17 @@ class NetcatIterator(NetcatContext):
     '''
     Connection = None
     e = None
+    T = None
 
     allow_reuse_port = True
+
+    def __init__(self, e=None, T=None, *args, **kwargs):
+        super(NetcatIterator, self).__init__(*args, **kwargs)
+
+        if e is not None:
+            self.e = e
+        if T is not None:
+            self.T = T
 
     def _init_kwargs(self, **kwargs):
         self._conn_kwargs = kwargs
@@ -522,6 +531,14 @@ class NetcatIterator(NetcatContext):
     def __next__(self):
         return self.next_connection()
 
+    @property
+    def tos(self):
+        ''' Returns IP TOS integer value. '''
+        T = self.T
+        if T in TOSKEYWORDS:
+            T = TOSKEYWORDS[T]
+        return int(T)
+
     def iter_connections(self):
         ''' Override in subclass
         Iterate through and yield each connection.
@@ -534,6 +551,34 @@ class NetcatIterator(NetcatContext):
         Return the next NetcatConnection.
         '''
         raise NotImplementedError
+
+    def readwrite(self):
+        for conn in self:
+            conn.readwrite()
+
+    def _set_common_sockopts(self, sock):
+        if self.allow_reuse_port:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        if self.b:
+            sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
+        if self.D:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_DEBUG, 1)
+        if self.T:
+            sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, self.tos)
+        if self.I:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
+        if self.O:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
+
+    def _getaddrinfo(self, addr, port):
+        # Used to raise socket error on bad address.
+        try:
+            return socket.getaddrinfo(
+                    addr, port,
+                    self.address_family, 0, 0, self.flags,
+            )
+        except socket.error as e:
+            raise NetcatSocketError(e)
 
 
 class NetcatClient(NetcatIterator):
@@ -767,22 +812,6 @@ class NetcatClient(NetcatIterator):
                     proto=proto,
                 ),
         )
-
-    def readwrite(self):
-        for nc_conn in self:
-            nc_conn.readwrite()
-
-    def _set_common_sockopts(self, sock):
-        if self.allow_reuse_port:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        if self.b:
-            sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
-        if self.D:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_DEBUG, 1)
-        if self.I:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
-        if self.O:
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
     
     def _create_connection(self, addr):
         dest, port = addr
@@ -814,16 +843,6 @@ class NetcatClient(NetcatIterator):
             port = self.p or None
             addrinfo = self._getaddrinfo(source, port)
         sock.bind((self.s, self.p))
-
-    def _getaddrinfo(self, addr, port):
-        # Used to raise socket error on bad address.
-        try:
-            return socket.getaddrinfo(
-                    addr, port,
-                    self.address_family, 0, 0, self.flags,
-            )
-        except socket.error as e:
-            raise NetcatSocketError(e)
 
     def _client_connect(self, sock, addr):
         sock.connect(addr)
@@ -1054,46 +1073,9 @@ class NetcatServer(NetcatIterator):
         self._conn_accepted(cli_dest, cli_port)
         return nc_conn
 
-    def readwrite(self):
-        """
-        Convenience method to run each :class:`pync.NetcatConnection` one
-        after another.
-
-        :Example:
-
-        .. code-block:: python
-
-           with NetcatServer(8000, dest='localhost', k=True) as nc:
-               nc.readwrite()
-        """
-        for conn in self:
-            conn.readwrite()
-
-    def _set_common_sockopts(self):
-        if self.allow_reuse_port:
-            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        if self.b:
-            self._sock.setsockopt(socket.IPPROTO_TCP, socket.SO_BROADCAST, 1)
-        if self.D:
-            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_DEBUG, 1)
-        if self.I:
-            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
-        if self.O:
-            self._sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, self.O)
-
-    def _getaddrinfo(self, addr, port):
-        # Used to raise socket error on bad address.
-        try:
-            return socket.getaddrinfo(
-                    addr, port,
-                    self.address_family, 0, 0, self.flags,
-            )
-        except socket.error as e:
-            raise NetcatSocketError(e)
-
     def _server_bind(self):
         addrinfo = self._getaddrinfo(self.dest, self.port)
-        self._set_common_sockopts()
+        self._set_common_sockopts(self._sock)
         self._sock.bind((self.dest, self.port))
 
     def _server_activate(self):
@@ -1245,8 +1227,8 @@ class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
     usage = ("%(prog)s [-46bCDdhklnruvz] [-e command] [-I length] [-i interval]"
             "\n\t    [-O length] [-P proxy_username] [-p source_port] [-q seconds]"
-            "\n\t    [-s source] [-X proxy_protocol] [-x proxy_address[:port]]"
-            "\n\t    [dest] [port]")
+            "\n\t    [-s source] [-T toskeyword] [-X proxy_protocol]"
+            "\n\t    [-x proxy_address[:port]] [dest] [port]")
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
     
@@ -1366,6 +1348,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         self.add_argument('-T',
                 help='Set IP Type of Service',
                 metavar='toskeyword',
+                type=self.toskeyword,
         )
 
         self.add_argument('-u',
@@ -1415,6 +1398,18 @@ class NetcatArgumentParser(GroupingArgumentParser):
 
     def _valid_port(self, value):
         return 1 <= int(value) <= 65535
+
+    def toskeyword(self, value):
+        if value in TOSKEYWORDS:
+            return TOSKEYWORDS[value]
+        try:
+            value = int(value)
+        except ValueError:
+            # value might be a hex number.
+            value = int(value, 16)
+        if 0 <= value <= 255:
+            return value
+        raise ValueError('illegal tos value {}'.format(value))
 
     def source_port(self, value):
         msg = 'invalid source_port value: {}'
