@@ -175,9 +175,10 @@ class NetcatConnection(NetcatContext):
     d = False
     i = 0
     q = 0
+    w = None
     plen = 2048
 
-    def __init__(self, net, C=None, d=None, i=None, q=None, **kwargs):
+    def __init__(self, net, C=None, d=None, i=None, q=None, w=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
 
         self.net = net
@@ -190,6 +191,8 @@ class NetcatConnection(NetcatContext):
             self.i = i
         if q is not None:
             self.q = q
+        if w is not None:
+            self.w = w
 
         self.dest, self.port = self._getpeername(net)
 
@@ -309,7 +312,8 @@ class NetcatConnection(NetcatContext):
         """
         netin_eof = False
         stdin_eof = None
-        stdin_eof_elapsed = None
+
+        idle_time = time.time()
 
         # (     )
         #   O O
@@ -335,6 +339,7 @@ class NetcatConnection(NetcatContext):
                         # py2 write bytes
                         self.stdout.write(net_data)
                     self.stdout.flush()
+                    idle_time = time.time()
                 elif net_data is not None:
                     # netin EOF
                     self.shutdown_rd()
@@ -362,6 +367,7 @@ class NetcatConnection(NetcatContext):
                             # Broken pipe.
                             # netin connection lost
                             return
+                        idle_time = time.time()
                     elif stdin_data is not None:
                         # stdin EOF
                         if not stdin_eof:
@@ -375,6 +381,11 @@ class NetcatConnection(NetcatContext):
                             stdin_eof_elapsed = time.time() - stdin_eof
                             if stdin_eof_elapsed >= self.q:
                                 return
+                    
+                    if self.w is not None:
+                        idle_time_elapsed = time.time() - idle_time
+                        if idle_time_elapsed >= self.w:
+                            return
             except StopReadWrite:
                 # I/O has requested to stop the readwrite loop.
                 break
@@ -652,14 +663,15 @@ class NetcatClient(NetcatIterator):
     p = 0
     r = False
     s = ''
+    w = None
     X = '5'
     x = None
     z = False
 
     def __init__(self, dest, port,
             _4=None, _6=None, b=None, D=None, e=None, I=None,
-            n=None, O=None, P=None, p=None, r=None, s=None, X=None,
-            x=None, z=None, **kwargs):
+            n=None, O=None, P=None, p=None, r=None, s=None, w=None,
+            X=None, x=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -685,12 +697,16 @@ class NetcatClient(NetcatIterator):
             self.r = r
         if s is not None:
             self.s = s
+        if w is not None:
+            self.w = w
         if X is not None:
             self.X = X
         if x is not None:
             self.x = x
         if z is not None:
             self.z = z
+
+        self._conn_kwargs['w'] = self.w
         
         if isinstance(self.port, int):
             # Only one port passed, wrap it in a list
@@ -845,7 +861,10 @@ class NetcatClient(NetcatIterator):
         sock.bind((self.s, self.p))
 
     def _client_connect(self, sock, addr):
+        if self.w:
+            sock.settimeout(self.w)
         sock.connect(addr)
+        sock.settimeout(None)
 
 
 class NetcatTCPClient(NetcatClient):
@@ -1361,6 +1380,12 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 action='store_true',
         )
 
+        self.add_argument('-w',
+                help='Timeout for connects and final net reads',
+                metavar='secs',
+                type=self.timeout,
+        )
+
         self.add_argument('-X',
                 group='client arguments',
                 help='Proxy protocol: "4", "5" (SOCKS) or "connect"',
@@ -1398,6 +1423,11 @@ class NetcatArgumentParser(GroupingArgumentParser):
 
     def _valid_port(self, value):
         return 1 <= int(value) <= 65535
+
+    def timeout(self, value):
+        value = int(value)
+        if value < 0:
+            raise ValueError('timeout too small')
 
     def toskeyword(self, value):
         if value in TOSKEYWORDS:
