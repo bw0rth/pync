@@ -256,6 +256,10 @@ class NetcatConnection(NetcatContext):
         """
         raise NotImplementedError
 
+    @property
+    def timeout(self):
+        return self.w
+
     def _getpeername(self, sock):
         try:
             # IPv4
@@ -382,9 +386,9 @@ class NetcatConnection(NetcatContext):
                             if stdin_eof_elapsed >= self.q:
                                 return
                     
-                    if self.w is not None:
+                    if self.timeout is not None:
                         idle_time_elapsed = time.time() - idle_time
-                        if idle_time_elapsed >= self.w:
+                        if idle_time_elapsed >= self.timeout:
                             return
             except StopReadWrite:
                 # I/O has requested to stop the readwrite loop.
@@ -756,6 +760,10 @@ class NetcatClient(NetcatIterator):
             port = repr(port)
         return port
 
+    @property
+    def timeout(self):
+        return self.w
+
     def iter_connections(self):
         while True:
             try:
@@ -861,8 +869,8 @@ class NetcatClient(NetcatIterator):
         sock.bind((self.s, self.p))
 
     def _client_connect(self, sock, addr):
-        if self.w:
-            sock.settimeout(self.w)
+        if self.timeout:
+            sock.settimeout(self.timeout)
         sock.connect(addr)
         sock.settimeout(None)
 
@@ -896,8 +904,13 @@ class NetcatUDPClient(NetcatClient):
         for i in compat.range(2):
             sock.sendall(b'X')
 
+        timeout = self.timeout
+
+        if timeout is None:
+            timeout = self.udp_scan_timeout
+
         # Give the remote host some time to reply.
-        for i in compat.range(0, self.udp_scan_timeout):
+        for i in compat.range(0, timeout):
             time.sleep(1)
             sock.sendall(b'X')
 
@@ -1428,6 +1441,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         value = int(value)
         if value < 0:
             raise ValueError('timeout too small')
+        return value
 
     def toskeyword(self, value):
         if value in TOSKEYWORDS:
