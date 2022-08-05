@@ -10,7 +10,7 @@ if os.name == 'nt' and sys.version_info < (3, 0):
 
 setuptools.setup(
     name='pync',
-    version='0.17.1',
+    version='0.18.0',
     author='Brendon Worthington',
     description='arbitrary TCP and UDP connections and listens (Netcat for Python).',
     package_dir={'': 'src'},
