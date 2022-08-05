@@ -1,14 +1,14 @@
 =====================
-[-e]xecuting Commands
+[--exec]uting Commands
 =====================
 
-Using the `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+Using the `--exec <https://pync.readthedocs.io/en/latest/options/execute.html>`_
 option, you can execute commands over Netcat's connection.
 
 Hello World
 ===========
 
-1. By combining `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+1. By combining `--exec <https://pync.readthedocs.io/en/latest/options/execute.html>`_
    with the `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
    option, we can create a server that will echo "Hello, World!" to the
    first client that connects:
@@ -17,13 +17,13 @@ Hello World
 
    .. code-block:: sh
 
-      pync -le 'echo "Hello, World!"' localhost 8000
+      pync --exec 'echo "Hello, World!"' -l localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -le "echo Hello, World!" localhost 8000
+      py -m pync --exec "echo Hello, World!" -l localhost 8000
 
 .. tab:: Python
 
@@ -36,7 +36,7 @@ Hello World
       if platform.system() == 'Windows':
           message = 'Hello, World!'
 
-      pync('-le \'echo {}\' localhost 8000'.format(message))
+      pync('--exec \'echo {}\' -l localhost 8000'.format(message))
 
 2. Test this by connecting to the server:
 

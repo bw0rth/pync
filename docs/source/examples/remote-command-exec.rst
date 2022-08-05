@@ -2,11 +2,11 @@
 Remote Command Execution
 ========================
 
-Using the `-e <https://pync.readthedocs.io/en/latest/options/execute.html>`_
-option, we can execute a command and have it's i_o
-(input/output) connect to Netcat's network socket.
+Using the `--exec <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+option, we can execute a command and connect it's stdin/stdout/stderr
+to the network socket.
 
-Using this idea, we can create an interactive shell
+For example, we could create an interactive shell
 to execute commands on a remote machine.
 
 .. warning::
@@ -44,13 +44,13 @@ A Simple Reverse Shell
 
    .. code-block:: sh
 
-      pync -e "PS1='$ ' sh -i" localhost 8000
+      pync --exec "PS1='$ ' sh -i" localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -e "cmd /q" localhost 8000
+      py -m pync --exec "cmd /q" localhost 8000
 
 .. tab:: Python
 
@@ -64,7 +64,7 @@ A Simple Reverse Shell
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-e {} localhost 8000'.format(command))
+      pync('--exec {} localhost 8000'.format(command))
 
 There should now be a prompt on the server console that
 allows you to remotely execute commands on the client machine.
@@ -79,13 +79,13 @@ A Simple Bind Shell
 
    .. code-block:: sh
 
-      pync -le "PS1='$ ' sh -i" localhost 8000
+      pync --exec "PS1='$ ' sh -i" -l localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -le "cmd /q" localhost 8000
+      py -m pync --exec "cmd /q" -l localhost 8000
 
 .. tab:: Python
 
@@ -99,7 +99,7 @@ A Simple Bind Shell
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-le {} localhost 8000'.format(command))
+      pync('--exec {} -l localhost 8000'.format(command))
 
 2. On another console, connect to the server to
    interact with the shell:
