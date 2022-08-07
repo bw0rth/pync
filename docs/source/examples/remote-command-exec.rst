@@ -6,9 +6,8 @@ Remote Command Execution
    | Please BE CAREFUL with this functionality as it could expose your system to attackers.
    | Also, please DO NOT use this functionality for evil purposes.
 
-Using the `-c <https://pync.readthedocs.io/en/latest/options/execute.html>`_
-option, we can execute a command and connect it's stdin/stdout/stderr
-to the network socket.
+The **-e** option allows you to execute a process and have that process' stdin/stdout/stderr
+be connected to the network socket.
 
 For example, we can create an interactive shell
 to execute commands on a remote machine.
@@ -44,13 +43,13 @@ A Simple Reverse Shell
 
    .. code-block:: sh
 
-      pync -c "PS1='$ ' sh -i" localhost 8000
+      pync -ve "/bin/sh -i" localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -c "cmd /q" localhost 8000
+      py -m pync -ve "cmd /q" localhost 8000
 
 .. tab:: Python
 
@@ -60,11 +59,11 @@ A Simple Reverse Shell
       import platform
       from pync import pync
 
-      command = "PS1='$ ' sh -i"
+      command = '/bin/sh -i'
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-c {} localhost 8000'.format(command))
+      pync('-ve {} localhost 8000'.format(command))
 
 There should now be a prompt on the server console that
 allows you to remotely execute commands on the client machine.
@@ -79,13 +78,13 @@ A Simple Bind Shell
 
    .. code-block:: sh
 
-      pync -c "PS1='$ ' sh -i" -l localhost 8000
+      pync -vle "/bin/sh -i" localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -c "cmd /q" -l localhost 8000
+      py -m pync -vle "cmd /q" localhost 8000
 
 .. tab:: Python
 
@@ -95,11 +94,11 @@ A Simple Bind Shell
       import platform
       from pync import pync
 
-      command = "PS1='$ ' sh -i"
+      command = '/bin/sh -i'
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-c {} -l localhost 8000'.format(command))
+      pync('-vle {} localhost 8000'.format(command))
 
 2. On another console, connect to the server to
    interact with the shell:
