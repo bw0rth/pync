@@ -26,6 +26,15 @@ from .conin import NonBlockingConsoleInput as ConsoleInput
 from .process import NonBlockingProcess, ProcessTerminated
 
 
+# For handling Process error.
+try:
+    # py3
+    FileNotFoundError
+except NameError:
+    # py2
+    FileNotFoundError = IOError
+
+
 TOSKEYWORDS = dict(
         af11=0x28,
         af12=0x30,
@@ -545,7 +554,7 @@ class NetcatIterator(NetcatContext):
                 cmd = self.c
             try:
                 proc = Process(cmd, shell=sh)
-            except FileNotFoundError as e:
+            except (FileNotFoundError, OSError) as e:
                 raise NetcatError(str(e))
             inout.update(stdin=proc.stdout, stdout=proc.stdin)
         self._conn_kwargs.update(inout)
