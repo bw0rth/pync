@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .nc import (
+from .netcat import (
         pync,
         Netcat,
         NetcatArgumentParser,

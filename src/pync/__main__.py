@@ -2,7 +2,8 @@
 
 import socket
 import sys
-from .nc import pync
+
+from . import pync
 
 
 def main():
