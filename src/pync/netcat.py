@@ -1286,7 +1286,7 @@ class NetcatPortAction(argparse.Action):
 
 class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
-    usage = ("%(prog)s [-46bCDdhklnruvz] [-c string] [-e command] [-I length]"
+    usage = ("%(prog)s [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]"
             "\n\t    [-i interval] [-O length] [-P proxy_username] [-p source_port]"
             "\n\t    [-q seconds] [-s source] [-T toskeyword] [-w timeout]"
             "\n\t    [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]")
