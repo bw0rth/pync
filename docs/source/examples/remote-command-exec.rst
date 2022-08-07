@@ -2,16 +2,16 @@
 Remote Command Execution
 ========================
 
+.. warning::
+   | Please BE CAREFUL with this functionality as it could expose your system to attackers.
+   | Also, please DO NOT use this functionality for evil purposes.
+
 Using the `-c <https://pync.readthedocs.io/en/latest/options/execute.html>`_
 option, we can execute a command and connect it's stdin/stdout/stderr
 to the network socket.
 
-For example, we could create an interactive shell
+For example, we can create an interactive shell
 to execute commands on a remote machine.
-
-.. warning::
-   | Please BE CAREFUL with this functionality as it could expose your system to attackers.
-   | Also, please DO NOT use this functionality for evil purposes.
 
 A Simple Reverse Shell
 ======================

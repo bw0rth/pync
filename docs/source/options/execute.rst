@@ -72,8 +72,8 @@ A Simple Reverse Shell (-e)
 A Simple Reverse Shell (-c)
 ===========================
 
-The -c option lets us pass arguments to the executed process
-to give us a more customized shell.
+The `-c <https://pync.readthedocs.io/en/latest/options/execute.html>`_
+option lets us pass arguments to give us a more customized shell.
 
 1. Create a local test server to catch the reverse shell:
 
