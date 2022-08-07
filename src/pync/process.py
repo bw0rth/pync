@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import shlex
 import subprocess
 
 from .pipe import NonBlockingPipe
@@ -9,6 +10,9 @@ class NonBlockingProcess(object):
 
     def __init__(self, cmd, shell=False):
         pipe = NonBlockingPipe()
+
+        if not shell:
+            cmd = shlex.split(cmd)
 
         self._proc = subprocess.Popen(cmd, shell=shell,
                 stdin=subprocess.PIPE,
