@@ -64,7 +64,7 @@ class NetcatError(Exception):
         self.msg = msg 
 
     def __str__(self):
-        return self.msg
+        return str(self.msg)
 
 
 class NetcatSocketError(NetcatError):
@@ -515,16 +515,19 @@ class NetcatIterator(NetcatContext):
     and NetcatServers can accept one or more connections.
     '''
     Connection = None
-    exec_ = None
+    c = None
+    e = None
     T = None
 
     allow_reuse_port = True
 
-    def __init__(self, exec_=None, T=None, *args, **kwargs):
+    def __init__(self, c=None, e=None, T=None, *args, **kwargs):
         super(NetcatIterator, self).__init__(*args, **kwargs)
 
-        if exec_ is not None:
-            self.exec_ = exec_
+        if c is not None:
+            self.c = c
+        if e is not None:
+            self.e = e
         if T is not None:
             self.T = T
 
@@ -533,9 +536,17 @@ class NetcatIterator(NetcatContext):
 
     def _init_connection(self, sock):
         inout = dict(stdin=self.stdin, stdout=self.stdout, stderr=self.stderr)
-        if self.exec_:
+        if self.c or self.e:
             # Execute a command and plug I/O into NetcatConnection.
-            proc = Process(self.exec_)
+            sh = False
+            cmd = self.e
+            if self.c:
+                sh = True
+                cmd = self.c
+            try:
+                proc = Process(cmd, shell=sh)
+            except FileNotFoundError as e:
+                raise NetcatError(str(e))
             inout.update(stdin=proc.stdout, stdout=proc.stdin)
         self._conn_kwargs.update(inout)
         return self.Connection(sock, **self._conn_kwargs)
@@ -658,8 +669,9 @@ class NetcatClient(NetcatIterator):
     _4 = True
     _6 = False
     b = False
+    c = None
     D = False
-    exec_ = None
+    e = None
     I = None
     n = False
     O = None
@@ -673,7 +685,7 @@ class NetcatClient(NetcatIterator):
     z = False
 
     def __init__(self, dest, port,
-            _4=None, _6=None, b=None, D=None, exec_=None, I=None,
+            _4=None, _6=None, b=None, c=None, D=None, e=None, I=None,
             n=None, O=None, P=None, p=None, r=None, s=None, w=None,
             X=None, x=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
@@ -685,10 +697,12 @@ class NetcatClient(NetcatIterator):
             self._6 = _6
         if b is not None:
             self.b = b
+        if c is not None:
+            self.c = c
         if D is not None:
             self.D = D
-        if exec_ is not None:
-            self.exec_ = exec_
+        if e is not None:
+            self.e = e
         if I is not None:
             self.I = I
         if n is not None:
@@ -973,15 +987,16 @@ class NetcatServer(NetcatIterator):
     _4 = True
     _6 = False
     b = False
+    c = None
     D = False
-    exec_ = None
+    e = None
     I = None
     k = False
     n = False
     O = None
 
-    def __init__(self, port, dest='', _4=None, _6=None, b=None,
-            D=None, exec_=None, I=None, k=None, n=None, O=None, **kwargs):
+    def __init__(self, port, dest='', _4=None, _6=None, b=None, c=None,
+            D=None, e=None, I=None, k=None, n=None, O=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -1003,10 +1018,12 @@ class NetcatServer(NetcatIterator):
             self._6 = _6
         if b is not None:
             self.b = b
+        if c is not None:
+            self.c = c
         if D is not None:
             self.D = D
-        if exec_ is not None:
-            self.exec_ = exec_
+        if e is not None:
+            self.e = e
         if I is not None:
             self.I = I
         if k is not None:
@@ -1260,10 +1277,10 @@ class NetcatPortAction(argparse.Action):
 
 class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
-    usage = ("%(prog)s [-46bCDdhklnruvz] [--exec command] [-I length] [-i interval]"
-            "\n\t    [-O length] [-P proxy_username] [-p source_port] [-q seconds]"
-            "\n\t    [-s source] [-T toskeyword] [-w timeout] [-X proxy_protocol]"
-            "\n\t    [-x proxy_address[:port]] [dest] [port]")
+    usage = ("%(prog)s [-46bCDdhklnruvz] [-c string] [-e command] [-I length]"
+            "\n\t    [-i interval] [-O length] [-P proxy_username] [-p source_port]"
+            "\n\t    [-q seconds] [-s source] [-T toskeyword] [-w timeout]"
+            "\n\t    [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]")
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
     
@@ -1289,6 +1306,11 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 action='store_true',
         )
 
+        self.add_argument('-c',
+                help='specify shell commands to exec after connect (use with caution).',
+                metavar='string',
+        )
+
         self.add_argument('-C',
                 help='Send CRLF as line-ending',
                 action='store_true',
@@ -1304,10 +1326,9 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 action='store_true',
         )
 
-        self.add_argument('--exec',
-                help='Execute a command over the connection',
-                metavar='command',
-                dest='exec_',
+        self.add_argument('-e',
+                help='specify filename to exec after connect (use with caution).',
+                metavar='filename',
         )
 
         self.add_argument('-h',

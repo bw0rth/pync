@@ -7,10 +7,10 @@ from .pipe import NonBlockingPipe
 
 class NonBlockingProcess(object):
 
-    def __init__(self, cmd):
+    def __init__(self, cmd, shell=False):
         pipe = NonBlockingPipe()
 
-        self._proc = subprocess.Popen(cmd, shell=True,
+        self._proc = subprocess.Popen(cmd, shell=shell,
                 stdin=subprocess.PIPE,
                 stdout=pipe.pout,
                 stderr=subprocess.STDOUT,
