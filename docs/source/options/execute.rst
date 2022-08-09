@@ -8,6 +8,7 @@
 
 **pync** can execute a process and connect the process' stdin/stdout/stderr
 to the network socket.
+
 Any data that comes in from the network will go to the process' stdin, and
 any data that comes out from the process' stdout/stderr will be sent out to the network.
 
