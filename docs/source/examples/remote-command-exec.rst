@@ -9,34 +9,37 @@ Remote Command Execution
 The **-e** option allows you to execute a process and have that process' stdin/stdout/stderr
 be connected to the network socket.
 
+Any data coming in from the network will go to the process' stdin and any
+data coming from the process' stdout/stderr with go out to the network.
+
 For example, we can create an interactive shell
 to execute commands on a remote machine.
 
 A Simple Reverse Shell
 ======================
 
-1. Create a server that will listen for the reverse shell connection:
+1. Create a local server that will listen for the reverse shell connection:
 
 .. tab:: Unix
 
    .. code-block:: sh
    
-      pync -l localhost 8000
+      pync -vl localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -l localhost 8000
+      py -m pync -vl localhost 8000
 
 .. tab:: Python
 
    .. code-block:: python
    
       from pync import pync
-      pync('-l localhost 8000')
+      pync('-vl localhost 8000')
 
-2. On another console, connect back to our server and
+2. On another console, connect back to the server and
    execute the shell:
 
 .. tab:: Unix
@@ -63,7 +66,7 @@ A Simple Reverse Shell
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-ve {} localhost 8000'.format(command))
+      pync('-ve "{}" localhost 8000'.format(command))
 
 There should now be a prompt on the server console that
 allows you to remotely execute commands on the client machine.
@@ -98,7 +101,7 @@ A Simple Bind Shell
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-vle {} localhost 8000'.format(command))
+      pync('-vle "{}" localhost 8000'.format(command))
 
 2. On another console, connect to the server to
    interact with the shell:
@@ -107,20 +110,20 @@ A Simple Bind Shell
 
    .. code-block:: sh
 
-      pync localhost 8000
+      pync -v localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync localhost 8000
+      py -m pync -v localhost 8000
 
 .. tab:: Python
 
    .. code-block:: python
 
       from pync import pync
-      pync('localhost 8000')
+      pync('-v localhost 8000')
 
 .. raw:: html
 
@@ -131,4 +134,5 @@ A Simple Bind Shell
 
 * :doc:`../options/execute`
 * :doc:`../options/listen`
+* :doc:`../options/verbose`
 
