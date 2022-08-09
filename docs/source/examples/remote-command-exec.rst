@@ -10,7 +10,7 @@ The **-e** option allows you to execute a process and have that process' stdin/s
 be connected to the network socket.
 
 Any data coming in from the network will go to the process' stdin and any
-data coming from the process' stdout/stderr with go out to the network.
+data coming from the process' stdout/stderr will go out to the network.
 
 For example, we can create an interactive shell
 to execute commands on a remote machine.
@@ -129,6 +129,9 @@ A Simple Bind Shell
 
    <br>
    <hr>
+
+There should now be a prompt on the client console that
+allows you to remotely execute commands on the server machine.
 
 :SEE ALSO:
 
