@@ -125,13 +125,13 @@ A Simple Bind Shell
       from pync import pync
       pync('-v localhost 8000')
 
+There should now be a prompt on the client console that
+allows you to remotely execute commands on the server machine.
+
 .. raw:: html
 
    <br>
    <hr>
-
-There should now be a prompt on the client console that
-allows you to remotely execute commands on the server machine.
 
 :SEE ALSO:
 
