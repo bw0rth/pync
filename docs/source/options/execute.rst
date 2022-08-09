@@ -15,7 +15,7 @@ any data that comes out from the process' stdout/stderr will be sent out to the 
 There are two options that can provide this functionality, the **-e** option
 and the **-c** option.
 
-Running a Command with -e
+Running a Command With -e
 =========================
 The **-e** option takes the full pathname of a command to execute,
 along with any arguments.
@@ -69,7 +69,7 @@ along with any arguments.
       from pync import pync
       pync('-v localhost 8000')
 
-Running a Command with -c
+Running a Command With -c
 =========================
 The **-c** option is the same as the **-e** option but allows
 extra shell features such as pipelines and evironment variable expansion.
