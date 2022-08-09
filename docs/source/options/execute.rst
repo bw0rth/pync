@@ -8,6 +8,8 @@
 
 **pync** can execute a process and connect the process' stdin/stdout/stderr
 to the network socket.
+Any data that comes in from the network will go to the process' stdin, and
+any data that comes out from the process' stdout/stderr will be sent out to the network.
 
 There are two options that can provide this functionality, the **-e** option
 and the **-c** option.
@@ -15,10 +17,10 @@ and the **-c** option.
 The **-e** option takes the full pathname of a command to execute,
 along with any arguments.
 
-A Simple Hello Server (-e)
-==========================
+A Simple Hello Server
+=====================
 
-1. Create a local server that sends "Hello, World!" to the first
+1. Create a local server that sends "Hello" to the first
    client that connects:
 
 .. tab:: Unix
