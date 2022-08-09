@@ -15,11 +15,10 @@ any data that comes out from the process' stdout/stderr will be sent out to the 
 There are two options that can provide this functionality, the **-e** option
 and the **-c** option.
 
+Running a Command with -e
+=========================
 The **-e** option takes the full pathname of a command to execute,
 along with any arguments.
-
-A Simple Hello Server
-=====================
 
 1. Create a local server that sends "Hello" to the first
    client that connects:
@@ -50,6 +49,61 @@ A Simple Hello Server
       pync('-vle "{}" localhost 8000')
 
 2. Connect to the Hello server to see the message:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      pync -v localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -v localhost 8000
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      from pync import pync
+      pync('-v localhost 8000')
+
+Running a Command with -c
+=========================
+The **-c** option is the same as the **-e** option but allows
+extra shell features such as pipelines and evironment variable expansion.
+
+1. Create a local server that sends the current working directory
+   to the first client that connects:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      pync -vle "/bin/echo `pwd`" localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -vle "echo %cd%" localhost 8000
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      import platform
+      from pync import pync
+
+      cmd = '/bin/echo `pwd`'
+      if platform.system() == 'Windows':
+          cmd = 'echo %cd%'
+
+      pync('-vle "{}" localhost 8000')
+
+2. Connect to the server to receive the server's
+   current working directory:
 
 .. tab:: Unix
 
