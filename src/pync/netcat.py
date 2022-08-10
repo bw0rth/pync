@@ -1447,6 +1447,16 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 metavar='proxy_address[:port]',
         )
 
+        self.add_argument('-Y',
+                help='specify python file to exec after connect (use with caution).',
+                metavar='filename',
+        )
+
+        self.add_argument('-y',
+                help='specify python code to exec after connect (use with caution).',
+                metavar='string',
+        )
+
         self.add_argument('-z',
                 group='client arguments',
                 help='Zero-I/O mode [used for scanning]',
