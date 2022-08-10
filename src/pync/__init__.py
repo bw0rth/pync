@@ -12,3 +12,5 @@ from .netcat import (
         ConsoleInput,
 )
 
+from .process import PythonProcess
+
