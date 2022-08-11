@@ -23,7 +23,10 @@ import socks
 from .argparsing import GroupingArgumentParser
 from . import compat
 from .conin import NonBlockingConsoleInput as ConsoleInput
-from .process import NonBlockingProcess, ProcessTerminated
+from .process import (
+        NonBlockingProcess, ProcessTerminated,
+        PythonProcess,
+)
 
 
 # For handling Process error.
@@ -527,10 +530,13 @@ class NetcatIterator(NetcatContext):
     c = None
     e = None
     T = None
+    y = None
+    Y = None
 
     allow_reuse_port = True
 
-    def __init__(self, c=None, e=None, T=None, *args, **kwargs):
+    def __init__(self, c=None, e=None, T=None, y=None, Y=None,
+            *args, **kwargs):
         super(NetcatIterator, self).__init__(*args, **kwargs)
 
         if c is not None:
@@ -539,24 +545,40 @@ class NetcatIterator(NetcatContext):
             self.e = e
         if T is not None:
             self.T = T
+        if y is not None:
+            self.Y = Y
 
     def _init_kwargs(self, **kwargs):
         self._conn_kwargs = kwargs
 
     def _init_connection(self, sock):
         inout = dict(stdin=self.stdin, stdout=self.stdout, stderr=self.stderr)
-        if self.c or self.e:
-            # Execute a command and plug I/O into NetcatConnection.
-            sh = False
-            cmd = self.e
-            if self.c:
-                sh = True
-                cmd = self.c
+
+        if self.c:
+            cmd = self.c
+            sh = True
             try:
-                proc = Process(cmd, shell=sh)
+                proc = NetcatProcess(cmd, shell=sh)
             except (FileNotFoundError, OSError) as e:
                 raise NetcatError(str(e))
             inout.update(stdin=proc.stdout, stdout=proc.stdin)
+        elif self.e:
+            cmd = self.e
+            sh = False
+            try:
+                proc = NetcatProcess(cmd, shell=sh)
+            except (FileNotFoundError, OSError) as e:
+                raise NetcatError(str(e))
+            inout.update(stdin=proc.stdout, stdout=proc.stdin)
+        elif self.y:
+            code = self.y
+            proc = NetcatPythonProcess(code)
+            inout.update(stdin=proc.stdout, stdout=proc.stdin)
+        elif self.Y:
+            filename = self.Y
+            proc = NetcatPythonProcess.from_file(filename)
+            inout.update(stdin=proc.stdout, stdout=proc.stdin)
+
         self._conn_kwargs.update(inout)
         return self.Connection(sock, **self._conn_kwargs)
 
@@ -691,12 +713,14 @@ class NetcatClient(NetcatIterator):
     w = None
     X = '5'
     x = None
+    y = None
+    Y = None
     z = False
 
     def __init__(self, dest, port,
             _4=None, _6=None, b=None, c=None, D=None, e=None, I=None,
             n=None, O=None, P=None, p=None, r=None, s=None, w=None,
-            X=None, x=None, z=None, **kwargs):
+            X=None, x=None, y=None, Y=None, z=None, **kwargs):
         super(NetcatClient, self).__init__(**kwargs)
 
         self.dest, self.port = dest, port
@@ -730,6 +754,10 @@ class NetcatClient(NetcatIterator):
             self.X = X
         if x is not None:
             self.x = x
+        if y is not None:
+            self.y = y
+        if Y is not None:
+            self.Y = Y
         if z is not None:
             self.z = z
 
@@ -1003,9 +1031,12 @@ class NetcatServer(NetcatIterator):
     k = False
     n = False
     O = None
+    y = None
+    Y = None
 
     def __init__(self, port, dest='', _4=None, _6=None, b=None, c=None,
-            D=None, e=None, I=None, k=None, n=None, O=None, **kwargs):
+            D=None, e=None, I=None, k=None, n=None, O=None,
+            y=None, Y=None, **kwargs):
         super(NetcatServer, self).__init__(**kwargs)
 
         self.dest = dest
@@ -1041,6 +1072,10 @@ class NetcatServer(NetcatIterator):
             self.n = n
         if O is not None:
             self.O = O
+        if y is not None:
+            self.y = y
+        if Y is not None:
+            self.Y = Y
 
         if _6:
             self.address_family = socket.AF_INET6
@@ -1220,7 +1255,15 @@ class StopReadWrite(Exception):
     """
 
 
-class Process(NonBlockingProcess):
+class NetcatPythonProcess(PythonProcess):
+    
+    def __init__(self, *args, **kwargs):
+        super(NetcatPythonProcess, self).__init__(*args, **kwargs)
+        self.stdin = _ProcStdin(self.stdin)
+        self.stdout = _ProcStdout(self.stdout)
+
+
+class NetcatProcess(NonBlockingProcess):
     """
     A non-blocking process to be used with Netcat classes.
     Use this instead of <subprocess.Process>.
@@ -1289,7 +1332,9 @@ class NetcatArgumentParser(GroupingArgumentParser):
     usage = ("%(prog)s [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]"
             "\n\t    [-i interval] [-O length] [-P proxy_username] [-p source_port]"
             "\n\t    [-q seconds] [-s source] [-T toskeyword] [-w timeout]"
-            "\n\t    [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]")
+            "\n\t    [-X proxy_protocol] [-x proxy_address[:port]]"
+            "\n\t    [-y string] [-Y filename] [dest] [port]"
+    )
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
     

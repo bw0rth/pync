@@ -4,25 +4,44 @@ import multiprocessing
 import shlex
 import subprocess
 
+try:
+    # py2
+    import Queue as queue
+except ImportError:
+    # py3
+    import queue
+
 from .pipe import NonBlockingPipe
 
 
 class PythonPipeInput(object):
 
-    def __init__(self, q):
+    def __init__(self, proc, q):
+        self._proc = proc
         self._q = q
 
     def write(self, data):
         self._q.put(data)
 
+    def flush(self):
+        pass
+
 
 class PythonPipeOutput(object):
 
-    def __init__(self, q):
+    def __init__(self, proc, q):
+        self._proc = proc
         self._q = q
 
-    def read(self):
-        return self._q.get()
+    def read(self, n):
+        try:
+            data = self._q.get(False)
+        except queue.Empty:
+            if not self._proc.is_alive():
+                raise ProcessTerminated
+            return None
+        else:
+            return data.encode('utf-8')
 
 
 class PythonProcessInput(object):
@@ -31,7 +50,11 @@ class PythonProcessInput(object):
         self._q = q
 
     def read(self):
-        return self._q.get()
+        data = self._q.get()
+        return data.decode()
+
+    def readline(self):
+        return self.read()
 
 
 class PythonProcessOutput(object):
@@ -41,6 +64,9 @@ class PythonProcessOutput(object):
 
     def write(self, data):
         self._q.put(data)
+
+    def flush(self):
+        pass
 
 
 class PythonProcess(object):
@@ -53,13 +79,15 @@ class PythonProcess(object):
                 target=self.run,
         )
 
-        self.stdin = PythonPipeInput(self._qin)
-        self.stdout = PythonPipeOutput(self._qout)
+        self.stdin = PythonPipeInput(self._proc, self._qin)
+        self.stdout = PythonPipeOutput(self._proc, self._qout)
         self.stderr = self.stdout
 
         self._proc_stdin = PythonProcessInput(self._qin)
         self._proc_stdout = PythonProcessOutput(self._qout)
         self._proc_stderr = self._proc_stdout
+
+        self._proc.start()
 
     @classmethod
     def from_file(cls, filename):
