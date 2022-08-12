@@ -554,6 +554,7 @@ class NetcatIterator(NetcatContext):
     def _init_connection(self, sock):
         inout = dict(stdin=self.stdin, stdout=self.stdout, stderr=self.stderr)
 
+        proc = None
         if self.c:
             cmd = self.c
             sh = True
@@ -561,7 +562,6 @@ class NetcatIterator(NetcatContext):
                 proc = NetcatProcess(cmd, shell=sh)
             except (FileNotFoundError, OSError) as e:
                 raise NetcatError(str(e))
-            inout.update(stdin=proc.stdout, stdout=proc.stdin)
         elif self.e:
             cmd = self.e
             sh = False
@@ -569,14 +569,14 @@ class NetcatIterator(NetcatContext):
                 proc = NetcatProcess(cmd, shell=sh)
             except (FileNotFoundError, OSError) as e:
                 raise NetcatError(str(e))
-            inout.update(stdin=proc.stdout, stdout=proc.stdin)
         elif self.y:
             code = self.y
             proc = NetcatPythonProcess(code)
-            inout.update(stdin=proc.stdout, stdout=proc.stdin)
         elif self.Y:
             filename = self.Y
             proc = NetcatPythonProcess.from_file(filename)
+
+        if proc is not None:
             inout.update(stdin=proc.stdout, stdout=proc.stdin)
 
         self._conn_kwargs.update(inout)

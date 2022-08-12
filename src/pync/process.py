@@ -16,12 +16,12 @@ from .pipe import NonBlockingPipe
 
 class PythonPipeInput(object):
 
-    def __init__(self, proc, q):
+    def __init__(self, proc, conn):
         self._proc = proc
-        self._q = q
+        self._conn = conn
 
     def write(self, data):
-        self._q.put(data)
+        self._conn.send(data)
 
     def flush(self):
         pass
@@ -29,29 +29,32 @@ class PythonPipeInput(object):
 
 class PythonPipeOutput(object):
 
-    def __init__(self, proc, q):
+    def __init__(self, proc, conn):
         self._proc = proc
-        self._q = q
+        self._conn = conn
 
     def read(self, n):
-        try:
-            data = self._q.get(False)
-        except queue.Empty:
-            if not self._proc.is_alive():
-                raise ProcessTerminated
-            return None
-        else:
-            return data.encode('utf-8')
+        if self._conn.poll():
+            try:
+                data = self._conn.recv()
+            except EOFError:
+                pass
+            else:
+                data = data.encode('utf-8')
+                return data
+        if not self._proc.is_alive():
+            raise ProcessTerminated
 
 
 class PythonProcessInput(object):
 
-    def __init__(self, q):
-        self._q = q
+    def __init__(self, conn):
+        self._conn = conn
 
     def read(self):
-        data = self._q.get()
-        return data.decode()
+        data = self._conn.recv()
+        data = data.decode()
+        return data
 
     def readline(self):
         return self.read()
@@ -59,11 +62,11 @@ class PythonProcessInput(object):
 
 class PythonProcessOutput(object):
 
-    def __init__(self, q):
-        self._q = q
+    def __init__(self, conn):
+        self._conn = conn
 
     def write(self, data):
-        self._q.put(data)
+        self._conn.send(data)
 
     def flush(self):
         pass
@@ -73,18 +76,18 @@ class PythonProcess(object):
 
     def __init__(self, code):
         self._code = code
-        self._qin = multiprocessing.Queue()
-        self._qout = multiprocessing.Queue()
+        stdin_conn_out, stdin_conn_in = multiprocessing.Pipe()
+        stdout_conn_out, stdout_conn_in = multiprocessing.Pipe()
         self._proc = multiprocessing.Process(
                 target=self.run,
         )
 
-        self.stdin = PythonPipeInput(self._proc, self._qin)
-        self.stdout = PythonPipeOutput(self._proc, self._qout)
+        self.stdin = PythonPipeInput(self._proc, stdin_conn_in)
+        self.stdout = PythonPipeOutput(self._proc, stdout_conn_out)
         self.stderr = self.stdout
 
-        self._proc_stdin = PythonProcessInput(self._qin)
-        self._proc_stdout = PythonProcessOutput(self._qout)
+        self._proc_stdin = PythonProcessInput(stdin_conn_out)
+        self._proc_stdout = PythonProcessOutput(stdout_conn_in)
         self._proc_stderr = self._proc_stdout
 
         self._proc.start()
