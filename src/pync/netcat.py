@@ -1410,7 +1410,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 metavar='filename',
         )
 
-        self.add_argument('-h',
+        self.add_argument('-h', '--help',
                 help='show this help message and exit.',
                 action='help',
         )
