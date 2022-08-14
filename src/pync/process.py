@@ -185,7 +185,10 @@ class NonBlockingProcess(object):
         return getattr(self._proc, name)
 
     def close(self):
-        self.kill()
+        try:
+            self.kill()
+        except OSError:
+            pass
 
 
 class ProcessTerminated(Exception):
