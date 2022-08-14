@@ -43,7 +43,7 @@ a simple echo server.
    .. code-block:: python
 
       from pync import pync
-      pync('-vle "import sys; sys.stdout.write(sys.stdin.read())" localhost 8000')
+      pync('-vly "import sys; sys.stdout.write(sys.stdin.read())" localhost 8000')
 
 2. Connect to the echo server and send a message:
 
@@ -51,20 +51,23 @@ a simple echo server.
 
    .. code-block:: sh
 
-      pync -vq 5 -y "import sys; sys.stdout.write('Hello\n')" localhost 8000
+      echo Hello | pync -vq 5 localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -vq 5 -y "import sys; sys.stdout.write('Hello\n')" localhost 8000
+      echo Hello | py -m pync -vq 5 localhost 8000
 
 .. tab:: Python
 
    .. code-block:: python
 
+      import io
       from pync import pync
-      pync('-vq 5 -y "import sys; sys.stdout.write('Hello\n')" localhost 8000')
+
+      hello = io.BytesIO(b'Hello\n')
+      pync('-vq 5 localhost 8000', stdin=hello)
 
 Executing Python Files With -Y
 ==============================
