@@ -137,9 +137,6 @@ class PythonProcess(object):
             code = f.read()
         return cls(code)
 
-    def __getattr__(self, name):
-        return getattr(self._proc, name)
-
     def run(self):
         import sys
         sys.stdin = self._stdin_reader
