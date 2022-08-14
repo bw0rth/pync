@@ -1358,7 +1358,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
             "\n\t    [-i interval] [-O length] [-P proxy_username] [-p source_port]"
             "\n\t    [-q seconds] [-s source] [-T toskeyword] [-w timeout]"
             "\n\t    [-X proxy_protocol] [-x proxy_address[:port]]"
-            "\n\t    [-Y filename] [-y string] [dest] [port]"
+            "\n\t    [-Y pyfile] [-y pycode] [dest] [port]"
     )
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
     add_help = False
@@ -1519,12 +1519,12 @@ class NetcatArgumentParser(GroupingArgumentParser):
 
         self.add_argument('-Y',
                 help='specify python file to exec after connect (use with caution).',
-                metavar='filename',
+                metavar='pyfile',
         )
 
         self.add_argument('-y',
                 help='specify python code to exec after connect (use with caution).',
-                metavar='string',
+                metavar='pycode',
         )
 
         self.add_argument('-z',
