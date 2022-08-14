@@ -65,7 +65,7 @@ A Reverse Python Shell
 There should now be a prompt on the server console that
 allows you to remotely execute python code on the client machine.
 
-A Simple Bind Shell
+A Bind Python Shell
 ===================
 
 1. Create a server on port 8000 that executes the shell upon
