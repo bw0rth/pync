@@ -68,13 +68,18 @@ class GroupingArgumentParser(ArgumentParser):
         self._group_parsers = dict()
         super(GroupingArgumentParser, self).__init__(*args, **kwargs)
 
-    def add_argument(self, name, group='', **kwargs):
+    def add_argument(self, *args, **kwargs):
+        name = args[-1]
+        group = ''
+        if 'group' in kwargs:
+            group = kwargs['group']
+            del kwargs['group']
         if not group:
             group = self.default_group
         if group not in self._group_parsers:
             self._group_parsers[group] = self.add_argument_group(group)
         parser = self._group_parsers[group]
-        parser.add_argument(name, **kwargs)
+        parser.add_argument(*args, **kwargs)
         dest = name.lstrip('-')
         if 'dest' in kwargs:
             dest = kwargs['dest']
