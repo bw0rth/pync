@@ -154,10 +154,15 @@ class PythonProcess(object):
         try:
             # py3.7+
             self.kill()
-            self._proc.close()
         except AttributeError:
             # py2
             self.terminate()
+        try:
+            self._proc.close()
+        except (AttributeError, ValueError):
+            # AttributeError may raise on older versions of python.
+            # ValueError may raise when trying to close on a running process.
+            pass
 
 
 class NonBlockingProcess(object):
