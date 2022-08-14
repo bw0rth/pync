@@ -124,6 +124,11 @@ extra shell features such as pipelines and evironment variable expansion.
       from pync import pync
       pync('-v localhost 8000')
 
+.. raw:: html
+
+   <br>
+   <hr>
+
 :SEE ALSO:
 
 * :doc:`../examples/remote-command-exec`
