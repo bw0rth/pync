@@ -10,4 +10,5 @@ Examples
    talking-to-servers
    port-scanning
    remote-command-exec
+   remote-code-exec
 
