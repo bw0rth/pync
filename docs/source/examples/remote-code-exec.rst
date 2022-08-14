@@ -7,10 +7,10 @@ Remote Code Execution
    | Also, please DO NOT use this functionality for evil purposes.
 
 The **-y** option allows you to execute a string of python code and have the
-python process' stdin/stdout/stderr be connected to the network socket.
+process' stdin/stdout/stderr be connected to the network socket.
 
-Any data coming in from the network will go to the python process' stdin and any
-data coming from the python process' stdout/stderr will go out to the network.
+Any data coming in from the network will go to the process' stdin and any
+data coming from the process' stdout/stderr will go out to the network.
 
 For example, we can create an interactive python interpreter shell
 to execute python code on a remote machine.
