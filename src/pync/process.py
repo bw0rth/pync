@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import io
 import multiprocessing
 import shlex
 import subprocess
@@ -16,10 +15,9 @@ except ImportError:
 from .pipe import NonBlockingPipe
 
 
-class PythonStdoutReader(io.RawIOBase):
+class PythonStdoutReader(object):
 
     def __init__(self, proc, conn):
-        super(PythonStdoutReader, self).__init__()
         self._proc = proc
         self._conn = conn
 
@@ -35,10 +33,9 @@ class PythonStdoutReader(io.RawIOBase):
             raise ProcessTerminated
 
 
-class PythonStdoutWriter(io.RawIOBase):
+class PythonStdoutWriter(object):
 
     def __init__(self, conn):
-        super(PythonStdoutWriter, self).__init__()
         self._conn = conn
 
     def seekable(self):
@@ -51,16 +48,16 @@ class PythonStdoutWriter(io.RawIOBase):
         return True
 
     def write(self, data):
+        data = data.encode()
         self._conn.send_bytes(data)
 
     def flush(self):
         pass
 
 
-class PythonStdinReader(io.RawIOBase):
+class PythonStdinReader(object):
     
     def __init__(self, conn):
-        super(PythonStdinReader, self).__init__()
         self._conn = conn
 
     def seekable(self):
@@ -74,6 +71,7 @@ class PythonStdinReader(io.RawIOBase):
 
     def read(self, *args, **kwargs):
         data = self._conn.recv_bytes()
+        data = data.decode()
         return data
 
     def read1(self, *args, **kwargs):
@@ -83,10 +81,9 @@ class PythonStdinReader(io.RawIOBase):
         return self.read()
 
 
-class PythonStdinWriter(io.RawIOBase):
+class PythonStdinWriter(object):
 
     def __init__(self, proc, conn):
-        super(PythonStdinWriter, self).__init__()
         self._proc = proc
         self._conn = conn
 
@@ -126,12 +123,6 @@ class PythonProcess(object):
         self._stdin_reader = self.StdinReader(stdin_conn_out)
         self._stdout_reader = self.StdoutReader(self._proc, stdout_conn_out)
         self._stdout_writer = self.StdoutWriter(stdout_conn_in)
-
-        if sys.version_info >= (3, 0):
-            self._stdin_writer = io.TextIOWrapper(self._stdin_writer)
-            self._stdin_reader = io.TextIOWrapper(self._stdin_reader)
-            self._stdout_reader = io.TextIOWrapper(self._stdout_reader)
-            self._stdout_writer = io.TextIOWrapper(self._stdout_writer)
 
         self.stdin = self._stdin_writer
         self.stdout = self._stdout_reader
