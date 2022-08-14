@@ -142,7 +142,8 @@ class PythonProcess(object):
         sys.stdin = self._stdin_reader
         sys.stdout = self._stdout_writer
         sys.stderr = self._stdout_writer
-        exec(self._code, locals())
+        namespace = dict()
+        exec(self._code, namespace)
 
     def terminate(self, *args, **kwargs):
         return self._proc.terminate(*args, **kwargs)
