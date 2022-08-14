@@ -25,7 +25,7 @@ from . import compat
 from .conin import NonBlockingConsoleInput as ConsoleInput
 from .process import (
         NonBlockingProcess, ProcessTerminated,
-        PythonProcess,
+        PythonProcess, PythonStdinWriter, PythonStdoutReader,
 )
 
 
@@ -296,6 +296,7 @@ class NetcatConnection(NetcatContext):
         self.net.sendall(data)
 
     def close(self):
+        super(NetcatConnection, self).close()
         self.net.close()
 
     def shutdown(self, how):
@@ -548,6 +549,8 @@ class NetcatIterator(NetcatContext):
         if y is not None:
             self.Y = Y
 
+        self._proc = None
+
     def _init_kwargs(self, **kwargs):
         self._conn_kwargs = kwargs
 
@@ -578,6 +581,7 @@ class NetcatIterator(NetcatContext):
 
         if proc is not None:
             inout.update(stdin=proc.stdout, stdout=proc.stdin)
+            self._proc = proc
 
         self._conn_kwargs.update(inout)
         return self.Connection(sock, **self._conn_kwargs)
@@ -636,6 +640,11 @@ class NetcatIterator(NetcatContext):
             )
         except socket.error as e:
             raise NetcatSocketError(e)
+
+    def close(self):
+        super(NetcatIterator, self).close()
+        if self._proc is not None:
+            self._proc.close()
 
 
 class NetcatClient(NetcatIterator):
@@ -1194,6 +1203,7 @@ class NetcatServer(NetcatIterator):
         """
         Close the server.
         """
+        super(NetcatServer, self).close()
         self._server_close()
 
 
@@ -1211,7 +1221,7 @@ class NetcatTCPServer(NetcatServer):
     def next_connection(self):
         nc_conn = super(NetcatTCPServer, self).next_connection()
         if not self.k:
-            self.close()
+            self._server_close()
         return nc_conn
 
     def _server_activate(self):
@@ -1255,12 +1265,27 @@ class StopReadWrite(Exception):
     """
 
 
+class NetcatPythonStdinWriter(PythonStdinWriter):
+
+    def write(self, *args, **kwargs):
+        try:
+            return super(NetcatPythonStdinWriter, self).write(*args, **kwargs)
+        except OSError:
+            raise StopReadWrite
+
+
+class NetcatPythonStdoutReader(PythonStdoutReader):
+
+    def read(self, *args, **kwargs):
+        try:
+            return super(NetcatPythonStdoutReader, self).read(*args, **kwargs)
+        except ProcessTerminated:
+            raise StopReadWrite
+
+
 class NetcatPythonProcess(PythonProcess):
-    
-    def __init__(self, *args, **kwargs):
-        super(NetcatPythonProcess, self).__init__(*args, **kwargs)
-        self.stdin = _ProcStdin(self.stdin)
-        self.stdout = _ProcStdout(self.stdout)
+    StdinWriter = NetcatPythonStdinWriter
+    StdoutReader = NetcatPythonStdoutReader
 
 
 class NetcatProcess(NonBlockingProcess):
@@ -1270,7 +1295,7 @@ class NetcatProcess(NonBlockingProcess):
     """
 
     def __init__(self, *args, **kwargs):
-        super(Process, self).__init__(*args, **kwargs)
+        super(NetcatProcess, self).__init__(*args, **kwargs)
         self.stdin = _ProcStdin(self.stdin)
         self.stdout = _ProcStdout(self.stdout)
 

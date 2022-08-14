@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import io
 import multiprocessing
 import shlex
 import subprocess
+import sys
 
 try:
     # py2
@@ -14,82 +16,128 @@ except ImportError:
 from .pipe import NonBlockingPipe
 
 
-class PythonPipeInput(object):
+class PythonStdoutReader(io.RawIOBase):
 
     def __init__(self, proc, conn):
+        super(PythonStdoutReader, self).__init__()
         self._proc = proc
         self._conn = conn
 
-    def write(self, data):
-        self._conn.send(data)
-
-    def flush(self):
-        pass
-
-
-class PythonPipeOutput(object):
-
-    def __init__(self, proc, conn):
-        self._proc = proc
-        self._conn = conn
-
-    def read(self, n):
+    def read(self, *args, **kwargs):
         if self._conn.poll():
             try:
-                data = self._conn.recv()
+                data = self._conn.recv_bytes()
             except EOFError:
                 pass
             else:
-                data = data.encode('utf-8')
                 return data
         if not self._proc.is_alive():
             raise ProcessTerminated
 
 
-class PythonProcessInput(object):
+class PythonStdoutWriter(io.RawIOBase):
 
     def __init__(self, conn):
+        super(PythonStdoutWriter, self).__init__()
         self._conn = conn
 
-    def read(self):
-        data = self._conn.recv()
-        data = data.decode()
+    def seekable(self):
+        return False
+
+    def readable(self):
+        return False
+
+    def writable(self):
+        return True
+
+    def write(self, data):
+        self._conn.send_bytes(data)
+
+    def flush(self):
+        pass
+
+
+class PythonStdinReader(io.RawIOBase):
+    
+    def __init__(self, conn):
+        super(PythonStdinReader, self).__init__()
+        self._conn = conn
+
+    def seekable(self):
+        return False
+
+    def writable(self):
+        return False
+
+    def readable(self):
+        return True
+
+    def read(self, *args, **kwargs):
+        data = self._conn.recv_bytes()
         return data
+
+    def read1(self, *args, **kwargs):
+        return self.read(*args, **kwargs)
 
     def readline(self):
         return self.read()
 
 
-class PythonProcessOutput(object):
+class PythonStdinWriter(io.RawIOBase):
 
-    def __init__(self, conn):
+    def __init__(self, proc, conn):
+        super(PythonStdinWriter, self).__init__()
+        self._proc = proc
         self._conn = conn
 
+    def seekable(self):
+        return False
+
+    def writable(self):
+        return True
+
+    def readable(self):
+        return False
+
     def write(self, data):
-        self._conn.send(data)
+        self._conn.send_bytes(data)
 
     def flush(self):
         pass
 
 
 class PythonProcess(object):
+    StdinReader = PythonStdinReader
+    StdinWriter = PythonStdinWriter
+    StdoutReader = PythonStdoutReader
+    StdoutWriter = PythonStdoutWriter
 
     def __init__(self, code):
         self._code = code
-        stdin_conn_out, stdin_conn_in = multiprocessing.Pipe()
-        stdout_conn_out, stdout_conn_in = multiprocessing.Pipe()
+
+        stdin_conn_out, stdin_conn_in = multiprocessing.Pipe(False)
+        stdout_conn_out, stdout_conn_in = multiprocessing.Pipe(False)
+
         self._proc = multiprocessing.Process(
                 target=self.run,
         )
 
-        self.stdin = PythonPipeInput(self._proc, stdin_conn_in)
-        self.stdout = PythonPipeOutput(self._proc, stdout_conn_out)
+        self._stdin_writer = self.StdinWriter(self._proc, stdin_conn_in)
+        self._stdin_reader = self.StdinReader(stdin_conn_out)
+        self._stdout_reader = self.StdoutReader(self._proc, stdout_conn_out)
+        self._stdout_writer = self.StdoutWriter(stdout_conn_in)
+
+        if sys.version_info >= (3, 0):
+            self._stdin_writer = io.TextIOWrapper(self._stdin_writer)
+            self._stdin_reader = io.TextIOWrapper(self._stdin_reader)
+            self._stdout_reader = io.TextIOWrapper(self._stdout_reader)
+            self._stdout_writer = io.TextIOWrapper(self._stdout_writer)
+
+        self.stdin = self._stdin_writer
+        self.stdout = self._stdout_reader
         self.stderr = self.stdout
 
-        self._proc_stdin = PythonProcessInput(stdin_conn_out)
-        self._proc_stdout = PythonProcessOutput(stdout_conn_in)
-        self._proc_stderr = self._proc_stdout
-
+        self._proc.daemon = True
         self._proc.start()
 
     @classmethod
@@ -103,10 +151,19 @@ class PythonProcess(object):
 
     def run(self):
         import sys
-        sys.stdin = self._proc_stdin
-        sys.stdout = self._proc_stdout
-        sys.stderr = self._proc_stderr
+        sys.stdin = self._stdin_reader
+        sys.stdout = self._stdout_writer
+        sys.stderr = self._stdout_writer
         exec(self._code, locals())
+
+    def close(self):
+        try:
+            # py3.7+
+            self.kill()
+            self._proc.close()
+        except AttributeError:
+            # py2
+            self.terminate()
 
 
 class NonBlockingProcess(object):
@@ -126,6 +183,9 @@ class NonBlockingProcess(object):
 
     def __getattr__(self, name):
         return getattr(self._proc, name)
+
+    def close(self):
+        self.kill()
 
 
 class ProcessTerminated(Exception):
