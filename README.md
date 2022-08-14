@@ -28,7 +28,7 @@ pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
      [-i interval] [-O length] [-P proxy_username] [-p source_port]
      [-q seconds] [-s source] [-T toskeyword] [-w timeout]
      [-X proxy_protocol] [-x proxy_address[:port]]
-     [-Y filename] [-y string] [dest] [port]
+     [-Y pyfile] [-y pycode] [dest] [port]
 ```
 </details>
 
@@ -40,7 +40,7 @@ py -m pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
            [-i interval] [-O length] [-P proxy_username] [-p source_port]
            [-q seconds] [-s source] [-T toskeyword] [-w timeout]
            [-X proxy_protocol] [-x proxy_address[:port]]
-           [-Y filename] [-y string] [dest] [port]
+           [-Y pyfile] [-y pycode] [dest] [port]
 ```
 </details>
 
@@ -53,7 +53,7 @@ args = '''[-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
           [-i interval] [-O length] [-P proxy_username] [-p source_port]
           [-q seconds] [-s source] [-T toskeyword] [-w timeout]
           [-X proxy_protocol] [-x proxy_address[:port]]
-          [-Y filename] [-y string] [dest] [port]'''
+          [-Y pyfile] [-y pycode] [dest] [port]'''
 pync(args, stdin, stdout, stderr)
 ```
 </details>
@@ -68,6 +68,7 @@ Common uses include:
 * [Remote data transfer (upload/download)](https://pync.readthedocs.io/en/latest/examples/data-transfer.html)
 * [Port scanning (simple connect scan)](https://pync.readthedocs.io/en/latest/examples/port-scanning.html)
 * [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/examples/remote-command-exec.html)
+* [Remote code execution (Python)](https://pync.readthedocs.io/en/latest/examples/remote-code-exec.html)
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
