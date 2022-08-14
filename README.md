@@ -27,7 +27,8 @@
 pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
      [-i interval] [-O length] [-P proxy_username] [-p source_port]
      [-q seconds] [-s source] [-T toskeyword] [-w timeout]
-     [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]
+     [-X proxy_protocol] [-x proxy_address[:port]]
+     [-Y filename] [-y string] [dest] [port]
 ```
 </details>
 
@@ -38,7 +39,8 @@ pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
 py -m pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
            [-i interval] [-O length] [-P proxy_username] [-p source_port]
            [-q seconds] [-s source] [-T toskeyword] [-w timeout]
-           [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]
+           [-X proxy_protocol] [-x proxy_address[:port]]
+           [-Y filename] [-y string] [dest] [port]
 ```
 </details>
 
@@ -50,7 +52,8 @@ from pync import pync
 args = '''[-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
           [-i interval] [-O length] [-P proxy_username] [-p source_port]
           [-q seconds] [-s source] [-T toskeyword] [-w timeout]
-          [-X proxy_protocol] [-x proxy_address[:port]] [dest] [port]'''
+          [-X proxy_protocol] [-x proxy_address[:port]]
+          [-Y filename] [-y string] [dest] [port]'''
 pync(args, stdin, stdout, stderr)
 ```
 </details>
