@@ -1,5 +1,5 @@
 ========================
-[-e]xecuting [-c]ommands
+Executing P[-y]thon Code
 ========================
 
 .. warning::
@@ -48,20 +48,20 @@ A Simple Echo Server
 
    .. code-block:: sh
 
-      pync -vq 5 -y "import sys; sys.stdout.write('Echo...')" localhost 8000
+      pync -vq 5 -y "import sys; sys.stdout.write('Echo...\n')" localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -vq 5 -y "import sys; sys.stdout.write('Echo...')" localhost 8000
+      py -m pync -vq 5 -y "import sys; sys.stdout.write('Echo...\n')" localhost 8000
 
 .. tab:: Python
 
    .. code-block:: python
 
       from pync import pync
-      pync('-vq 5 -y "import sys; sys.stdout.write('Echo...')" localhost 8000')
+      pync('-vq 5 -y "import sys; sys.stdout.write('Echo...\n')" localhost 8000')
 
 .. raw:: html
 
