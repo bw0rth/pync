@@ -72,14 +72,14 @@ def main():
         )
         print_warning(lines, ask_continue=True)
 
-    command = "PS1='$ ' sh -i"
+    command = '/bin/sh -i'
     if platform.system() == 'Windows':
         command = 'cmd /q'
 
     nc = Netcat(
             dest=args.dest,
             port=args.port,
-            c=command,       # Execute a command upon connection.
+            e=command,       # Execute a command upon connection.
             l=args.l,        # Listen for connections (server mode).
             v=True,          # Print connection status messages to stderr.
     )
