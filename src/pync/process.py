@@ -144,6 +144,12 @@ class PythonProcess(object):
         sys.stderr = self._stdout_writer
         exec(self._code, locals())
 
+    def terminate(self, *args, **kwargs):
+        return self._proc.terminate(*args, **kwargs)
+
+    def kill(self, *args, **kwargs):
+        return self._proc.kill(*args, **kwargs)
+
     def close(self):
         try:
             # py3.7+
