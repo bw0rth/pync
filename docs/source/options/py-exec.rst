@@ -12,19 +12,16 @@ process' stdin/stdout/stderr to the network socket.
 Any data that comes in from the network will go to the process' stdin, and
 any data that comes out from the process' stdout/stderr will be sent out to the network.
 
-There are two options that can provide this functionality, the **-y** (lowercase y) option
-and the **-Y** (uppercase Y) option.
+There are two options that can provide this functionality, the lowercase **-y** option
+and the uppercase **-Y** option.
 
 Executing Python Code With -y
 =============================
-The **-y** option takes a string of python code to execute.
+The lowercase **-y** option takes a string of python code to execute.
 This option is best used when you have a simple one-liner to execute.
 
-The following example shows how to use the **-y** option to create
-a simple echo server.
-
-1. Create a server that reads data from stdin (the network) and writes the
-   same data to stdout (back to the network):
+For example, you can create a simple echo server by reading data from
+stdin (the network) and writing that same data back to stdout (the network):
 
 .. tab:: Unix
 
@@ -45,7 +42,7 @@ a simple echo server.
       from pync import pync
       pync('-vly "import sys; sys.stdout.write(sys.stdin.read())" localhost 8000')
 
-2. Connect to the echo server and send a message:
+To test this server, connect to it and send it a message:
 
 .. tab:: Unix
 
@@ -69,9 +66,24 @@ a simple echo server.
       hello = io.BytesIO(b'Hello\n')
       pync('-vq 5 localhost 8000', stdin=hello)
 
+After receiving the message, the echo server should send it back
+to the client which then would display on the client console.
+
+Here, we use the **-q** option to ensure pync doesn't quit immediately
+after EOF on stdin (after sending the "Hello" message).
+Otherwise, there's a chance the client would quit before receiving
+the message back from the echo server.
+
+.. note::
+   | You could just as well use the builtin print and input functions
+   | for this but because print and input (raw_input on python 2) are
+   | different on python 2 and python 3 I just decided using the
+   | sys module would be better since it works on both versions of
+   | python.
+
 Executing Python Files With -Y
 ==============================
-The **-Y** option (uppercase Y) takes the full pathname of a python file
+The uppercase **-Y** option takes the full pathname of a python file
 to execute.
 
 .. raw:: html
@@ -81,5 +93,7 @@ to execute.
 
 :SEE ALSO:
 
+* :doc:`../options/quit-after-eof`
+* :doc:`../options/verbose`
 * :doc:`../examples/remote-code-exec`
 
