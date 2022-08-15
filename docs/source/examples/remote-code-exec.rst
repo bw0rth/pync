@@ -117,6 +117,59 @@ A Bind Python Shell
 There should now be a prompt on the client console that
 allows you to remotely execute python code on the server machine.
 
+A Python Exec Server
+====================
+
+1. Create a server that stays open, receiving python code to
+   execute:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      pync -vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      # pyexec_server.py
+      from pync import pync
+      pync('-vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000'
+
+We use the **-k** option here to keep the server open between connections,
+serving one client after another.
+
+2. Connect to the exec server and send a string of python code to execute:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      echo "import sys; sys.stdout.write('Hello\n')" | pync -vq 5 localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      echo "import sys; sys.stdout.write('Hello\n')" | py -m pync -vq 5 localhost 8000
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      import io
+      from pync import pync
+
+      pycode = io.BytesIO(b"import sys; sys.stdout.write('Hello\n')")
+      pync('-vq 5 localhost 8000', stdin=pycode)
+
 .. raw:: html
 
    <br>
