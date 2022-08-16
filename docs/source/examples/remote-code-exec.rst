@@ -149,7 +149,7 @@ arbitrary code to be executed remotely.
       pync('-vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000'
 
 We use the **-k** option here to keep the server open between connections,
-serving one client after another.
+serving one connection after another.
 
 2. Connect to the exec server and send a string of python code to execute:
 
@@ -185,7 +185,8 @@ time to respond.
 
 You should be able to repeat step 2 (sending code to the exec server) for
 as long as the server is running.
-Experiment by sending different lines of code.
+
+Experiment by sending different lines of code!
 
 When finished, hit Ctrl+C on the server console to stop the server.
 
