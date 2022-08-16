@@ -61,7 +61,7 @@ A Reverse Python Shell
 
       # reverse_pyshell.py
       from pync import pync
-      pync('-vy "import code; code.interact()" localhost 8000'
+      pync('-vy "import code; code.interact()" localhost 8000')
 
 There should now be a prompt on the server console that
 allows you to remotely execute python code on the client machine.
@@ -90,7 +90,7 @@ A Bind Python Shell
 
       # bind_pyshell.py
       from pync import pync
-      pync('-vly "import code; code.interact()" localhost 8000'
+      pync('-vly "import code; code.interact()" localhost 8000')
 
 2. On another console, connect to the server to
    interact with the shell:
@@ -146,7 +146,7 @@ arbitrary code to be executed remotely.
 
       # pyexec_server.py
       from pync import pync
-      pync('-vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000'
+      pync('-vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000')
 
 We use the **-k** option here to keep the server open between connections,
 serving one connection after another.

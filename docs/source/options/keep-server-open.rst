@@ -78,6 +78,6 @@ When you're finished, hit Ctrl+C on the server console to close the server.
 
 :SEE ALSO:
 
-* :doc:`execute`
+* :doc:`exec`
 * :doc:`listen`
 
