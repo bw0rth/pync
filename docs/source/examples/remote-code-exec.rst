@@ -119,6 +119,11 @@ allows you to remotely execute python code on the server machine.
 
 A Python Exec Server
 ====================
+Python's builtin exec function lets you execute a string of python
+code in a separate namespace.
+
+By reading data from stdin (the network), you can essentially allow
+arbitrary code to be executed remotely.
 
 1. Create a server that stays open, receiving python code to
    execute:
@@ -169,6 +174,20 @@ serving one client after another.
 
       pycode = io.BytesIO(b"import sys; sys.stdout.write('Hello\n')")
       pync('-vq 5 localhost 8000', stdin=pycode)
+
+After executing the above, you should be able to see the message "Hello"
+printed on the client machine.
+
+The use of the **-q** option tells the pync client to keep running after
+EOF on stdin (after sending the code to execute).
+Otherwise the client would quit immediately, not giving the server any
+time to respond.
+
+You should be able to repeat step 2 (sending code to the exec server) for
+as long as the server is running.
+Experiment by sending different lines of code.
+
+When finished, hit Ctrl+C on the server console to stop the server.
 
 .. raw:: html
 
