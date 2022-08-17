@@ -22,6 +22,9 @@
   <a href="https://readthedocs.org/projects/pync/">
     <img src="https://readthedocs.org/projects/pync/badge/?version=latest">
   </a>
+
+  </br>
+
   <a href="https://github.com/brenw0rth/pync/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/brenw0rth/pync">
   </a>
