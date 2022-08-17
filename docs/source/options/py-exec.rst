@@ -48,13 +48,13 @@ To test this server, connect to it and send it a message:
 
    .. code-block:: sh
 
-      echo Hello | pync -vq 5 localhost 8000
+      echo Hello | pync -vq -1 localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      echo Hello | py -m pync -vq 5 localhost 8000
+      echo Hello | py -m pync -vq -1 localhost 8000
 
 .. tab:: Python
 
@@ -64,13 +64,13 @@ To test this server, connect to it and send it a message:
       from pync import pync
 
       hello = io.BytesIO(b'Hello\n')
-      pync('-vq 5 localhost 8000', stdin=hello)
+      pync('-vq -1 localhost 8000', stdin=hello)
 
 After receiving the message, the echo server should send it back
 to the client which then would display on the client console.
 
-Here, we use the **-q** option to ensure pync doesn't quit immediately
-after EOF on stdin (after sending the "Hello" message).
+Here, we pass a negative number to the **-q** option to ensure pync
+doesn't quit immediately after EOF on stdin (after sending the "Hello" message).
 Otherwise, there's a chance the client would quit before receiving
 the message back from the echo server.
 
