@@ -1605,6 +1605,22 @@ class NetcatArgumentParser(GroupingArgumentParser):
         return compat.range(start_port, end_port+1)
 
     def parse_args(self, args):
+        _args = list()
+        skip = False
+        for i, a in enumerate(args):
+            if skip:
+                skip = False
+                continue
+            if a.startswith('-') and a.endswith('q'):
+                try:
+                    a += args[i+1]
+                except IndexError:
+                    pass
+                else:
+                    skip = True
+            _args.append(a)
+        args = _args
+
         grouped_args = self.group_parse_args(args)
 
         args = grouped_args['general arguments']

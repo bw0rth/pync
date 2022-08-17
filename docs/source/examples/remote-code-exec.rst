@@ -157,13 +157,13 @@ serving one connection after another.
 
    .. code-block:: sh
 
-      echo "import sys; sys.stdout.write('Hello\n')" | pync -vq 5 localhost 8000
+      echo "import sys; sys.stdout.write('Hello\n')" | pync -vq -1 localhost 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      echo "import sys; sys.stdout.write('Hello\n')" | py -m pync -vq 5 localhost 8000
+      echo "import sys; sys.stdout.write('Hello\n')" | py -m pync -vq -1 localhost 8000
 
 .. tab:: Python
 
@@ -173,13 +173,13 @@ serving one connection after another.
       from pync import pync
 
       pycode = io.BytesIO(b"import sys; sys.stdout.write('Hello\n')")
-      pync('-vq 5 localhost 8000', stdin=pycode)
+      pync('-vq -1 localhost 8000', stdin=pycode)
 
 After executing the above, you should be able to see the message "Hello"
 printed on the client machine.
 
-The use of the **-q** option tells the pync client to keep running after
-EOF on stdin (after sending the code to execute).
+Passing a negative number to the **-q** option tells the pync client to
+keep running after EOF on stdin (after sending the code to execute).
 Otherwise the client would quit immediately, not giving the server any
 time to respond.
 
