@@ -1605,6 +1605,18 @@ class NetcatArgumentParser(GroupingArgumentParser):
         return compat.range(start_port, end_port+1)
 
     def parse_args(self, args):
+        # First, modify the args to allow a negative number
+        # to be passed to the -q option.
+        # The argparse module doesn't seem to provide a
+        # solution to this problem so modifying the args
+        # directly before parsing them seems to be the
+        # only option.
+        #
+        # For a negative number to work, I just need to
+        # remove the space between -q and it's argument
+        # then argparse won't complain with an error.
+        #
+        # pync -q -1 localhost 8000 -> pync -q-1 localhost 8000
         _args = list()
         skip = False
         for i, a in enumerate(args):
