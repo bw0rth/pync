@@ -143,7 +143,14 @@ class PythonProcess(object):
         sys.stdout = self._stdout_writer
         sys.stderr = self._stdout_writer
         namespace = dict()
-        exec(self._code, namespace)
+        try:
+            exec(self._code, namespace)
+        except SystemExit:
+            pass
+        except:
+            import traceback
+            exc = traceback.format_exc()
+            self._stdout_writer.write(exc)
 
     def terminate(self, *args, **kwargs):
         return self._proc.terminate(*args, **kwargs)
