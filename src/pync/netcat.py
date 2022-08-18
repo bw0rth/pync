@@ -285,7 +285,7 @@ class NetcatConnection(NetcatContext):
         if blocking:
             return self.net.recv(n)
         try:
-            can_read, _, _ = select.select([self.net], [], [], .001)
+            can_read, _, _ = select.select([self.net], [], [], 0)
         except ValueError:
             return self.net.recv(n)
 
@@ -399,10 +399,12 @@ class NetcatConnection(NetcatContext):
                             if stdin_eof_elapsed >= self.q:
                                 return
                     
-                    if self.timeout is not None:
-                        idle_time_elapsed = time.time() - idle_time
-                        if idle_time_elapsed >= self.timeout:
-                            return
+                if self.timeout is not None:
+                    idle_time_elapsed = time.time() - idle_time
+                    if idle_time_elapsed >= self.timeout:
+                        return
+
+                time.sleep(.001)
             except StopReadWrite:
                 # I/O has requested to stop the readwrite loop.
                 break
