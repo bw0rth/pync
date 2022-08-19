@@ -353,8 +353,8 @@ class NetcatConnection(NetcatContext):
             # py2 read bytes
             stdin_read = self.stdin.read
 
-        while not netin_eof:
-            try:
+        try:
+            while not netin_eof:
                 if i:
                     time_sleep(i)
 
@@ -411,9 +411,9 @@ class NetcatConnection(NetcatContext):
                         return
 
                 time_sleep(.001)
-            except StopReadWrite:
-                # I/O has requested to stop the readwrite loop.
-                break
+        except StopReadWrite:
+            # IO has requested to stop the readwrite loop.
+            pass
 
 
 class NetcatTCPConnection(NetcatConnection):
