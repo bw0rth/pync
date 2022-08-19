@@ -327,56 +327,62 @@ class NetcatConnection(NetcatContext):
            with NetcatConnection(sock) as nc:
                nc.readwrite()
         """
-        netin_eof = False
-        stdin_eof = None
+        netin_eof, stdin_eof = False, None
+        time_now, time_sleep = time.time, time.sleep
 
-        idle_time = time.time()
+        idle_time, plen = time_now(), self.plen
+        carriage_return, quit_eof = self.C, self.q
+        i, timeout = self.i, self.timeout
 
-        # (     )
-        #   O O
-        while(1<2):
+        net_send, net_recv = self.send, self.recv
+        net_shutdown_rd, net_shutdown_wr = self.shutdown_rd, self.shutdown_wr
+
+        try:
+            # py3 write bytes
+            stdout_write = self.stdout.buffer.write
+        except AttributeError:
+            # py2 write bytes
+            stdout_write = self.stdout.write
+        stdout_flush = self.stdout.flush
+
+        stdin_detach = self.d
+        try:
+            # py3 read bytes
+            stdin_read = self.stdin.buffer.read
+        except AttributeError:
+            # py2 read bytes
+            stdin_read = self.stdin.read
+
+        while not netin_eof:
             try:
-                if netin_eof:
-                    break
-
-                if self.i:
-                    time.sleep(self.i)
+                if i:
+                    time_sleep(i)
 
                 # netin
                 try:
-                    net_data = self.recv(self.plen, blocking=False)
+                    net_data = net_recv(plen, blocking=False)
                 except (socket.error, OSError):
                     return
                 if net_data:
                     # stdout
-                    try:
-                        # py3 write bytes
-                        self.stdout.buffer.write(net_data)
-                    except AttributeError:
-                        # py2 write bytes
-                        self.stdout.write(net_data)
-                    self.stdout.flush()
-                    idle_time = time.time()
+                    stdout_write(net_data)
+                    stdout_flush()
+                    idle_time = time_now()
                 elif net_data is not None:
                     # netin EOF
-                    self.shutdown_rd()
+                    net_shutdown_rd()
                     netin_eof = True
 
                 # stdin
-                if not self.d:
-                    try:
-                        # py3 read bytes
-                        stdin_data = self.stdin.buffer.read(self.plen)
-                    except AttributeError:
-                        # py2 read bytes
-                        stdin_data = self.stdin.read(self.plen)
+                if not stdin_detach:
+                    stdin_data = stdin_read(plen)
 
                     # netout
                     if stdin_data:
-                        if self.C:
+                        if carriage_return:
                             stdin_data = stdin_data.replace(b'\n', b'\r\n')
                         try:
-                            self.send(stdin_data)
+                            net_send(stdin_data)
                         except socket.error as e:
                             if e.errno != errno.EPIPE:
                                 # Not a broken pipe.
@@ -384,27 +390,27 @@ class NetcatConnection(NetcatContext):
                             # Broken pipe.
                             # netin connection lost
                             return
-                        idle_time = time.time()
+                        idle_time = time_now()
                     elif stdin_data is not None:
                         # stdin EOF
                         if not stdin_eof:
-                            stdin_eof = time.time()
+                            stdin_eof = time_now()
                         # If the user asked to exit on EOF, do it
-                        if self.q == 0:
-                            self.shutdown_wr()
+                        if quit_eof == 0:
+                            net_shutdown_wr()
                             #self.stdin.close()
                         # If the user asked to die after a while, arrange for it
-                        if self.q > 0:
-                            stdin_eof_elapsed = time.time() - stdin_eof
-                            if stdin_eof_elapsed >= self.q:
+                        if quit_eof > 0:
+                            stdin_eof_elapsed = time_now() - stdin_eof
+                            if stdin_eof_elapsed >= quit_eof:
                                 return
-                    
-                if self.timeout is not None:
-                    idle_time_elapsed = time.time() - idle_time
-                    if idle_time_elapsed >= self.timeout:
+
+                if timeout is not None:
+                    idle_time_elapsed = time_now() - idle_time
+                    if idle_time_elapsed >= timeout:
                         return
 
-                time.sleep(.001)
+                time_sleep(.001)
             except StopReadWrite:
                 # I/O has requested to stop the readwrite loop.
                 break
