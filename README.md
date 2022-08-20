@@ -13,9 +13,9 @@
   <a href="https://gitHub.com/brenw0rth/pync/network/members">
     <img src="https://badgen.net/github/forks/brenw0rth/pync">
   </a>
-  
-  </br>
-  
+</p>
+
+<p align="center">
   <a href="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml">
     <img src="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml/badge.svg">
   </a>
