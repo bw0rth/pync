@@ -355,6 +355,8 @@ class NetcatConnection(NetcatContext):
 
         try:
             while not netin_eof:
+                sleep = True
+
                 if i:
                     time_sleep(i)
 
@@ -368,6 +370,7 @@ class NetcatConnection(NetcatContext):
                     stdout_write(net_data)
                     stdout_flush()
                     idle_time = time_now()
+                    sleep = False
                 elif net_data is not None:
                     # netin EOF
                     net_shutdown_rd()
@@ -391,6 +394,7 @@ class NetcatConnection(NetcatContext):
                             # netin connection lost
                             return
                         idle_time = time_now()
+                        sleep = False
                     elif stdin_data is not None:
                         # stdin EOF
                         if not stdin_eof:
@@ -410,7 +414,8 @@ class NetcatConnection(NetcatContext):
                     if idle_time_elapsed >= timeout:
                         return
 
-                time_sleep(.001)
+                if sleep:
+                    time_sleep(.001)
         except StopReadWrite:
             # IO has requested to stop the readwrite loop.
             pass
