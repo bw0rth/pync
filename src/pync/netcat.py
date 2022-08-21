@@ -414,7 +414,7 @@ class NetcatConnection(NetcatContext):
 
                 if sleep:
                     time_sleep(.001)
-        except StopReadWrite:
+        except NetcatStopReadWrite:
             # IO has requested to stop the readwrite loop.
             pass
 
@@ -517,7 +517,7 @@ class NetcatUDPConnection(NetcatConnection):
         try:
             return super(NetcatUDPConnection, self).recv(*args, **kwargs)
         except (socket.error, compat.ConnectionRefusedError):
-            raise StopReadWrite
+            raise NetcatStopReadWrite
 
 
 class ConnectionRefused(Exception):
@@ -1270,7 +1270,7 @@ class NetcatUDPServer(NetcatServer):
             request.close()
 
 
-class StopReadWrite(Exception):
+class NetcatStopReadWrite(Exception):
     """
     Exception to stop the readwrite loop.
     """
@@ -1282,7 +1282,7 @@ class NetcatPythonStdinWriter(PythonStdinWriter):
         try:
             return super(NetcatPythonStdinWriter, self).write(*args, **kwargs)
         except OSError:
-            raise StopReadWrite
+            raise NetcatStopReadWrite
 
 
 class NetcatPythonStdoutReader(PythonStdoutReader):
@@ -1291,7 +1291,7 @@ class NetcatPythonStdoutReader(PythonStdoutReader):
         try:
             return super(NetcatPythonStdoutReader, self).read(*args, **kwargs)
         except ProcessTerminated:
-            raise StopReadWrite
+            raise NetcatStopReadWrite
 
 
 class NetcatPythonProcess(PythonProcess):
@@ -1323,7 +1323,7 @@ class _ProcStdin(object):
         try:
             self._stdin.write(data)
         except OSError:
-            raise StopReadWrite
+            raise NetcatStopReadWrite
 
 
 class _ProcStdout:
@@ -1338,7 +1338,7 @@ class _ProcStdout:
         try:
             return self._stdout.read(n)
         except ProcessTerminated:
-            raise StopReadWrite
+            raise NetcatStopReadWrite
 
 
 class NetcatPortAction(argparse.Action):
