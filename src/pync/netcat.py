@@ -330,7 +330,7 @@ class NetcatConnection(NetcatContext):
         netin_eof, stdin_eof = False, None
         time_now, time_sleep = time.time, time.sleep
 
-        idle_time, plen = time_now(), self.plen
+        last_io, plen = time_now(), self.plen
         carriage_return, quit_eof = self.C, self.q
         i, timeout = self.i, self.timeout
 
@@ -369,8 +369,7 @@ class NetcatConnection(NetcatContext):
                     # stdout
                     stdout_write(net_data)
                     stdout_flush()
-                    idle_time = time_now()
-                    sleep = False
+                    last_io, sleep = time_now(), False
                 elif net_data is not None:
                     # netin EOF
                     net_shutdown_rd()
@@ -393,8 +392,7 @@ class NetcatConnection(NetcatContext):
                             # Broken pipe.
                             # netin connection lost
                             return
-                        idle_time = time_now()
-                        sleep = False
+                        last_io, sleep = time_now(), False
                     elif stdin_data is not None:
                         # stdin EOF
                         if not stdin_eof:
@@ -410,7 +408,7 @@ class NetcatConnection(NetcatContext):
                                 return
 
                 if timeout is not None:
-                    idle_time_elapsed = time_now() - idle_time
+                    idle_time_elapsed = time_now() - last_io
                     if idle_time_elapsed >= timeout:
                         return
 
