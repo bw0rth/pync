@@ -9,7 +9,7 @@ from .netcat import (
         NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
         NetcatProcess, NetcatStopReadWrite, ConnectionRefused,
-        ConsoleInput,
+        NetcatConsoleInput,
         NetcatPythonProcess,
 )
 

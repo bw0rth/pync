@@ -22,7 +22,7 @@ import socks
 
 from .argparsing import GroupingArgumentParser
 from . import compat
-from .conin import NonBlockingConsoleInput as ConsoleInput
+from .conin import NonBlockingConsoleInput as NetcatConsoleInput
 from .process import (
         NonBlockingProcess, ProcessTerminated,
         PythonProcess, PythonStdinWriter, PythonStdoutReader,
@@ -210,7 +210,7 @@ class NetcatConnection(NetcatContext):
 
         # TODO: Move this into a property.setter?
         if self.stdin is sys.__stdin__ and self.stdin.isatty():
-            self.stdin = ConsoleInput()
+            self.stdin = NetcatConsoleInput()
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
