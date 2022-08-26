@@ -94,5 +94,6 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    status = main()
+    sys.exit(status)
 
