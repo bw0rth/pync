@@ -72,19 +72,22 @@ class ChatOutput(object):
 
 
 def main():
-    parser = argparse.ArgumentParser('chat.py')
+    parser = argparse.ArgumentParser('chat.py',
+            formatter_class=argparse.RawTextHelpFormatter,
+            description=__doc__,
+    )
     parser.add_argument('-l',
-            help='listen for a connection.',
+            help='listen for a connection',
             action='store_true',
     )
     parser.add_argument('dest',
-            help='destination hostname or ip to connect or bind to.',
+            help='destination hostname or ip to connect or bind to',
     )
     parser.add_argument('port',
-            help='port number to connect or bind to.',
+            help='port number to connect or bind to',
     )
     parser.add_argument('--username',
-            help='username to use for the chat.',
+            help='username to use for the chat',
     )
     args = parser.parse_args()
     pync_args = '-v {dest} {port}'.format(
