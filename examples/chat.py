@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*-
+'''
+A simple chat example using pync.
+
+First create a chat server:
+    chat.py -l localhost 8000
+
+Then connect to the chat server:
+    chat.py localhost 8000
+'''
 
 import argparse
 import sys
