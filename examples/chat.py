@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from pync import pync, ConsoleInput
+from pync import pync, NetcatConsoleInput
 
 
 try:
@@ -13,14 +13,14 @@ except NameError:
     pass
 
 
-class ChatInput(ConsoleInput):
+class ChatInput(NetcatConsoleInput):
 
     def __init__(self, username, *args, **kwargs):
         super(ChatInput, self).__init__(*args, **kwargs)
         self.username = username
         self.prompt = 'You: '
         self._lines = [
-                "Chat started with user [{}]".format(self.username).encode(),
+                self.username.encode(),
         ]
 
     def readline(self):
@@ -36,22 +36,25 @@ class ChatInput(ConsoleInput):
 
 
 class ChatOutput(object):
+    intro = 'Chat started with username [{user}] speaking with [{ruser}]\n'
 
-    def __init__(self):
+    def __init__(self, username):
         self.prompt = 'You: '
-        self._newline = False
+        self.username = username
+        self._intro = True
 
     def write(self, data):
-        if not self._newline:
-            data = data.decode()
-            self._newline = True
-        else:
-            data = '\n'+data.decode()
+        if self._intro:
+            ruser = data.decode().strip()
+            sys.__stdout__.write(self.intro.format(
+                user=self.username,
+                ruser=ruser,
+            ))
+            sys.__stdout__.write(self.prompt)
+            self._intro = False
+            return
+        data = '\n'+data.decode()
         sys.__stdout__.write(data)
-        sys.__stdout__.write(self.prompt)
-
-    def _write(self, data):
-        sys.__stdout__.write('\n\n'+data.decode())
         sys.__stdout__.write(self.prompt)
 
     def flush(self):
@@ -86,7 +89,7 @@ def main():
         username = input('Enter username: ')
 
     chatin = ChatInput(username)
-    chatout = ChatOutput()
+    chatout = ChatOutput(username)
     return pync(pync_args, stdin=chatin, stdout=chatout)
 
 
