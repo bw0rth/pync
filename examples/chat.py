@@ -32,7 +32,7 @@ class ChatInput(NetcatConsoleInput):
             sys.stdout.write(self.prompt)
             sys.stdout.flush()
             if line.strip():
-                return self.username.encode()+b': ' + line
+                return line
 
 
 class ChatOutput(object):
@@ -42,23 +42,24 @@ class ChatOutput(object):
         self.prompt = 'You: '
         self.username = username
         self._intro = True
+        self._ruser = None
 
     def write(self, data):
         if self._intro:
-            ruser = data.decode().strip()
-            sys.__stdout__.write(self.intro.format(
+            self._ruser = data.decode().strip()
+            sys.stdout.write(self.intro.format(
                 user=self.username,
-                ruser=ruser,
+                ruser=self._ruser,
             ))
-            sys.__stdout__.write(self.prompt)
+            sys.stdout.write(self.prompt)
             self._intro = False
             return
-        data = '\n'+data.decode()
-        sys.__stdout__.write(data)
-        sys.__stdout__.write(self.prompt)
+        data = '\n' + '{}: '.format(self._ruser) + data.decode()
+        sys.stdout.write(data)
+        sys.stdout.write(self.prompt)
 
     def flush(self):
-        sys.__stdout__.flush()
+        sys.stdout.flush()
 
 
 def main():
