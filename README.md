@@ -14,12 +14,16 @@
     <img src="https://badgen.net/github/forks/brenw0rth/pync">
   </a>
 
+  </br>
+
   <a href="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml">
     <img src="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml/badge.svg">
   </a>
   <a href="https://readthedocs.org/projects/pync/">
     <img src="https://readthedocs.org/projects/pync/badge/?version=latest">
   </a>
+
+  </br>
 
   <a href="https://github.com/brenw0rth/pync/blob/main/LICENSE">
     <img src="https://img.shields.io/github/license/brenw0rth/pync">
