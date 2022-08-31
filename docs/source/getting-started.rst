@@ -56,8 +56,20 @@ Once installed, there are several ways to run **pync**:
 Common Uses
 ===========
 
-Interactive Client/Server Communication
----------------------------------------
+Interact with a server
+----------------------
+
+  .. tab:: Unix
+
+     .. code-block:: sh
+        
+        echo Hello | pync -q -1 www.example.com 80
+
+  .. tab:: Windows
+
+     .. code-block:: sh
+
+        echo Hello | py -m pync -q -1 www.example.com
 
 Programming pync
 ================
