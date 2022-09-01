@@ -79,8 +79,63 @@ Interacting With Servers
       import io
       from pync import pync
       
+      # BytesIO turns the get request string into a file-like
+      # object for the pync function.
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
       pync('-q -1 www.example.com 80', stdin=http_get)
       
+Transferring files
+------------------
+
+File Server
+^^^^^^^^^^^
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync -l localhost 8000 < file.in
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -l localhost 8000 < file.in
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # file_server.py
+      from pync import pync
+      
+      with open('file.in', 'rb') as f:
+          pync('-l localhost 8000', stdin=f)
+          
+Download File
+^^^^^^^^^^^^^
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync localhost 8000 > file.out
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync localhost 8000 > file.out
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # download_file.py
+      from pync import pync
+      
+      with open('file.out', 'wb') as f:
+          pync('localhost 8000', stdout=f)
+
 Programming pync
 ================
