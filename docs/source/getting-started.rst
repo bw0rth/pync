@@ -63,13 +63,24 @@ Interacting With Servers
 
    .. code-block:: sh
         
-      echo Hello | pync -q -1 www.example.com 80
+      echo "GET / HTTP/1.0\r\n\r\n" | pync -q -1 www.example.com 80
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      echo Hello | py -m pync -q -1 www.example.com
+      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync -q -1 www.example.com
+      
+.. tab:: Python
 
+   .. code-block:: python
+   
+      # http_get.py
+      import io
+      from pync import pync
+      
+      http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
+      pync('-q -1 www.example.com 80', stdin=http_get)
+      
 Programming pync
 ================
