@@ -84,8 +84,8 @@ Talking To Servers
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
       pync('-q -1 www.example.com 80', stdin=http_get)
       
-Transferring files
-------------------
+Transferring Data
+-----------------
 
 File Server
 ^^^^^^^^^^^
@@ -139,3 +139,6 @@ File Client
 
 Programming pync
 ================
+
+Next Steps
+==========
