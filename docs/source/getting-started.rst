@@ -56,8 +56,8 @@ Once installed, there are several ways to run **pync**:
 Common Uses
 ===========
 
-Interacting With Servers
-------------------------
+Talking To Servers
+------------------
 
 .. tab:: Unix
 
