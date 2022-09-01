@@ -59,17 +59,17 @@ Common Uses
 Interact with a server
 ----------------------
 
-  .. tab:: Unix
+.. tab:: Unix
 
-     .. code-block:: sh
+   .. code-block:: sh
         
-        echo Hello | pync -q -1 www.example.com 80
+      echo Hello | pync -q -1 www.example.com 80
 
-  .. tab:: Windows
+.. tab:: Windows
 
-     .. code-block:: sh
+   .. code-block:: sh
 
-        echo Hello | py -m pync -q -1 www.example.com
+      echo Hello | py -m pync -q -1 www.example.com
 
 Programming pync
 ================
