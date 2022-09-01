@@ -87,8 +87,8 @@ Talking To Servers
 Transferring Data
 -----------------
 
-File Server
-^^^^^^^^^^^
+Server
+^^^^^^
 
 .. tab:: Unix
 
@@ -112,8 +112,8 @@ File Server
       with open('file.in', 'rb') as f:
           pync('-l localhost 8000', stdin=f)
           
-File Client
-^^^^^^^^^^^
+Client
+^^^^^^
 
 .. tab:: Unix
 
