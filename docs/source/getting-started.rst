@@ -131,7 +131,7 @@ File Client
 
    .. code-block:: python
    
-      # download_file.py
+      # file_client.py
       from pync import pync
       
       with open('file.out', 'wb') as f:
