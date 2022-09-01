@@ -112,8 +112,8 @@ File Server
       with open('file.in', 'rb') as f:
           pync('-l localhost 8000', stdin=f)
           
-Download File
-^^^^^^^^^^^^^
+File Client
+^^^^^^^^^^^
 
 .. tab:: Unix
 
