@@ -124,8 +124,8 @@ Talking To Servers
 By piping input to **pync**, you can pass messages
 to all kinds of servers.
 
-Send a GET request to a HTTP server
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Send a GET request to an HTTP server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. tab:: Unix
 
