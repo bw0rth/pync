@@ -58,12 +58,12 @@ Common Uses
 
 Transferring Data
 -----------------
+.. warning::
+    | Please DO NOT transfer any sensitive data using
+    | the following method.
+
 By redirecting input and output, you can use **pync** to perform
 simple file transfers.
-
-.. warning::
-    | Data transferred is NOT encrypted.
-    | Please DO NOT transfer any sensitive data using this method.
 
 Create a server to host a file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
