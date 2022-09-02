@@ -56,8 +56,68 @@ Once installed, there are several ways to run **pync**:
 Common Uses
 ===========
 
+Transferring Data
+-----------------
+By redirecting input and output, you can use **pync** to perform
+simple file transfers.
+
+Create a server to host a file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync -l localhost 8000 < file.in
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -l localhost 8000 < file.in
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # file_server.py
+      from pync import pync
+      
+      with open('file.in', 'rb') as f:
+          pync('-l localhost 8000', stdin=f)
+          
+Connect to the file server to download the file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync localhost 8000 > file.out
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync localhost 8000 > file.out
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # file_client.py
+      from pync import pync
+      
+      with open('file.out', 'wb') as f:
+          pync('localhost 8000', stdout=f)
+
 Talking To Servers
 ------------------
+This simple idea of redirecting input and output lets you
+talk to all kinds of servers.
+
+Talk to a HTTP server
+^^^^^^^^^^^^^^^^^^^^^
 
 .. tab:: Unix
 
@@ -83,59 +143,6 @@ Talking To Servers
       # object for the pync function.
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
       pync('-q -1 www.example.com 80', stdin=http_get)
-      
-Transferring File Data
-----------------------
-
-Server
-^^^^^^
-
-.. tab:: Unix
-
-   .. code-block:: sh
-        
-      pync -l localhost 8000 < file.in
-
-.. tab:: Windows
-
-   .. code-block:: sh
-
-      py -m pync -l localhost 8000 < file.in
-      
-.. tab:: Python
-
-   .. code-block:: python
-   
-      # file_server.py
-      from pync import pync
-      
-      with open('file.in', 'rb') as f:
-          pync('-l localhost 8000', stdin=f)
-          
-Client
-^^^^^^
-
-.. tab:: Unix
-
-   .. code-block:: sh
-        
-      pync localhost 8000 > file.out
-
-.. tab:: Windows
-
-   .. code-block:: sh
-
-      py -m pync localhost 8000 > file.out
-      
-.. tab:: Python
-
-   .. code-block:: python
-   
-      # file_client.py
-      from pync import pync
-      
-      with open('file.out', 'wb') as f:
-          pync('localhost 8000', stdout=f)
 
 Programming pync
 ================
