@@ -116,8 +116,8 @@ Talking To Servers
 This simple idea of redirecting input and output lets you
 talk to all kinds of servers.
 
-Talk to a HTTP server
-^^^^^^^^^^^^^^^^^^^^^
+Send a get request to a HTTP server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. tab:: Unix
 
