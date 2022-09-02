@@ -84,9 +84,11 @@ Create a server to host a file
 
    .. code-block:: python
    
-      # file_server.py
+      # server.py
       from pync import pync
-      
+     
+      # pync reads and writes bytes so be sure to open
+      # files in binary mode. 
       with open('file.in', 'rb') as f:
           pync('-l localhost 8000', stdin=f)
           
@@ -109,9 +111,11 @@ Connect to the server to download the file
 
    .. code-block:: python
    
-      # file_client.py
+      # client.py
       from pync import pync
-      
+
+      # pync reads and writes bytes so be sure to open
+      # files in binary mode. 
       with open('file.out', 'wb') as f:
           pync('localhost 8000', stdout=f)
 
