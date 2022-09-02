@@ -121,8 +121,8 @@ Connect to the server to download the file
 
 Talking To Servers
 ------------------
-Using this same idea of redirecting input and output, you
-can send messages to servers and wait for a response.
+By piping input to **pync**, you can pass messages
+to all kinds of servers.
 
 Send a GET request to a HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
