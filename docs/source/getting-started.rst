@@ -121,8 +121,8 @@ Connect to the server to download the file
 
 Talking To Servers
 ------------------
-This simple idea of redirecting input and output lets you
-talk to all kinds of servers.
+Using this same idea of redirecting input and output, you
+can send messages to servers and wait for a response.
 
 Send a GET request to a HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
