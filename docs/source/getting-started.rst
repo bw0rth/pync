@@ -60,7 +60,8 @@ Transferring Data
 -----------------
 .. warning::
     | Please DO NOT transfer any sensitive data using
-    | the following method.
+    | the following method as the connection is NOT
+    | secure.
 
 By redirecting input and output, you can use **pync** to perform
 simple file transfers.
@@ -93,7 +94,7 @@ Create a server to host a file
           pync('-l localhost 8000', stdin=f)
           
 Connect to the server to download the file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. tab:: Unix
 
@@ -121,8 +122,9 @@ Connect to the server to download the file
 
 Talking To Servers
 ------------------
-By passing input to **pync**, you can send messages
-to all kinds of servers.
+By piping data to **pync**'s stdin stream, you
+can send messages to other servers and wait
+to receive a response.
 
 Send a GET request to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
