@@ -120,6 +120,12 @@ Connect to the server to download the file
       with open('file.out', 'wb') as f:
           pync('localhost 8000', stdout=f)
 
+.. note::
+   | During the file transfer there won't be any progress
+   | indication.
+   | The connection will close after the all the data has
+   | been transferred.
+
 Talking To Servers
 ------------------
 By piping data to **pync**'s stdin stream, you
