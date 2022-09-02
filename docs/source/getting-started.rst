@@ -121,7 +121,7 @@ Connect to the server to download the file
 
 Talking To Servers
 ------------------
-By piping input to **pync**, you can pass messages
+By passing input to **pync**, you can send messages
 to all kinds of servers.
 
 Send a GET request to an HTTP server
