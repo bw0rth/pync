@@ -121,10 +121,10 @@ Connect to the server to download the file
           pync('localhost 8000', stdout=f)
 
 .. note::
-   | During the file transfer there won't be any progress
-   | indication.
-   | The connection will close after the all the data has
-   | been transferred.
+   | There won't be any progress indication during the
+   | file transfer.
+   | The connection will automatically close after all the
+   | data has been transferred.
 
 Talking To Servers
 ------------------
