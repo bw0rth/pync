@@ -61,6 +61,10 @@ Transferring Data
 By redirecting input and output, you can use **pync** to perform
 simple file transfers.
 
+.. warning::
+    Data transferred is NOT encrypted.
+    Please DO NOT transfer any sensitive data using this method.
+
 Create a server to host a file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -86,7 +90,7 @@ Create a server to host a file
       with open('file.in', 'rb') as f:
           pync('-l localhost 8000', stdin=f)
           
-Connect to the file server to download the file
+Connect to the server to download the file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. tab:: Unix
@@ -116,7 +120,7 @@ Talking To Servers
 This simple idea of redirecting input and output lets you
 talk to all kinds of servers.
 
-Send a get request to a HTTP server
+Send a GET request to a HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. tab:: Unix
