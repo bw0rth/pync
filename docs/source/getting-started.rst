@@ -53,6 +53,18 @@ Once installed, there are several ways to run **pync**:
      from pync import pync
      pync('--help')
 
+Ensure you have a working pync
+==============================
+The basic idea of **pync** is to create a connection and then
+send any data from stdin to the connection while simultaneously
+writing any data coming in from the connection to stdout.
+
+Client/Server Model
+-------------------
+
+Create a server
+^^^^^^^^^^^^^^^
+
 Common Uses
 ===========
 
@@ -128,8 +140,8 @@ Connect to the server to download the file
 
 Talking To Servers
 ------------------
-You can send messages to servers by piping data to **pync**'s
-stdin stream.
+You can create a connection to different kinds of servers and
+send messages by piping data to **pync**'s stdin stream.
 
 Send a GET request to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
