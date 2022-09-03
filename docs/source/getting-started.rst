@@ -53,14 +53,16 @@ Once installed, there are several ways to run **pync**:
      from pync import pync
      pync('--help')
 
-Ensure you have a working pync
-==============================
-
 Client/Server Model
--------------------
+===================
+| **pync** can act as a client or a server.
+| Either way, once a connection has been established,
+  any data from stdin gets sent over the connection
+  and any data received from the connection
+  gets written to stdout.
 
-Create a server
-^^^^^^^^^^^^^^^
+Create a server to listen for a connection
+------------------------------------------
 
 Common Uses
 ===========
