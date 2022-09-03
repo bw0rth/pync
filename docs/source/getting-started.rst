@@ -133,10 +133,8 @@ Connect to the server to download the file
           pync('localhost 8000', stdout=f)
 
 .. note::
-   | There won't be any progress indication during the
-   | file transfer.
-   | The connection will automatically close after all the
-   | data has been transferred.
+   | There won't be any progress indication during the file transfer.
+   | The connection will automatically close after all the data has been transferred.
 
 Talking To Servers
 ------------------
@@ -171,11 +169,10 @@ Send a GET request to an HTTP server
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
       pync('-q -1 www.example.com 80', stdin=http_get)
 
-Setting the -q option to a negative number tells **pync**
-not to close after sending the GET request.
-
-After sending the GET request, the server's response should
-be printed to the console.
+| Setting the -q option to a negative number tells **pync**
+  not to close after sending the GET request.
+| After sending the GET request, the server's response should
+  be printed to the console.
 
 Programming pync
 ================
