@@ -71,9 +71,8 @@ Common Uses
 Transferring Data
 -----------------
 .. warning::
-    | Please DO NOT transfer any sensitive data using
-    | the following method as the connection is NOT
-    | secure.
+    | Please DO NOT transfer any sensitive data using the following method as the
+    | connection is NOT secure.
 
 By redirecting input and output, you can use **pync** to perform
 simple file transfers.
