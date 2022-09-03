@@ -129,8 +129,7 @@ Connect to the server to download the file
 Talking To Servers
 ------------------
 By piping data to **pync**'s stdin stream, you
-can send messages to other servers and wait
-to receive a response.
+can send messages to other servers.
 
 Send a GET request to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -159,6 +158,12 @@ Send a GET request to an HTTP server
       # object for the pync function.
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
       pync('-q -1 www.example.com 80', stdin=http_get)
+
+Setting the -q option to a negative number tells **pync**
+not to close after sending the GET request.
+
+After sending the GET request, the server's response should
+be printed to the console.
 
 Programming pync
 ================
