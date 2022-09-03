@@ -55,15 +55,18 @@ Once installed, there are several ways to run **pync**:
 
 Client/Server Model
 ===================
-**pync** can act as a client or a server.::
+**pync** can act as a client or a server::
 
-   pync ---connect---> server
-   pync <---connect--- client
+   pync    ---connect---> server
+   pync -l <---connect--- client
 
-Either way, once a connection has been established,
+Once a connection has been established,
 any data from stdin gets sent over the connection
 and any data received from the connection
-gets written to stdout.
+gets written to stdout::
+
+   stdin  --data--> pync --data--> connection
+   stdout <--data-- pync <--data-- connection
 
 Create a server to listen for a connection
 ------------------------------------------
