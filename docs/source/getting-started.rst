@@ -128,8 +128,8 @@ Connect to the server to download the file
 
 Talking To Servers
 ------------------
-By piping data to **pync**'s stdin stream, you
-can send messages to other servers.
+You can send messages to servers by piping data to **pync**'s
+stdin stream.
 
 Send a GET request to an HTTP server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
