@@ -60,14 +60,6 @@ Client/Server Model
    pync    ---connect---> server
    pync -l <---connect--- client
 
-Once a connection has been established,
-any data from stdin gets sent over the connection
-and any data received from the connection
-gets written to stdout::
-
-   stdin  --data--> pync --data--> connection
-   stdout <--data-- pync <--data-- connection
-
 Create a server to listen for a connection
 ------------------------------------------
 
@@ -110,9 +102,17 @@ Connect to the server
 
    .. code-block:: python
    
-      # server.py
+      # client.py
       from pync import pync
       pync('localhost 8000')
+
+Once a connection has been established,
+any data from stdin gets sent over the connection
+and any data received from the connection
+gets written to stdout::
+
+   stdin  --data--> pync --data--> connection
+   stdout <--data-- pync <--data-- connection
 
 Common Uses
 ===========
