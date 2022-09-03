@@ -55,9 +55,6 @@ Once installed, there are several ways to run **pync**:
 
 Ensure you have a working pync
 ==============================
-The basic idea of **pync** is to create a connection and then
-send any data from stdin to the connection while simultaneously
-writing any data coming in from the connection to stdout.
 
 Client/Server Model
 -------------------
