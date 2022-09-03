@@ -55,10 +55,7 @@ Once installed, there are several ways to run **pync**:
 
 Client/Server Model
 ===================
-**pync** can act as a client or a server::
-
-   pync    ---connect---> server
-   pync -l <---connect--- client
+**pync** can act as a client or a server.
 
 Create a server to listen for a connection
 ------------------------------------------
@@ -83,8 +80,8 @@ Create a server to listen for a connection
       from pync import pync
       pync('-l localhost 8000')
 
-Connect to the server
----------------------
+Create a client to connect to the server
+----------------------------------------
 
 .. tab:: Unix
 
@@ -106,13 +103,12 @@ Connect to the server
       from pync import pync
       pync('localhost 8000')
 
-Once a connection has been established,
-any data from stdin gets sent over the connection
-and any data received from the connection
-gets written to stdout::
+Once a connection has been established, anything
+typed on one console will be concatenated to the other,
+and vice-versa.
 
-   stdin  --data--> pync --data--> connection
-   stdout <--data-- pync <--data-- connection
+When finished, hit Ctrl-C on either console to close
+the connection.
 
 Common Uses
 ===========
