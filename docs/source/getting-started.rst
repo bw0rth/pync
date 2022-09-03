@@ -71,14 +71,57 @@ gets written to stdout::
 Create a server to listen for a connection
 ------------------------------------------
 
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync -l localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -l localhost 8000
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # server.py
+      from pync import pync
+      pync('-l localhost 8000')
+
+Connect to the server
+---------------------
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync localhost 8000
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync localhost 8000
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # server.py
+      from pync import pync
+      pync('localhost 8000')
+
 Common Uses
 ===========
 
 Transferring Data
 -----------------
 .. warning::
-    | Please DO NOT transfer any sensitive data using the following method as the
-    | connection is NOT secure.
+    | Please DO NOT transfer any sensitive data using
+    | the following method as the connection is NOT secure.
 
 By redirecting input and output, you can use **pync** to perform
 simple file transfers.
