@@ -198,7 +198,7 @@ Send a GET request to an HTTP server
 
    .. code-block:: sh
 
-      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync -q -1 host.example.com
+      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync -q -1 host.example.com 80
       
 .. tab:: Python
 
