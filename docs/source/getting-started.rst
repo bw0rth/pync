@@ -225,7 +225,7 @@ Port Scanning
 Sometimes it's useful to know which ports are open and what services a
 target machine is running.
 
-Combining the -v and -z options, you can scan a list of ports to reveal
+Combining the -v and -z flags, you can scan a list of ports to reveal
 the ones that are accepting connections.
 
 Scan a list of ports on a target machine
@@ -250,6 +250,52 @@ Scan a list of ports on a target machine
       # scan.py
       from pync import pync
       pync('-vz host.example.com 20-30')
+
+For example, if ports 22 and 25 are open, you should see
+output similar to this::
+
+   Connection to host.example.com 22 port [tcp/ssh] succeeded!
+   Connection to host.example.com 25 port [tcp/smtp] succeeded!
+   ...
+
+It might also be useful to know which server software is running, and
+which versions.
+
+This can be done by setting a small timeout with the -w flag, or maybe
+by issuing a well known command to the server.
+
+Get the version of software a port is running
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      echo "QUIT" | pync host.example.com 20-30
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      echo "QUIT" | py -m pync host.example.com 20-30
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # banner.py
+      import io
+      from pync import pync
+
+      command = io.BytesIO(b'QUIT')
+      pync('host.example.com 20-30', stdin=command)
+
+For example, if SSH was running on port 22, you might see output
+similar to this::
+
+   SSH-1.99-OpenSSH_3.6.1p2
+   Protocol mismatch.
+   ...
 
 Programming pync
 ================
