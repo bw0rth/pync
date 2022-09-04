@@ -192,13 +192,13 @@ Send a GET request to an HTTP server
 
    .. code-block:: sh
         
-      echo "GET / HTTP/1.0\r\n\r\n" | pync -q -1 www.example.com 80
+      echo "GET / HTTP/1.0\r\n\r\n" | pync -q -1 host.example.com 80
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync -q -1 www.example.com
+      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync -q -1 host.example.com
       
 .. tab:: Python
 
@@ -211,14 +211,44 @@ Send a GET request to an HTTP server
       # BytesIO turns the get request string into a file-like
       # object for the pync function.
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
-      pync('-q -1 www.example.com 80', stdin=http_get)
+      pync('-q -1 host.example.com 80', stdin=http_get)
 
 After sending the GET request, the server's response should
 be printed to the console.
 
 .. note::
-   | Setting the -q option to a negative number tells **pync** not to quit after
-   | sending the GET request.
+   Setting the -q option to a negative number tells **pync** not to quit after
+   sending the GET request.
+
+Port Scanning
+-------------
+| Sometimes it's useful to know what ports are open and what services a
+  target machine is running.
+| Combining the -v and -z options, you can scan a list of ports to reveal
+  which ones accepted a connection.
+
+Scan a list of ports on a target machine
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync -vz host.example.com 20-30
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -vz host.example.com 20-30
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      # scan.py
+      from pync import pync
+      pync('-vz host.example.com 20-30')
 
 Programming pync
 ================
