@@ -213,10 +213,12 @@ Send a GET request to an HTTP server
       http_get = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
       pync('-q -1 www.example.com 80', stdin=http_get)
 
-| Setting the -q option to a negative number tells **pync**
-  not to close after sending the GET request.
-| After sending the GET request, the server's response should
-  be printed to the console.
+After sending the GET request, the server's response should
+be printed to the console.
+
+.. note::
+   | Setting the -q option to a negative number tells **pync** not to quit after
+   | sending the GET request.
 
 Programming pync
 ================
