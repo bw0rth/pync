@@ -226,7 +226,7 @@ Sometimes it's useful to know what ports are open and what services a
 target machine is running.
 
 Combining the -v and -z options, you can scan a list of ports to reveal
-which ones accepted a connection.
+which ones are accepting connections.
 
 Scan a list of ports on a target machine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
