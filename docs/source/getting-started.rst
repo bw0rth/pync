@@ -116,8 +116,8 @@ Common Uses
 Transferring Data
 -----------------
 .. warning::
-    | Please DO NOT transfer any sensitive data using
-    | the following method as the connection is NOT secure.
+    | Please DO NOT transfer any sensitive data using the following method.
+    | The connection is NOT secure.
 
 By redirecting input and output, you can use **pync** to perform
 simple file transfers.
@@ -222,11 +222,11 @@ be printed to the console.
 
 Port Scanning
 -------------
-Sometimes it's useful to know what ports are open and what services a
+Sometimes it's useful to know which ports are open and what services a
 target machine is running.
 
 Combining the -v and -z options, you can scan a list of ports to reveal
-which ones are accepting connections.
+the ones that are accepting connections.
 
 Scan a list of ports on a target machine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
