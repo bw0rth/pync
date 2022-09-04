@@ -225,11 +225,10 @@ Port Scanning
 Sometimes it's useful to know which ports are open and what services a
 target machine is running.
 
-Combining the -v and -z flags, you can scan a list of ports to reveal
-the ones that are accepting connections.
-
 Scan a list of ports on a target machine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Combining the -v and -z flags, you can scan a list of ports to reveal
+the ones that are accepting connections:
 
 .. tab:: Unix
 
@@ -258,14 +257,13 @@ output similar to this::
    Connection to host.example.com 25 port [tcp/smtp] succeeded!
    ...
 
+Get the version of software a port is running
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 It might also be useful to know which server software is running, and
 which versions.
 
 This can be done by setting a small timeout with the -w flag, or maybe
-by issuing a well known command to the server.
-
-Get the version of software a port is running
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+by issuing a well known command to the server:
 
 .. tab:: Unix
 
