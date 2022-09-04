@@ -307,5 +307,8 @@ Running the **pync** function is similar to running **pync** from the
 command-line. It will run a given string of arguments and return an
 integer exit status value once finished.
 
+Creating a Netcat instance
+--------------------------
+
 Next Steps
 ==========
