@@ -301,40 +301,20 @@ There are two main objects of interest when using
 **pync** in your own Python scripts: the **pync** function
 and the Netcat class.
 
-The following examples are going to need a test server
-to connect to.
-
-Create a test server
---------------------
-
-.. code-block:: python
-
-   # test_server.py
-   import sys
-   from pync import pync
-
-   status = pync('-vkl localhost 8000')
-   sys.exit(status)
-
-Run this server script in a separate console before running
-the examples.
-
-Hit Ctrl-C to stop the server when finished.
-
 Running the pync function
 -------------------------
 Running the **pync** function is similar to running **pync** from the
 command-line. It will run a given string of arguments and return an
 integer exit status value once finished.
 
-| The **pync** function also takes a few more keyword arguments: stdin,
-  stdout and stderr.
-| These allow control over where the data gets read from and written to.
+The **pync** function also takes a few more keyword arguments: stdin,
+stdout and stderr.
 
-| The stdin, stdout and stderr arguments can be any object that acts like
-  a file.
-| The following example shows how you can turn a byte string into a file-like
-  object using the io.BytesIO class:
+You can pass your own file-like objects to these keyword arguments
+to control where the data gets read from and written to.
+
+Send a GET request to an HTTP server
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: python
 
@@ -344,13 +324,11 @@ integer exit status value once finished.
 
    from pync import pync
 
-   hello = io.BytesIO(b'Hello, World!\n')
-   status = pync('localhost 8000', stdin=hello)
+   hello = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
+   with open('http_response.out', 'wb') as f:
+       status = pync('host.example.com 80', stdin=hello, stdout=f)
 
    sys.exit(status)
-
-After running this script, you should see the message appear in the
-test server console window.
 
 Creating a Netcat instance
 --------------------------
