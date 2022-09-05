@@ -318,17 +318,26 @@ Send a GET request to an HTTP server
 
 .. code-block:: python
 
-   # pync_client.py
+   # pync_http_get.py
    import io
    import sys
 
    from pync import pync
 
-   hello = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
-   with open('http_response.out', 'wb') as f:
-       status = pync('host.example.com 80', stdin=hello, stdout=f)
+   # io.BytesIO turns the GET request string into
+   # a file-like object for the pync function.
+   request = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
+
+   with open('http.response', 'wb') as response:
+       status = pync('host.example.com 80', stdin=request, stdout=response)
 
    sys.exit(status)
+
+This sends a GET request string to a web server and saves
+the response to a file.
+
+.. note::
+   **pync** reads and writes bytes, so be sure to open files in binary mode.
 
 Creating a Netcat instance
 --------------------------
