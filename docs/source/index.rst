@@ -1,7 +1,9 @@
 :hide-toc:
 
-Name
-====
+.. raw:: HTML
+
+   <h4>Name</h4>
+
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
 Description
@@ -27,7 +29,7 @@ Common uses include:
    talking-to-servers
    port-scanning
    examples/index
-   dev-guide
+   pync-for-devs
    reference/index
 
 .. toctree::
