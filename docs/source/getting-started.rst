@@ -295,8 +295,6 @@ similar to this::
    SSH-1.99-OpenSSH_3.6.1p2
    Protocol mismatch.
 
-See the Port Scanning example page for more.
-
 pync For Python Developers
 ==========================
 There are two main objects of interest when using
@@ -341,8 +339,6 @@ Send a GET request to an HTTP server
 This example sends a GET request string to a web server and saves
 the response to a file.
 
-See the API reference for the **pync** function for more.
-
 Creating a Netcat instance
 --------------------------
 Under the hood, the **pync** function creates a custom Netcat class
@@ -382,7 +378,11 @@ Send a GET request to an HTTP server
 As before when using the **pync** function, this sends a GET request
 to a web server and saves the response to a file.
 
-See the API reference for the Netcat class for more.
-
 Next Steps
 ==========
+It is recommended to have a look at the Options and Examples sections.
+
+If you're a developer looking for more information on how to use
+**pync** in your own scripts, take a look at the API Reference or
+the Example Scripts.
+
