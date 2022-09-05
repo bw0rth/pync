@@ -2,13 +2,13 @@
 
 .. raw:: HTML
 
-   <h3>Name</h3>
+   <h2>Name</h2>
 
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
 .. raw:: HTML
 
-   <h3>Description</h3>
+   <h2>Description</h2>
 
 Inspired by the Black Hat Python book, the goal of pync was to create an easy to use library that provides Netcat-like functionality for Python developers.
 
