@@ -305,7 +305,15 @@ Running the pync function
 -------------------------
 Running the **pync** function is similar to running **pync** from the
 command-line. It will run a given string of arguments and return an
-integer exit status value once finished.
+integer exit status value once finished:
+
+.. code-block:: python
+
+   # pync_client.py
+   import sys
+   from pync import pync
+   status = pync('localhost 8000')
+   sys.exit(status)
 
 Next Steps
 ==========
