@@ -1,18 +1,20 @@
 :hide-toc:
 
+Name
 ====
-pync
-====
+**pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
-| **pync** is a `Netcat <https://en.wikipedia.org/wiki/Netcat>`_ library for `Python <https://www.python.org/>`_.
-| It can be used as a command-line utility or can be imported into other Python projects.
+Description
+===========
+Inspired by the Black Hat Python book, the goal of pync was to create an easy to use library that provides Netcat-like functionality for Python developers.
 
 Common uses include:
 
 * Interactive client/server communication
 * Remote data transfer (upload/download)
 * Port scanning (simple connect scan)
-* Remote command execution
+* Remote command execution (reverse/bind shell)
+* Remote code execution (Python)
 
 .. toctree::
    :caption: Contents
@@ -20,6 +22,10 @@ Common uses include:
 
    getting-started
    options/index
+   client-server
+   data-transfer
+   talking-to-servers
+   port-scanning
    examples/index
    reference/index
 
