@@ -295,6 +295,8 @@ similar to this::
    SSH-1.99-OpenSSH_3.6.1p2
    Protocol mismatch.
 
+See the Port Scanning example page for more.
+
 pync For Python Developers
 ==========================
 There are two main objects of interest when using
@@ -339,8 +341,7 @@ Send a GET request to an HTTP server
 This example sends a GET request string to a web server and saves
 the response to a file.
 
-.. note::
-   **pync** reads and writes bytes, so be sure to open files in binary mode.
+See the API reference for the **pync** function for more.
 
 Creating a Netcat instance
 --------------------------
@@ -360,10 +361,10 @@ Send a GET request to an HTTP server
    from pync import Netcat
 
    # io.BytesIO turns the GET request byte string into a file-like
-   # object for the pync function.
+   # object for the Netcat class.
    request = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
 
-   # pync reads and writes bytes so be sure to open files in
+   # Netcat reads and writes bytes so be sure to open files in
    # binary mode.
    response = open('http.response', 'wb')
    nc = Netcat('host.example.com', 80,
@@ -373,7 +374,6 @@ Send a GET request to an HTTP server
    )
 
    try:
-       # Start the readwrite loop.
        nc.readwrite()
    finally:
        response.close()
@@ -381,6 +381,8 @@ Send a GET request to an HTTP server
 
 As before when using the **pync** function, this sends a GET request
 to a web server and saves the response to a file.
+
+See the API reference for the Netcat class for more.
 
 Next Steps
 ==========
