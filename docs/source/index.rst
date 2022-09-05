@@ -26,7 +26,7 @@ Common uses include:
 
    getting-started
    options/index
-   client-server
+   Client/Server Model <client-server>
    data-transfer
    talking-to-servers
    port-scanning
