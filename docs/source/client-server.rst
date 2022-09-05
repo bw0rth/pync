@@ -1,10 +1,9 @@
-===================
 Client/Server Model
 ===================
 **pync** can act as a client or a server.
 
 Create a server to listen for a connection
-==========================================
+------------------------------------------
 
 .. tab:: Unix
 
@@ -27,7 +26,7 @@ Create a server to listen for a connection
       pync('-l localhost 8000')
 
 Create a client to connect to the server
-========================================
+----------------------------------------
 
 .. tab:: Unix
 
