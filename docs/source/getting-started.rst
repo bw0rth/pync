@@ -315,5 +315,8 @@ integer exit status value once finished:
    status = pync('localhost 8000')
    sys.exit(status)
 
+Creating a Netcat instance
+--------------------------
+
 Next Steps
 ==========
