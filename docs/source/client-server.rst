@@ -1,9 +1,12 @@
-Client/Server Model
-===================
+.. raw:: html
+
+   <h2>Client/Server Model</h2>
+
 **pync** can act as a client or a server.
 
-Create a server to listen for a connection
-------------------------------------------
+.. raw:: html
+
+   <h3>Create a server to listen for a connection</h3>
 
 .. tab:: Unix
 
@@ -25,8 +28,9 @@ Create a server to listen for a connection
       from pync import pync
       pync('-l localhost 8000')
 
-Create a client to connect to the server
-----------------------------------------
+.. raw:: html
+
+   <h3>Create a client to connect to the server</h3>
 
 .. tab:: Unix
 
