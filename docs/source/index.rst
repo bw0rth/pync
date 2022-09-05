@@ -27,6 +27,7 @@ Common uses include:
    talking-to-servers
    port-scanning
    examples/index
+   dev-guide
    reference/index
 
 .. toctree::
