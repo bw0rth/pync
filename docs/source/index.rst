@@ -1,11 +1,11 @@
 :hide-toc:
 
 Name
-====
+----
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
 Description
-===========
+-----------
 Inspired by the Black Hat Python book, the goal of pync was to create an easy to use library that provides Netcat-like functionality for Python developers.
 
 Common uses include:
