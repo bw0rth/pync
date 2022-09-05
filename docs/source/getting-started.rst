@@ -301,22 +301,74 @@ There are two main objects of interest when using
 **pync** in your own Python scripts: the **pync** function
 and the Netcat class.
 
+The following examples are going to need a test server
+to connect to.
+
+Create a test server
+--------------------
+
+.. code-block:: python
+
+   # test_server.py
+   import sys
+   from pync import pync
+
+   status = pync('-vkl localhost 8000')
+   sys.exit(status)
+
+Run this server script in a separate console before running
+the examples.
+
+Hit Ctrl-C to stop the server when finished.
+
 Running the pync function
 -------------------------
 Running the **pync** function is similar to running **pync** from the
 command-line. It will run a given string of arguments and return an
-integer exit status value once finished:
+integer exit status value once finished.
+
+| The **pync** function also takes a few more keyword arguments: stdin,
+  stdout and stderr.
+| These allow control over where the data gets read from and written to.
+
+| The stdin, stdout and stderr arguments can be any object that acts like
+  a file.
+| The following example shows how you can turn a byte string into a file-like
+  object using the io.BytesIO class:
 
 .. code-block:: python
 
    # pync_client.py
+   import io
    import sys
+
    from pync import pync
-   status = pync('localhost 8000')
+
+   hello = io.BytesIO(b'Hello, World!\n')
+   status = pync('localhost 8000', stdin=hello)
+
    sys.exit(status)
+
+After running this script, you should see the message appear in the
+test server console window.
 
 Creating a Netcat instance
 --------------------------
+Under the hood, the **pync** function creates a custom Netcat class
+and handles any exceptions that may occur, printing them to stderr.
+
+If you would like more control over exception handling or maybe you'd
+like to customize your own Netcat, you can use the Netcat class:
+
+.. code-block:: python
+
+   # netcat_client.py
+   import io
+   from pync import Netcat
+
+   hello = io.BytesIO(b'Hello, World!\n')
+   with Netcat('localhost', '8000', stdin=hello) as nc:
+       nc.readwrite()
 
 Next Steps
 ==========
