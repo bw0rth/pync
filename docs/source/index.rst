@@ -54,8 +54,9 @@ Common uses include:
 * Remote command execution (reverse/bind shell)
 * Remote code execution (Python)
 
+Contents
+========
 .. toctree::
-   :caption: Contents
    :maxdepth: 2
 
    getting-started
@@ -70,8 +71,9 @@ Common uses include:
    pync-for-devs
    reference/index
 
+See Also
+========
 .. toctree::
-   :caption: See Also
    
    GitHub Repository <https://github.com/brenw0rth/pync>
 
