@@ -78,7 +78,7 @@ the goal of **pync** was to create an easy to use library that
 provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Common uses include:
-* [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers)
+* [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers.html)
 * [Data Transfer](https://pync.readthedocs.io/en/latest/data-transfer.html)
 * [Port Scanning](https://pync.readthedocs.io/en/latest/port-scanning.html)
 * [Remote Command execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
