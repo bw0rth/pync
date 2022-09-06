@@ -1,7 +1,7 @@
 :hide-toc:
 
 .. |identicon| image:: ../../identicon.png
-   :width: 50
+   :width: 60
 
 ******************************
 |identicon| pync documentation
