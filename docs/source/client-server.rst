@@ -1,15 +1,18 @@
-*******************
+===================
 Client/Server Model
-*******************
-**pync** can act as a client or a server.
+===================
 
-Creating a server
-=================
+To illustrate a basic client/server model, we can connect
+two **pync** instances together and send messages back and
+forth.
+
+1. Create a local server to listen for incoming connections
+   on port 8000:
 
 .. tab:: Unix
 
    .. code-block:: sh
-        
+
       pync -l localhost 8000
 
 .. tab:: Windows
@@ -17,22 +20,21 @@ Creating a server
    .. code-block:: sh
 
       py -m pync -l localhost 8000
-      
+
 .. tab:: Python
 
    .. code-block:: python
-   
+
       # server.py
       from pync import pync
       pync('-l localhost 8000')
 
-Creating a client
-=================
+2. On a separate console, connect to the server:
 
 .. tab:: Unix
 
    .. code-block:: sh
-        
+
       pync localhost 8000
 
 .. tab:: Windows
@@ -40,19 +42,28 @@ Creating a client
    .. code-block:: sh
 
       py -m pync localhost 8000
-      
+
 .. tab:: Python
 
    .. code-block:: python
-   
+
       # client.py
       from pync import pync
       pync('localhost 8000')
 
-Once a connection has been established, anything
-typed on one console will be concatenated to the other,
-and vice-versa.
+There should now be a connection between the two consoles
+and anything typed in one console should display in the
+other and vice-versa.
 
-When finished, hit Ctrl-C on either console to close
-the connection.
+When finished, hit Ctrl+C from either console to close the
+connection.
+
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/listen`
 
