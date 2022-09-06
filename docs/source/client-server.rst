@@ -26,8 +26,8 @@ Create a server
       from pync import pync
       pync('-l localhost 8000')
 
-Create a client
-===============
+Connect to the server
+=====================
 
 .. tab:: Unix
 
