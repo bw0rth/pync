@@ -81,8 +81,8 @@ Common uses include:
 * [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers.html)
 * [Data Transfer](https://pync.readthedocs.io/en/latest/data-transfer.html)
 * [Port Scanning](https://pync.readthedocs.io/en/latest/port-scanning.html)
-* [Remote Command execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
-* [Remote Code execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
+* [Remote Command Execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
+* [Remote Code Execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
