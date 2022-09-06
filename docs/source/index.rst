@@ -1,12 +1,22 @@
 :hide-toc:
 
-.. raw:: HTML
+****
+pync
+****
+
+.. raw:: html
 
    <h2>Name</h2>
 
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
-.. raw:: HTML
+.. raw:: html
+
+   <h2>Synopsis<h2>
+
+...
+
+.. raw:: html
 
    <h2>Description</h2>
 
