@@ -1,8 +1,8 @@
 =============
 Port Scanning
 =============
-**pync** can be used to perform a simple connect scan to
-see what ports and services a target machine is running.
+Sometimes it's useful to know which ports are open and what services a
+target machine is running.
 
 Scanning Multiple Ports
 =======================
