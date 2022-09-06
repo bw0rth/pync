@@ -10,10 +10,6 @@ pync - documentation
 
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
-.. raw:: html
-
-   <h2>Synopsis<h2>
-
 Synopsis
 ========
 
