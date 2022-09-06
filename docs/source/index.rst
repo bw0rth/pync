@@ -1,8 +1,8 @@
 :hide-toc:
 
-********************
-pync - documentation
-********************
+******************
+pync documentation
+******************
 
 Name
 ====
