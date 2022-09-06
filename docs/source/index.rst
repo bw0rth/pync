@@ -4,15 +4,12 @@
 pync - documentation
 ********************
 
-.. raw:: html
-
-   <h2>Name</h2>
-
+Name
+====
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
 Synopsis
 ========
-
 .. tab:: Unix
 
    .. code-block:: sh
@@ -45,10 +42,8 @@ Synopsis
                 [-Y pyfile] [-y pycode] [dest] [port]'''
       pync(args, stdin, stdout, stderr)
 
-.. raw:: html
-
-   <h2>Description</h2>
-
+Description
+===========
 Inspired by the Black Hat Python book, the goal of pync was to create an easy to use library that provides Netcat-like functionality for Python developers.
 
 Common uses include:
