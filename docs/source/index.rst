@@ -1,5 +1,3 @@
-:hide-toc:
-
 .. |identicon| image:: ../../identicon.png
    :width: 60
 
