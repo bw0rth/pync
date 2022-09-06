@@ -1,7 +1,7 @@
 :hide-toc:
 
 ********************
-pync - Documentation
+pync - documentation
 ********************
 
 .. raw:: html
