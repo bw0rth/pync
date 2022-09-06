@@ -1,5 +1,7 @@
 :hide-toc:
 
+.. image:: ../../identicon.png
+
 ******************
 pync documentation
 ******************
