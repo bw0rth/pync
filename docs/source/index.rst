@@ -49,11 +49,11 @@ Inspired by the Black Hat Python book, the goal of pync was to create an easy to
 
 Common uses include:
 
-* Interactive client/server communication
-* Remote data transfer (upload/download)
-* Port scanning (simple connect scan)
-* Remote command execution (reverse/bind shell)
-* Remote code execution (Python)
+* :doc:`talking-to-servers`
+* :doc:`data-transfer`
+* :doc:`port-scanning`
+* :doc:`remote-command-exec`
+* :doc:`remote-code-exec`
 
 Contents
 ========
