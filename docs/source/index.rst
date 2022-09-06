@@ -14,6 +14,8 @@ pync - documentation
 
    <h2>Synopsis<h2>
 
+Synopsis
+========
 
 .. tab:: Unix
 
@@ -46,7 +48,6 @@ pync - documentation
                 [-X proxy_protocol] [-x proxy_address[:port]]
                 [-Y pyfile] [-y pycode] [dest] [port]'''
       pync(args, stdin, stdout, stderr)
-
 
 .. raw:: html
 
