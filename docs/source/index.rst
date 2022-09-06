@@ -3,6 +3,8 @@
 .. |identicon| image:: ../../identicon.png
    :width: 60
 
+.. class:: center
+
 ******************************
 |identicon| pync documentation
 ******************************
