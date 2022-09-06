@@ -78,11 +78,11 @@ the goal of **pync** was to create an easy to use library that
 provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Common uses include:
-* [Interactive client/server communication](https://pync.readthedocs.io/en/latest/client-server.html)
-* [Remote data transfer (upload/download)](https://pync.readthedocs.io/en/latest/data-transfer.html)
-* [Port scanning (simple connect scan)](https://pync.readthedocs.io/en/latest/port-scanning.html)
-* [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
-* [Remote code execution (Python)](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
+* [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers)
+* [Data Transfer](https://pync.readthedocs.io/en/latest/data-transfer.html)
+* [Port Scanning](https://pync.readthedocs.io/en/latest/port-scanning.html)
+* [Remote Command execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
+* [Remote Code execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
