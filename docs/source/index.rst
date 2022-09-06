@@ -64,6 +64,8 @@ Common uses include:
    data-transfer
    talking-to-servers
    port-scanning
+   remote-command-exec
+   remote-code-exec
    examples/index
    pync-for-devs
    reference/index
