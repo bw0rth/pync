@@ -1,10 +1,11 @@
 :hide-toc:
 
-.. image:: ../../identicon.png
-   :width: 100
-******************
-pync documentation
-******************
+.. |identicon| image:: ../../identicon.png
+   :width: 70
+
+******************************
+|identicon| pync documentation
+******************************
 
 Name
 ====
