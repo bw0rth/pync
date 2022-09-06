@@ -3,9 +3,12 @@
 .. |identicon| image:: ../../identicon.png
    :width: 60
 
-******************************
-|identicon| pync documentation
-******************************
+****************
+|identicon| pync
+****************
+*************
+documentation
+*************
 
 Name
 ====
