@@ -78,3 +78,7 @@ See Also
    
    GitHub Repository <https://github.com/brenw0rth/pync>
 
+Caveats
+=======
+UDP port scans will always succeed (i.e report the port as open), rendering the -uz combination of flags relatively useless.
+
