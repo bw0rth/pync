@@ -3,7 +3,7 @@ Client/Server Model
 *******************
 **pync** can act as a client or a server.
 
-A Simple Server
+Create a server
 ===============
 
 .. tab:: Unix
@@ -26,7 +26,7 @@ A Simple Server
       from pync import pync
       pync('-l localhost 8000')
 
-A Simple Client
+Create a client
 ===============
 
 .. tab:: Unix
