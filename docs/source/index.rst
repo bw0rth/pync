@@ -14,7 +14,37 @@ pync - documentation
 
    <h2>Synopsis<h2>
 
-...
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
+           [-i interval] [-O length] [-P proxy_username] [-p source_port]
+           [-q seconds] [-s source] [-T toskeyword] [-w timeout]
+           [-X proxy_protocol] [-x proxy_address[:port]]
+           [-Y pyfile] [-y pycode] [dest] [port]
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
+                 [-i interval] [-O length] [-P proxy_username] [-p source_port]
+                 [-q seconds] [-s source] [-T toskeyword] [-w timeout]
+                 [-X proxy_protocol] [-x proxy_address[:port]]
+                 [-Y pyfile] [-y pycode] [dest] [port]
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      from pync import pync
+      args = '''[-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
+                [-i interval] [-O length] [-P proxy_username] [-p source_port]
+                [-q seconds] [-s source] [-T toskeyword] [-w timeout]
+                [-X proxy_protocol] [-x proxy_address[:port]]
+                [-Y pyfile] [-y pycode] [dest] [port]'''
+      pync(args, stdin, stdout, stderr)
 
 .. raw:: html
 
