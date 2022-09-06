@@ -71,6 +71,16 @@ class ChatOutput(object):
         sys.stdout.flush()
 
 
+class ChatProtocol(object):
+    Input = ChatInput
+    Output = ChatOutput
+
+    def __init__(self, username):
+        self.username = username
+        self.stdin = self.Input(username)
+        self.stdout = self.Output(username)
+
+
 def main():
     parser = argparse.ArgumentParser('chat.py',
             formatter_class=argparse.RawTextHelpFormatter,
@@ -101,9 +111,8 @@ def main():
     while not username:
         username = input('Enter username: ')
 
-    chatin = ChatInput(username)
-    chatout = ChatOutput(username)
-    return pync(pync_args, stdin=chatin, stdout=chatout)
+    chat = ChatProtocol(username)
+    return pync(pync_args, stdin=chat.stdin, stdout=chat.stdout)
 
 
 if __name__ == '__main__':
