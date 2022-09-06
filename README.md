@@ -78,11 +78,11 @@ the goal of **pync** was to create an easy to use library that
 provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Common uses include:
-* [Interactive client/server communication](https://pync.readthedocs.io/en/latest/examples/client-server.html)
-* [Remote data transfer (upload/download)](https://pync.readthedocs.io/en/latest/examples/data-transfer.html)
-* [Port scanning (simple connect scan)](https://pync.readthedocs.io/en/latest/examples/port-scanning.html)
-* [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/examples/remote-command-exec.html)
-* [Remote code execution (Python)](https://pync.readthedocs.io/en/latest/examples/remote-code-exec.html)
+* [Interactive client/server communication](https://pync.readthedocs.io/en/latest/client-server.html)
+* [Remote data transfer (upload/download)](https://pync.readthedocs.io/en/latest/data-transfer.html)
+* [Port scanning (simple connect scan)](https://pync.readthedocs.io/en/latest/port-scanning.html)
+* [Remote command execution (reverse/bind shell)](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
+* [Remote code execution (Python)](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 
 ## Installation
 **pync** should work on any system with  [Python](https://www.python.org/)
@@ -108,7 +108,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ## Documentation
 * [Getting Started](https://pync.readthedocs.io/en/latest/getting-started.html)
 * [Options](https://pync.readthedocs.io/en/latest/options/index.html)
-* [Examples](https://pync.readthedocs.io/en/latest/examples/index.html)
+* [Examples](https://pync.readthedocs.io/en/latest/examples.html)
 * [API Reference](https://pync.readthedocs.io/en/latest/reference/index.html)
 * [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 
