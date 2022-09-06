@@ -60,7 +60,7 @@ Common uses include:
 
    getting-started
    options/index
-   Client/Server Model <client-server>
+   client-server
    data-transfer
    talking-to-servers
    port-scanning
