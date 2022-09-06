@@ -1,13 +1,11 @@
 =============
 Port Scanning
 =============
-
 **pync** can be used to perform a simple connect scan to
 see what ports and services a target machine is running.
 
 Scanning Multiple Ports
 =======================
-
 By passing a range and/or list of ports, we can connect
 to multiple ports one after another.
 
@@ -41,38 +39,50 @@ ports or a range of ports to scan.
 In this case, we scan port 20 to 30 (20,21,22...30), port
 80 (http) and port 443 (https).
 
+For example, if ports 22 and 25 are open, you should see
+output similar to this::
+
+   ...
+   Connection to host.example.com 22 port [tcp/ssh] succeeded!
+   Connection to host.example.com 25 port [tcp/smtp] succeeded!
+
 Banner Grabbing
 ===============
+It might also be useful to know which server software is running, and
+which versions.
 
-You may also want to grab the server banner to check for
-the version of the service running.
-
-You can try this by piping a message to the server and
-hoping for a response:
+This can be done by setting a small timeout with the -w flag, or maybe
+by issuing a well known command to the server:
 
 .. tab:: Unix
-   
-   .. code-block:: sh
 
+   .. code-block:: sh
+        
       echo "QUIT" | pync host.example.com 20-30
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      echo QUIT | py -m pync host.example.com 20-30
-
+      echo "QUIT" | py -m pync host.example.com 20-30
+      
 .. tab:: Python
 
    .. code-block:: python
-
+   
       # banner.py
       import io
       from pync import pync
-      # BytesIO turns our message into a file-like
-      # object for the pync function.
-      message = io.BytesIO(b'QUIT')
-      pync('host.example.com 20-30', stdin=message)
+
+      command = io.BytesIO(b'QUIT')
+      pync('host.example.com 20-30', stdin=command)
+
+For example, if SSH was running on port 22, you might see output
+similar to this::
+
+   ...
+   SSH-1.99-OpenSSH_3.6.1p2
+   Protocol mismatch.
 
 .. raw:: html
 
