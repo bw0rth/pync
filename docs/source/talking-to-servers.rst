@@ -38,20 +38,22 @@ to retrieve the home page:
 Talking to an SMTP server
 -------------------------
 | You could also submit emails to Simple Mail Transfer Protocol (SMTP) servers.
-| Suppose you have a text file (email_template.txt)::
+| Suppose you have a text file (email_template.txt):
 
-  HELO host.example.com
-  MAIL FROM: <user@host.example.com>
-  RCPT TO: <user2@host.example.com>
-  DATA
-  From: A tester <user@host.example.com>
-  To: <user2@host.example.com>
-  Date: date
-  Subject: a test message
-  
-  Body of email.
-  .
-  QUIT
+.. code-block:: text
+
+   HELO host.example.com
+   MAIL FROM: <user@host.example.com>
+   RCPT TO: <user2@host.example.com>
+   DATA
+   From: A tester <user@host.example.com>
+   To: <user2@host.example.com>
+   Date: date
+   Subject: a test message
+
+   Body of email.
+   .
+   QUIT
 
 You could then send this template to the server like so:
 
@@ -77,6 +79,6 @@ You could then send this template to the server like so:
           pync('-C smtp.example.com 25', stdin=f)
 
 | SMTP requires lines to be terminated with a carriage return (CR)
-  line feed (LF) sequence (\r\n).
-| The -C flag tells **pync** to replace all LF characters (\n) with CRLF characters instead (\r\n).
+  line feed (LF) sequence (\\r\\n).
+| The -C flag tells **pync** to replace all LF characters (\\n) with CRLF characters instead (\\r\\n).
 
