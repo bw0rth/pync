@@ -68,7 +68,7 @@ Contents
    port-scanning
    remote-command-exec
    remote-code-exec
-   examples/index
+   examples
    pync-for-devs
    reference/index
 
