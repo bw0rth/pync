@@ -15,13 +15,13 @@ to retrieve the home page:
 
    .. code-block:: sh
 
-      echo "GET / HTTP/1.0\r\n\r\n" | pync -q -1 host.example.com 80
+      printf "GET / HTTP/1.0\r\n\r\n" | pync host.example.com 80
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync -q -1 host.example.com 80
+      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync host.example.com 80
 
 .. tab:: Python
 
@@ -33,7 +33,7 @@ to retrieve the home page:
       # BytesIO turns our request into a file-like
       # object for the pync function.
       request = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
-      pync('-q -1 host.example.com 80', stdin=request)
+      pync('host.example.com 80', stdin=request)
 
 Talking to an SMTP server
 -------------------------
@@ -78,7 +78,7 @@ You could then send this template to the server like so:
       with open('email_template.txt', 'rb') as f:
           pync('-C smtp.example.com 25', stdin=f)
 
-| SMTP requires lines to be terminated with a carriage return (CR)
+| SMTP typically requires lines to be terminated with a carriage return (CR)
   line feed (LF) sequence (\\r\\n).
 | The -C flag tells **pync** to replace all LF characters (\\n) with CRLF characters instead (\\r\\n).
 
