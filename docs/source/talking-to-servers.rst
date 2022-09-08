@@ -24,13 +24,8 @@ You can send a GET request to a web server to receive the home page:
 
    .. code-block:: text
 
-      GET / HTTP/1.0
-      unicode:: U+0020
-
-   ::
-
-      > GET / HTTP/1.0
-      >
+      1. GET / HTTP/1.0
+      2.
 
    So that's the line "GET / HTTP/1.0" followed by a blank line.
 
