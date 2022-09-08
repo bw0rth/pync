@@ -13,7 +13,7 @@ Talking to a web server
 
 .. code-block:: text
 
-   GET / HTTP/1.0\r\n\r\n
+   GET / HTTP/1.0
 
 | But just sending this won't complete the request.
 | The web server will typically wait until a sequence of carriage return
