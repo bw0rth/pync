@@ -18,31 +18,26 @@ You can send a GET request to a web server to receive the home page.
 
 .. tab:: Windows
 
-   On Windows' cmd.exe, it isn't as easy as just piping the request string.
+   On Windows, it isn't as easy as just piping the GET request string to **pync**.
 
    First, create a text file (http_get.txt) containing the following:
 
    .. literalinclude:: ../data/http_get.txt
       :linenos:
 
-   Revealing the invisible new line characters, the file data would
-   look like this when sent over the network:
-
-   .. literalinclude:: ../data/http_get_lf.txt
-      :linenos:
-
-   Using the -C flag replaces all LF (\\n) characters
-   with a CRLF (\\r\\n) sequence which is what the web server is expecting:
-
-   .. literalinclude:: ../data/http_get_crlf.txt
-      :linenos:
+   | That's the GET request followed by an empty blank line.
+   | The blank line tells the web server that you're done
+     sending the request.
 
    Once you've created the http_get.txt file, you can then pipe
    it into **pync**'s stdin stream:
 
    .. code-block:: sh
 
-      py -m pync host.example.com 80 < http_get.txt
+      py -m pync -C host.example.com 80 < http_get.txt
+
+   The -C flag here tells **pync** to replace all line feed (\\n) characters
+   with a carriage return line feed sequence (\\r\\n).
 
 .. tab:: Python
 
