@@ -8,8 +8,7 @@ response to certain commands.
 
 Talking to a web server
 -----------------------
-For example, we can pipe a GET request to a web server
-to retrieve the home page:
+You can send a GET request to a web server to receive the home page:
 
 .. tab:: Unix
 
