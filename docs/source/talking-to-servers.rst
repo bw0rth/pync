@@ -20,14 +20,14 @@ You can send a GET request to a web server to receive the home page:
 
    On Windows' cmd.exe, it isn't as easy as just piping the request string.
 
-   First create a file (http_get.txt):
+   First, create a text file containing the GET request (http_get.txt):
 
    .. code-block:: text
 
       GET / HTTP/1.0
       <blank>
 
-   So that's the line "GET / HTTP/1.0" followed by another blank line.
+   So that's the line "GET / HTTP/1.0" followed by a blank line.
 
    .. note::
 
