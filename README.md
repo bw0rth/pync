@@ -93,7 +93,7 @@ Use Python's pip command to install **pync** straight from github:
 <summary>Unix</summary>
 
 ```sh
-pip install https://github.com/brenw0rth/pync/archive/main.zip
+python -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ```
 </details>
 
