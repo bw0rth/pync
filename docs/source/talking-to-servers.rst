@@ -39,9 +39,15 @@ Talking to a web server
       :linenos:
 
    Revealing the invisible new line characters, the file data would
-   look like this:
+   look like this when sent over the network:
 
    .. literalinclude:: ../data/http_get_lf.txt
+      :linenos:
+
+   Using the -C flag replaces all LF (\\n) characters
+   with a CRLF (\\r\\n) sequence which is what the web server is expecting:
+
+   .. literalinclude:: ../data/http_get_crlf.txt
       :linenos:
 
    Once you've created the http_get.txt file, you can then pipe
