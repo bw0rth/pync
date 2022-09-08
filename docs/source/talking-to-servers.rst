@@ -27,6 +27,11 @@ You can send a GET request to a web server to receive the home page:
       GET / HTTP/1.0
       unicode:: U+0020
 
+   ::
+
+      > GET / HTTP/1.0
+      >
+
    So that's the line "GET / HTTP/1.0" followed by a blank line.
 
    .. note::
