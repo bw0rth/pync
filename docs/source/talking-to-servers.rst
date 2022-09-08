@@ -8,7 +8,16 @@ response to certain commands.
 
 Talking to a web server
 -----------------------
-You can send a GET request to a web server to receive the home page:
+| You can send a GET request to a web server to receive the home page.
+| The GET request will look like this::
+
+   GET / HTTP/1.0
+
+| But just sending this won't complete the request.
+| The web server will typically wait until a sequence of carriage return
+  (\r) line feed (\n) characters before sending a response::
+
+   \r\n\r\n
 
 .. tab:: Unix
 
@@ -59,6 +68,7 @@ Talking to a mail server
 | Suppose you have a text file (email_template.txt):
 
 .. literalinclude:: ../data/email_template.txt
+   :language: text
    :linenos:
 
 You could then send this template to the server like so:
