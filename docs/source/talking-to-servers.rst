@@ -22,6 +22,15 @@ You can send a GET request to a web server to receive the home page:
 
    First, create a text file containing the GET request (http_get.txt):
 
+   .. code-block:: text
+
+      .. raw:: html
+         
+         <pre>
+         GET / HTTP/1.0
+
+         </pre>
+
    .. raw:: html
 
       <pre>
