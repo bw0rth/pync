@@ -20,7 +20,7 @@ You can send a GET request to a web server to receive the home page:
 
    On Windows' cmd.exe, it isn't as easy as just piping the request string.
 
-   First, create a text file containing the GET request (http_get.txt):
+   First, create a text file (http_get.txt) containing the following:
 
    .. literalinclude:: ../data/http_get.txt
       :linenos:
@@ -31,7 +31,7 @@ You can send a GET request to a web server to receive the home page:
 
       That blank line is important. It tells the server that you're done
       sending the request and are now ready to receive the response.
-      Without it, the connection would hang indefinitely and you wouldn't
+      Without it, the connection would likely hang indefinitely and you wouldn't
       receive the response from the server.
 
    Once you've created the http_get.txt file, you can then pipe
@@ -57,6 +57,9 @@ Talking to a mail server
 -------------------------
 | You could also submit emails to Simple Mail Transfer Protocol (SMTP) servers.
 | Suppose you have a text file (email_template.txt):
+
+.. literalinclude:: ../data/email_template.txt
+   :linenos:
 
 .. code-block:: text
    :linenos:

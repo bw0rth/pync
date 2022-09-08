@@ -1,0 +1,12 @@
+HELO host.example.com
+MAIL FROM: <user@host.example.com>
+RCPT TO: <user2@host.example.com>
+DATA
+From: A tester <user@host.example.com>
+To: <user2@host.example.com>
+Date: date
+Subject: a test message
+
+Body of email.
+.
+QUIT
