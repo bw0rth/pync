@@ -55,4 +55,4 @@ Once installed, there are several ways to run **pync**:
 
 Next Steps
 ==========
-
+It is recommended to read the :doc:`client-server` page.
