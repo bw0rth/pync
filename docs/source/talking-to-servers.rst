@@ -38,14 +38,11 @@ Talking to a web server
    .. literalinclude:: ../data/http_get.txt
       :linenos:
 
-   So that's the line "GET / HTTP/1.0" followed by a blank line.
+   Revealing the invisible new line characters, the file data would
+   look like this:
 
-   .. note::
-
-      That blank line is important. It tells the server that you're done
-      sending the request and are now ready to receive the response.
-      Without it, the connection would likely hang indefinitely and you wouldn't
-      receive the response from the server.
+   .. literalinclude:: ../data/http_get_lf.txt
+      :linenos:
 
    Once you've created the http_get.txt file, you can then pipe
    it into **pync**'s stdin stream:
