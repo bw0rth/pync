@@ -62,18 +62,18 @@ Talking to a mail server
 
 .. code-block:: text
 
-   HELO host.example.com
-   MAIL FROM: <user@host.example.com>
-   RCPT TO: <user2@host.example.com>
-   DATA
-   From: A tester <user@host.example.com>
-   To: <user2@host.example.com>
-   Date: date
-   Subject: a test message
-
-   Body of email.
-   .
-   QUIT
+    1. HELO host.example.com
+    2. MAIL FROM: <user@host.example.com>
+    3. RCPT TO: <user2@host.example.com>
+    4. DATA
+    5. From: A tester <user@host.example.com>
+    6. To: <user2@host.example.com>
+    7. Date: date
+    8. Subject: a test message
+    9.
+   10. Body of email.
+   11. .
+   12. QUIT
 
 You could then send this template to the server like so:
 
