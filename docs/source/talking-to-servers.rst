@@ -61,22 +61,6 @@ Talking to a mail server
 .. literalinclude:: ../data/email_template.txt
    :linenos:
 
-.. code-block:: text
-   :linenos:
-
-   HELO host.example.com
-   MAIL FROM: <user@host.example.com>
-   RCPT TO: <user2@host.example.com>
-   DATA
-   From: A tester <user@host.example.com>
-   To: <user2@host.example.com>
-   Date: date
-   Subject: a test message
-
-   Body of email.
-   .
-   QUIT
-
 You could then send this template to the server like so:
 
 .. tab:: Unix
