@@ -47,12 +47,6 @@ Talking to a web server
       Without it, the connection would likely hang indefinitely and you wouldn't
       receive the response from the server.
 
-   | The CRLF sequence is invisible when you create and view the file.
-   | But this is what the file data will actually look like when sent to the web server:
-
-   .. literalinclude:: ../data/http_get_crlf.txt
-      :linenos:
-
    Once you've created the http_get.txt file, you can then pipe
    it into **pync**'s stdin stream:
 
