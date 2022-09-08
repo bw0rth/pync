@@ -17,7 +17,7 @@ Talking to a web server
 
 | But just sending this won't complete the request.
 | The web server will typically wait until a sequence of carriage return
-  (\r) line feed (\n) characters before sending a response:
+  (\\r) line feed (\\n) characters before sending a response:
 
 .. code-block:: text
 
