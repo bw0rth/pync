@@ -117,10 +117,11 @@ https://pync.readthedocs.io
 * [Remote Command Execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
 * [Remote Code Execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 * [Examples](https://pync.readthedocs.io/en/latest/examples.html)
+* [pync For Python Developers](https://pync.readthedocs.io/en/latest/pync-for-devs.html)
 * [API Reference](https://pync.readthedocs.io/en/latest/reference/index.html)
-* [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 
 ## See Also
+* [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
 
 ## Caveats
