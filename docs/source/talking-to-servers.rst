@@ -18,9 +18,28 @@ You can send a GET request to a web server to receive the home page:
 
 .. tab:: Windows
 
+   On Windows' cmd.exe, it isn't as easy as just piping the request string.
+
+   First create a file (http_get.txt):
+
+   .. code-block:: text
+
+      GET / HTTP/1.0
+
+
+   So that's the line "GET / HTTP/1.0" followed by another blank line.
+
+   | That blank line is important. It tells the server that you're done
+     sending the request and are now ready to receive the response.
+   | Without it, the connection would hang indefinitely and you wouldn't
+     receive the response from the server.
+
+   Once you've created the http_get.txt file, you can then pipe
+   it into **pync**:
+
    .. code-block:: sh
 
-      echo "GET / HTTP/1.0\r\n\r\n" | py -m pync host.example.com 80
+      py -m pync host.example.com 80 < http_get.txt
 
 .. tab:: Python
 
