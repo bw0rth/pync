@@ -55,4 +55,8 @@ Once installed, there are several ways to run **pync**:
 
 Next Steps
 ==========
-It is recommended to read the :doc:`client-server` page.
+It is recommended to read the :doc:`client-server` page
+to get a basic idea of what **pync** does.
+
+After that, browse the table of contents to
+choose a topic of interest.
