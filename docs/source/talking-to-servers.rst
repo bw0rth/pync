@@ -11,17 +11,17 @@ Talking to a web server
 | You can send a GET request to a web server to receive the home page.
 | The GET request will look like this:
 
-   .. code-block:: text
-   
-      GET / HTTP/1.0\r\n\r\n
+.. code-block:: text
+
+   GET / HTTP/1.0\r\n\r\n
 
 | But just sending this won't complete the request.
 | The web server will typically wait until a sequence of carriage return
   (\r) line feed (\n) characters before sending a response:
 
-  .. code-block:: text
+.. code-block:: text
 
-     \r\n\r\n
+   \r\n\r\n
 
 .. tab:: Unix
 
