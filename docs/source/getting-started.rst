@@ -12,7 +12,7 @@ Installation
    
    .. code-block:: sh
 
-      pip install https://github.com/brenw0rth/pync/archive/main.zip
+      python -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
 .. tab:: Windows
 
