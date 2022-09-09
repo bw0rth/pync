@@ -76,7 +76,7 @@ connection.
 
 Common Uses
 ===========
-While sending messages back and forth doesn't really seem
+While sending messages back and forth doesn't really seem all
 that useful, the core concept of redirecting input and output
 over the network can open up a range of other possibilities:
 
