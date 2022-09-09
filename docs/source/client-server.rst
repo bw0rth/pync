@@ -9,10 +9,9 @@ Client/Server Model
    **pync** --connect--> server
    **pync** <--connect-- client
    
-Once a connection has been established, any
-data from stdin gets sent to the other end
-of the connection and any data from the other
-end of the connection gets written to stdout:
+And once a connection has been established, any
+data from stdin gets sent to the connection and
+any data from the connection gets written to stdout:
 
 .. code-block:: text
 
