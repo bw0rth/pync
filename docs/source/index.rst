@@ -49,8 +49,8 @@ Inspired by the Black Hat Python book, the goal of **pync** was to create an eas
 
 Common uses include:
 
-* :doc:`talking-to-servers`
 * :doc:`data-transfer`
+* :doc:`talking-to-servers`
 * :doc:`port-scanning`
 * :doc:`remote-command-exec`
 * :doc:`remote-code-exec`
