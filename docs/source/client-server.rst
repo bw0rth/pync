@@ -1,6 +1,17 @@
 ===================
 Client/Server Model
 ===================
+The basic idea of **pync** is to create a
+connection to a client or server then,
+once connected, redirect any data from
+stdin to the connection while, at
+the same time, redirecting any data
+from the connection to stdout:
+
+.. code-block text
+
+   stdin  --data--> **pync** --data--> connection
+   stdout <--data-- **pync** <--data-- connection
 
 To illustrate a basic client/server model, we can connect
 two **pync** instances together and send messages back and
