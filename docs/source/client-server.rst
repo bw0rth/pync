@@ -8,7 +8,7 @@ stdin to the connection while, at
 the same time, redirecting any data
 from the connection to stdout:
 
-.. code-block text
+.. code-block:: text
 
    stdin  --data--> **pync** --data--> connection
    stdout <--data-- **pync** <--data-- connection
