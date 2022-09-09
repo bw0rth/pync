@@ -1,12 +1,18 @@
 ===================
 Client/Server Model
 ===================
-The basic idea of **pync** is to create a
-connection to a client or server then,
-once connected, redirect any data from
-stdin to the connection while, at
-the same time, redirecting any data
-from the connection to stdout:
+
+**pync** can be used as a client or a server:
+
+.. code-block:: text
+
+   **pync** --connect--> server
+   **pync** <--connect-- client
+   
+Once a connection has been established, any
+data from stdin gets sent to the other end
+of the connection and any data from the other
+end of the connection gets written to stdout:
 
 .. code-block:: text
 
@@ -69,6 +75,13 @@ other and vice-versa.
 When finished, hit Ctrl+C from either console to close the
 connection.
 
+While sending messages back and forth doesn't really seem
+that useful, the core concept of redirecting input and output
+over the network can open up a range of other possibilities.
+
+For instance, you can download and upload files by redirecting
+input and ouput.
+
 .. raw:: html
 
    <br>
@@ -77,4 +90,3 @@ connection.
 :SEE ALSO:
 
 * :doc:`../options/listen`
-
