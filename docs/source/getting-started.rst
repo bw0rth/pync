@@ -57,21 +57,3 @@ Next Steps
 ==========
 It is recommended to read the :doc:`client-server` page
 to get a basic idea of what **pync** does and how to use it.
-
-After that, browse the table of contents to
-choose a topic of interest:
-
-.. toctree::
-   :maxdepth: 1
-
-   getting-started
-   options/index
-   client-server
-   data-transfer
-   talking-to-servers
-   port-scanning
-   remote-command-exec
-   remote-code-exec
-   examples
-   pync-for-devs
-   reference/index
