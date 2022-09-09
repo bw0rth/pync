@@ -74,12 +74,38 @@ other and vice-versa.
 When finished, hit Ctrl+C from either console to close the
 connection.
 
+Common Uses
+===========
 While sending messages back and forth doesn't really seem
 that useful, the core concept of redirecting input and output
 over the network can open up a range of other possibilities.
 
-For instance, you can download and upload files by redirecting
-input and ouput.
+For instance, you can create a simple file server just
+by redirecting input from a file:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      pync -l localhost 8000 < file.in
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync -l localhost 8000 < file.in
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      # fserver.py
+      from pync import pync
+      
+      # pync reads and writes bytes so be sure to open
+      # files in binary mode.
+      with open('file.in', 'rb') as fin:
+          pync('-l localhost 8000', stdin=fin)
 
 .. raw:: html
 
