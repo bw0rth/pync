@@ -37,6 +37,7 @@ CRLF sequence on it's own.
    GET / HTTP/1.0\r\n\r\n
 
 .. tab:: Unix
+
    On Unix, this can be as simple as piping the GET request string to
    **pync**'s stdin stream:
 
