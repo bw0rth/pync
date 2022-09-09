@@ -29,13 +29,16 @@ But that's not it. To tell the server you're done sending the request
 and are now ready to receive the response, you need to send another
 CRLF sequence on it's own.
 
-So the end of the request should be a <CRLF><CRLF> sequence:
+| So the end of the request should be a <CRLF><CRLF> sequence.
+| Making the full request to be sent look like this:
 
 .. code-block:: text
 
    GET / HTTP/1.0\r\n\r\n
 
 .. tab:: Unix
+   On Unix, this can be as simple as piping the GET request string to
+   **pync**'s stdin stream:
 
    .. code-block:: sh
 
