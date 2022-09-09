@@ -65,9 +65,6 @@ CRLF sequence on it's own.
 
       py -m pync -C host.example.com 80 < http_get.txt
 
-   Web servers typically expect header fields to be terminated with a
-   carriage return (CR) and line feed (LF) character sequence (\\r\\n).
-
    The -C flag tells **pync** to replace all LF (\\n) characters
    with a CRLF sequence (\\r\\n).
 
