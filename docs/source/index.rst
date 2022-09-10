@@ -61,7 +61,6 @@ Contents
    :maxdepth: 2
 
    getting-started
-   options/index
    client-server
    data-transfer
    talking-to-servers
@@ -70,6 +69,7 @@ Contents
    remote-code-exec
    examples
    pync-for-devs
+   options/index
    reference/index
 
 See Also
