@@ -109,7 +109,6 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 https://pync.readthedocs.io
 ### Contents
 * [Getting Started](https://pync.readthedocs.io/en/latest/getting-started.html)
-* [Options](https://pync.readthedocs.io/en/latest/options/index.html)
 * [Client/Server Model](https://pync.readthedocs.io/en/latest/client-server.html)
 * [Data Transfer](https://pync.readthedocs.io/en/latest/data-transfer.html)
 * [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers.html)
@@ -118,6 +117,7 @@ https://pync.readthedocs.io
 * [Remote Code Execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 * [Examples](https://pync.readthedocs.io/en/latest/examples.html)
 * [pync For Python Developers](https://pync.readthedocs.io/en/latest/pync-for-devs.html)
+* [Options](https://pync.readthedocs.io/en/latest/options/index.html)
 * [API Reference](https://pync.readthedocs.io/en/latest/reference/index.html)
 
 ## See Also
