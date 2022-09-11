@@ -61,7 +61,7 @@ The options are as follows:
    :glob:
    :maxdepth: 1
 
-   options/*
+   options/[!index]*
 
 Contents
 ========
