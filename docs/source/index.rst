@@ -55,9 +55,11 @@ Common uses include:
 * :doc:`remote-command-exec`
 * :doc:`remote-code-exec`
 
+The options are as follows:
+
 .. toctree::
    :maxdepth: 2
-   :caption: The options are as follows:
+   :titlesonly:
 
    options/index
 
