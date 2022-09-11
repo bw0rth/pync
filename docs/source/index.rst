@@ -57,7 +57,6 @@ Common uses include:
 
 .. toctree::
    :maxdepth: 2
-   :hidden:
    :caption: The options are as follows:
 
    options/index
