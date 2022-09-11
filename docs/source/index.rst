@@ -58,10 +58,9 @@ Common uses include:
 The options are as follows:
 
 .. toctree::
-   :maxdepth: 2
-   :titlesonly:
+   :glob:
 
-   options/index
+   options/*
 
 Contents
 ========
