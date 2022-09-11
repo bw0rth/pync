@@ -55,6 +55,12 @@ Common uses include:
 * :doc:`remote-command-exec`
 * :doc:`remote-code-exec`
 
+The options are as follows:
+.. toctree::
+   :maxdepth: 1
+
+   options/index
+
 Contents
 ========
 .. toctree::
@@ -69,7 +75,6 @@ Contents
    remote-code-exec
    examples
    pync-for-devs
-   options/index
    reference/index
 
 See Also
