@@ -60,6 +60,7 @@ The options are as follows:
 .. toctree::
    :glob:
    :maxdepth: 1
+   :hidden:
 
    options/[!index]*
 
