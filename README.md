@@ -139,6 +139,18 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | dest           | The destination host name or ip to connect or bind to
 | port           | The port number to connect or bind to
 
+## Client/Server Model
+...
+
+## Data Transfer
+...
+
+## Talking to Servers
+...
+
+## Port Scanning
+...
+
 ## Documentation
 https://pync.readthedocs.io
 ### Contents
