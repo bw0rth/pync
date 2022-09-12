@@ -111,6 +111,23 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | ------ | -----------
 | -4     | Use IPv4 addresses only.
 | -6     | Use IPv6 addresses only.
+| -b     | Allow broadcast.
+| -C     | Send CRLF as line-ending.
+| -D     | Enable debugging on the socket.
+| -d     | Do not attempt to read from stdin.
+| -h     | Prints out nc help.
+| -I length | Specifies the size of the TCP receive buffer.
+| -i interval | Specifies a delay time interval between lines of text
+        sent and received.  Also causes a delay time between
+        connections to multiple ports.
+| -k     | Forces nc to stay listening for another connection
+        after its current connection is completed.  It is an
+        error to use this option without the -l option.
+| -l     | Used to specify that nc should listen for an incoming
+        connection rather than initiate a connection to a
+        remote host.  It is an error to use this option in con‐
+        junction with the -p, -s, or -z options.  Additionally,
+        any timeouts specified with the -w option are ignored.
 
 ## Documentation
 https://pync.readthedocs.io
