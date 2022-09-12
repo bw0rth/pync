@@ -55,15 +55,12 @@ Common uses include:
 * :doc:`remote-command-exec`
 * :doc:`remote-code-exec`
 
-The options are as follows:
-
-* :doc:`options/exec`
-
 Contents
 ========
 .. toctree::
    :maxdepth: 2
 
+   options/index
    getting-started
    client-server
    data-transfer
