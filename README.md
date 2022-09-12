@@ -107,19 +107,31 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
 ## Options
 
-| Option      | Description
-| :---------- | :----------
-| -4          | Use IPv4 addresses only.
-| -6          | Use IPv6 addresses only.
-| -b          | Allow broadcast
-| -C          | Send CRLF as line-ending
-| -D          | Enable the debug socket option
-| -d          | Detach from stdin
-| -h, --help  | show this help message and exit.
-| -I length   | TCP receive buffer length
-| -i secs     | Delay interval for lines sent, ports scanned
-| -k          | Keep inbound sockets open for multiple connects
-| -l          | Listen mode, for inbound connects
+| Option         | Description
+| :------------- | :----------
+| -4             | Use IPv4 addresses only.
+| -6             | Use IPv6 addresses only.
+| -b             | Allow broadcast
+| -C             | Send CRLF as line-ending
+| -D             | Enable the debug socket option
+| -d             | Detach from stdin
+| -h, --help     | show this help message and exit.
+| -I length      | TCP receive buffer length
+| -i secs        | Delay interval for lines sent, ports scanned
+| -k             | Keep inbound sockets open for multiple connects
+| -l             | Listen mode, for inbound connects
+| -n             | Suppress name/port resolutions
+| -O length      | TCP send buffer length
+| -p source_port | Specify local port for remote connects
+| -q seconds     | quit after EOF on stdin and delay of seconds
+| -T toskeyword  | Set IP Type of Service
+| -u             | UDP mode [default: TCP]
+| -v             | Verbose
+| -w secs        | Timeout for connects and final net reads
+| -Y pyfile      | specify python file to exec after connect (use with caution).
+| -y pycode      | specify python code to exec after connect (use with caution).
+| dest           | The destination host name or ip to connect or bind to
+| port           | The port number to connect or bind to
 
 ## Documentation
 https://pync.readthedocs.io
