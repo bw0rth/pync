@@ -105,6 +105,9 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ```
 </details>
 
+## Options
+...
+
 ## Documentation
 https://pync.readthedocs.io
 ### Contents
