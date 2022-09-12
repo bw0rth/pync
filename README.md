@@ -106,7 +106,11 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 </details>
 
 ## Options
-...
+
+| Option | Description
+| ------ | -----------
+| -4     | Use IPv4 addresses only.
+| -6     | Use IPv6 addresses only.
 
 ## Documentation
 https://pync.readthedocs.io
