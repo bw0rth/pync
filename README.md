@@ -122,14 +122,20 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | -l             | Listen mode, for inbound connects
 | -n             | Suppress name/port resolutions
 | -O length      | TCP send buffer length
+| -P proxy_username | Username for proxy authentication
 | -p source_port | Specify local port for remote connects
 | -q seconds     | quit after EOF on stdin and delay of seconds
+| -r             | Randomize remote ports
+| -s source      | Local source address
 | -T toskeyword  | Set IP Type of Service
 | -u             | UDP mode [default: TCP]
 | -v             | Verbose
 | -w secs        | Timeout for connects and final net reads
+| -X proxy_protocol | Proxy protocol: "4", "5" (SOCKS) or "connect"
+| -x proxy_address[:port] | Specify proxy address and port
 | -Y pyfile      | specify python file to exec after connect (use with caution).
 | -y pycode      | specify python code to exec after connect (use with caution).
+| -z             | Zero-I/O mode [used for scanning]
 | dest           | The destination host name or ip to connect or bind to
 | port           | The port number to connect or bind to
 
