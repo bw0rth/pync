@@ -133,7 +133,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | -w secs        | Timeout for connects and final net reads
 | -X proxy_protocol | Proxy protocol: "4", "5" (SOCKS) or "connect"
 | -x proxy_address[:port] | Specify proxy address and port
-| -Y pyfile      | specify python file to exec after connect (use with caution).
+| [-Y pyfile](https://pync.readthedocs.io/en/latest/options/py-exec.html)      | specify python file to exec after connect (use with caution).
 | -y pycode      | specify python code to exec after connect (use with caution).
 | -z             | Zero-I/O mode [used for scanning]
 | dest           | The destination host name or ip to connect or bind to
