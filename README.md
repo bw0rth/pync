@@ -109,12 +109,14 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
 | Option         | Description
 | :------------- | :----------
-| -4             | Use IPv4 addresses only.
-| -6             | Use IPv6 addresses only.
+| -4             | Use IPv4 addresses only
+| -6             | Use IPv6 addresses only
 | -b             | Allow broadcast
 | -C             | Send CRLF as line-ending
+| [-c](https://pync.readthedocs.io/en/latest/options/exec.html) string | specify shell commands to exec after connect (use with caution).
 | -D             | Enable the debug socket option
 | -d             | Detach from stdin
+| [-e](https://pync.readthedocs.io/en/latest/options/exec.html) filename | specify filename to exec after connect (use with caution).
 | -h, --help     | show this help message and exit.
 | -I length      | TCP receive buffer length
 | -i secs        | Delay interval for lines sent, ports scanned
@@ -133,8 +135,8 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | -w secs        | Timeout for connects and final net reads
 | -X proxy_protocol | Proxy protocol: "4", "5" (SOCKS) or "connect"
 | -x proxy_address[:port] | Specify proxy address and port
-| [-Y](https://pync.readthedocs.io/en/latest/options/py-exec.html) pyfile      | specify python file to exec after connect (use with caution).
-| [-y](https://pync.readthedocs.io/en/latest/options/py-exec.html) pycode      | specify python code to exec after connect (use with caution).
+| [-Y](https://pync.readthedocs.io/en/latest/options/py-exec.html) pyfile | specify python file to exec after connect (use with caution).
+| [-y](https://pync.readthedocs.io/en/latest/options/py-exec.html) pycode | specify python code to exec after connect (use with caution).
 | -z             | Zero-I/O mode [used for scanning]
 | dest           | The destination host name or ip to connect or bind to
 | port           | The port number to connect or bind to
