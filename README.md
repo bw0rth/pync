@@ -121,17 +121,17 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | -I length      | TCP receive buffer length
 | -i secs        | Delay interval for lines sent, ports scanned
 | [-k](https://pync.readthedocs.io/en/latest/options/keep-server-open.html) | Keep inbound sockets open for multiple connects
-| -l             | Listen mode, for inbound connects
+| [-l](https://pync.readthedocs.io/en/latest/options/listen.html) | Listen mode, for inbound connects
 | -n             | Suppress name/port resolutions
 | -O length      | TCP send buffer length
 | -P proxy_username | Username for proxy authentication
 | -p source_port | Specify local port for remote connects
-| -q seconds     | quit after EOF on stdin and delay of seconds
+| [-q](https://pync.readthedocs.io/en/latest/options/quit-after-eof.html) seconds | quit after EOF on stdin and delay of seconds
 | -r             | Randomize remote ports
 | -s source      | Local source address
 | -T toskeyword  | Set IP Type of Service
-| -u             | UDP mode [default: TCP]
-| -v             | Verbose
+| [-u](https://pync.readthedocs.io/en/latest/options/udp.html) | UDP mode [default: TCP]
+| [-v](https://pync.readthedocs.io/en/latest/options/verbose.html) | Verbose
 | -w secs        | Timeout for connects and final net reads
 | -X proxy_protocol | Proxy protocol: "4", "5" (SOCKS) or "connect"
 | -x proxy_address[:port] | Specify proxy address and port
