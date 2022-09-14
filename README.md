@@ -142,7 +142,24 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ## Usage
 
 ### Client/Server Model
-...
+To illustrate a basic client/server model, you can connect two **pync** instances together and send
+messages back and forth. On one console, create a server to listen for a connection on a specific port:
+
+```sh
+pync -l 8000
+```
+
+While the server listens for a connection on port 8000, on another console (or another machine)
+create a client to connect to the server:
+
+```sh
+pync localhost 8000
+```
+
+There should now be a connection between the two consoles and anything typed in one console
+will be displayed in the other, and vice-versa.
+
+When finished, hit Ctrl-C on either console to close the connection.
 
 ### Data Transfer
 ...
