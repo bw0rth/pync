@@ -158,7 +158,6 @@ pync localhost 8000
 
 There should now be a connection between the two consoles and anything typed in one console
 will be displayed in the other, and vice-versa.
-
 When finished, hit Ctrl-C on either console to close the connection.
 
 ### Data Transfer
