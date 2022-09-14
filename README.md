@@ -149,8 +149,8 @@ messages back and forth. On one console, create a server to listen for a connect
 pync -l 8000
 ```
 
-While the server listens for a connection on port 8000, on another console (or another machine)
-create a client to connect to the server:
+While the server listens for a connection on port 8000, create a client on another console
+(or another machine) to connect to the server:
 
 ```sh
 pync localhost 8000
