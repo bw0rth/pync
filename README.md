@@ -120,7 +120,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | [-h](https://pync.readthedocs.io/en/latest/options/help.html), [--help](https://pync.readthedocs.io/en/latest/options/help.html) | show this help message and exit.
 | -I length      | TCP receive buffer length
 | -i secs        | Delay interval for lines sent, ports scanned
-| -k             | Keep inbound sockets open for multiple connects
+| [-k](https://pync.readthedocs.io/en/latest/options/keep-server-open.html) | Keep inbound sockets open for multiple connects
 | -l             | Listen mode, for inbound connects
 | -n             | Suppress name/port resolutions
 | -O length      | TCP send buffer length
