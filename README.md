@@ -136,7 +136,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | -x proxy_address[:port] | Specify proxy address and port
 | [-Y](https://pync.readthedocs.io/en/latest/options/py-exec.html) pyfile | specify python file to exec after connect (use with caution).
 | [-y](https://pync.readthedocs.io/en/latest/options/py-exec.html) pycode | specify python code to exec after connect (use with caution).
-| -z             | Zero-I/O mode [used for scanning]
+| [-z](https://pync.readthedocs.io/en/latest/options/zero-io.html) | Zero-I/O mode [used for scanning]
 | dest           | The destination host name or ip to connect or bind to
 | port           | The port number to connect or bind to
 
