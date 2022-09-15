@@ -71,8 +71,20 @@ Options
      - Use IPv4 addresses only
    * - -6
      - Use IPv6 addresses only
+   * - -b
+     - Allow broadcast
+   * - -C
+     - Send CRLF as line-ending
    * - `-c <https://pync.readthedocs.io/en/latest/options/exec.html>`_ string
      - specify shell commands to exec after connect (use with caution).
+   * - -D
+     - Enable the debug socket option
+   * - -d
+     - Detach from stdin
+   * - `-e <https://pync.readthedocs.io/en/latest/options/exec.html>`_ filename
+     - specify filename to exec after connect (use with caution).
+   * - `-h <https://pync.readthedocs.io/en/latest/options/help.html>`_, `--help <https://pync.readthedocs.io/en/latest/options/help.html>`_
+     - show this help message and exit.
 
 Contents
 ========
