@@ -62,6 +62,7 @@ Options
 =======
 
 .. list-table::
+   :align: left
    
    * - Option
      - Description
