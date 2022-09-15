@@ -89,7 +89,7 @@ Options
      - TCP receive buffer length
    * - -i secs
      - Delay interval for lines sent, ports scanned
-   * - -k
+   * - `-k <https://pync.readthedocs.io/en/latest/options/keep-server-open.html>`_
      - Keep inbound sockets open for multiple connects
    * - `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
      - Listen mode, for inbound connects
@@ -109,9 +109,9 @@ Options
      - Local source address
    * - -T toskeyword
      - Set IP Type of Service
-   * - -u
+   * - `-u <https://pync.readthedocs.io/en/latest/options/udp.html>`_
      - UDP mode [default: TCP]
-   * - -v
+   * - `-v <https://pync.readthedocs.io/en/latest/options/verbose.html>`_
      - Verbose
    * - -w secs
      - Timeout for connects and final net reads
