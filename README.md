@@ -148,9 +148,6 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 * [Remote Command Execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
 * [Remote Code Execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 
-## Documentation
-https://pync.readthedocs.io
-
 ## See Also
 * [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
