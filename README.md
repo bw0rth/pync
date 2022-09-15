@@ -142,34 +142,12 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | port           | The port number to connect or bind to
 
 ## Usage
-
-### Client/Server Model
-To illustrate a basic client/server model, you can connect two **pync** instances together and send
-messages back and forth. On one console, create a server to listen for a connection on a specific port:
-
-```sh
-pync -l 8000
-```
-
-While the server listens for a connection on port 8000, create a client on another console
-(or another machine) to connect to the server:
-
-```sh
-pync localhost 8000
-```
-
-There should now be a connection between the two consoles and anything typed in one console
-will be displayed in the other, and vice-versa.
-When finished, hit Ctrl-C on either console to close the connection.
-
-### Data Transfer
-...
-
-### Talking to Servers
-...
-
-### Port Scanning
-...
+* [Client/Server Model](https://pync.readthedocs.io/en/latest/client-server.html)
+* [Data Transfer](https://pync.readthedocs.io/en/latest/data-transfer.html)
+* [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers.html)
+* [Port Scanning](https://pync.readthedocs.io/en/latest/port-scanning.html)
+* [Remote Command Execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
+* [Remote Code Execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
 
 ## Documentation
 https://pync.readthedocs.io
