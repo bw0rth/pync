@@ -56,7 +56,21 @@ Common uses include:
 
 Installation
 ============
-...
+**pync** should work on any system with Python installed (version 2.7 or higher).
+
+Use Python's pip command to install **pync** straight from GitHub:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+        
+      python -m pip install https://github.com/brenw0rth/pync/archive/main.zip
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
 Options
 =======
