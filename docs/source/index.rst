@@ -63,6 +63,7 @@ Options
 
 .. list-table::
    :align: left
+   :widths: auto
    
    * - Option
      - Description
@@ -70,6 +71,8 @@ Options
      - Use IPv4 addresses only
    * - -6
      - Use IPv6 addresses only
+   * - `-c <https://pync.readthedocs.io/en/latest/options/exec.html>`_ string
+     - specify shell commands to exec after connect (use with caution).
 
 Contents
 ========
