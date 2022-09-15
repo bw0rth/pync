@@ -101,7 +101,7 @@ Options
      - Username for proxy authentication
    * - -p source_port
      - Specify local port for remote connects
-   * - -q seconds
+   * - `-q <https://pync.readthedocs.io/en/latest/options/quit-after-eof.html>`_ seconds
      - quit after EOF on stdin and delay of seconds
    * - -r
      - Randomize remote ports
