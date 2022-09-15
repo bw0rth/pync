@@ -129,23 +129,15 @@ Options
      - The destination host name or ip to connect or bind to
    * - port
      - The port number to connect or bind to
-
-Contents
-========
-.. toctree::
-   :maxdepth: 2
-
-   options/index
-   getting-started
-   client-server
-   data-transfer
-   talking-to-servers
-   port-scanning
-   remote-command-exec
-   remote-code-exec
-   examples
-   pync-for-devs
-   reference/index
+     
+Usage
+=====
+* :doc:`client-server`
+* :doc:`data-transfer`
+* :doc:`talking-to-servers`
+* :doc:`port-scanning`
+* :doc:`remote-command-exec`
+* :doc:`remote-code-exec`
 
 See Also
 ========
