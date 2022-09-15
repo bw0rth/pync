@@ -49,11 +49,26 @@ Inspired by the Black Hat Python book, the goal of **pync** was to create an eas
 
 Common uses include:
 
-* :doc:`data-transfer`
-* :doc:`talking-to-servers`
-* :doc:`port-scanning`
-* :doc:`remote-command-exec`
-* :doc:`remote-code-exec`
+* simple TCP proxies
+* shell-script based HTTP clients and servers
+* network daemon testing
+* a SOCKS or HTTP ProxyCommand for ssh(1)
+
+Installation
+============
+...
+
+Options
+=======
+
+.. list-table::
+   
+   * - Option
+     - Description
+   * - -4
+     - Use IPv4 addresses only
+   * - -6
+     - Use IPv6 addresses only
 
 Contents
 ========
