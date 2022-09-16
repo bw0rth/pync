@@ -141,12 +141,12 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | port           | The port number to connect or bind to
 
 ## Usage
-* [Client/Server Model](https://pync.readthedocs.io/en/latest/client-server.html)
-* [Data Transfer](https://pync.readthedocs.io/en/latest/data-transfer.html)
-* [Talking to Servers](https://pync.readthedocs.io/en/latest/talking-to-servers.html)
-* [Port Scanning](https://pync.readthedocs.io/en/latest/port-scanning.html)
-* [Remote Command Execution](https://pync.readthedocs.io/en/latest/remote-command-exec.html)
-* [Remote Code Execution](https://pync.readthedocs.io/en/latest/remote-code-exec.html)
+* [Client/Server Model](https://pync.readthedocs.io/en/latest/usage/client-server.html)
+* [Data Transfer](https://pync.readthedocs.io/en/latest/usage/data-transfer.html)
+* [Talking to Servers](https://pync.readthedocs.io/en/latest/usage/talking-to-servers.html)
+* [Port Scanning](https://pync.readthedocs.io/en/latest/usage/port-scanning.html)
+* [Remote Command Execution](https://pync.readthedocs.io/en/latest/usage/remote-command-exec.html)
+* [Remote Code Execution](https://pync.readthedocs.io/en/latest/usage/remote-code-exec.html)
 
 ## See Also
 * [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
