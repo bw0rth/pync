@@ -8,33 +8,7 @@ response to certain commands.
 
 Talking to a web server
 -----------------------
-| You can send a GET request to a web server to receive the home page.
-| The GET request would look like this:
-
-.. code-block:: text
-
-   GET / HTTP/1.0
-
-Web servers typically expect header lines to be terminated with a
-carriage return (CR) and line feed (LF) character sequence (\\r\\n).
-
-So terminating the GET request line with a CRLF sequence would
-turn the data into this:
-
-.. code-block:: text
-
-   GET / HTTP/1.0\r\n
-
-But that's not it. To tell the server you're done sending the request
-and are now ready to receive the response, you need to send another
-CRLF sequence on it's own.
-
-| So the end of the request should be a <CRLF><CRLF> sequence.
-| Making the full request to be sent look like this:
-
-.. code-block:: text
-
-   GET / HTTP/1.0\r\n\r\n
+You can send a GET request to a web server to receive the home page.
 
 .. tab:: Unix
 
