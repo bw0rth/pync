@@ -154,6 +154,14 @@ Usage
 * :doc:`usage/remote-code-exec`
 * :doc:`usage/pync-for-devs`
 
+API
+===
+* :doc:`api/pync`
+* :doc:`api/Netcat`
+* :doc:`api/clients`
+* :doc:`api/servers`
+* :doc:`api/connections`
+
 See Also
 ========
 .. toctree::
