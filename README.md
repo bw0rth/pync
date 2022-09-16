@@ -149,6 +149,13 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 * [Remote Code Execution](https://pync.readthedocs.io/en/latest/usage/remote-code-exec.html)
 * [pync For Developers](https://pync.readthedocs.io/en/latest/usage/pync-for-devs.html)
 
+## API
+* [pync](https://pync.readthedocs.io/en/latest/api/pync.html)
+* [Netcat](https://pync.readthedocs.io/en/latest/api/netcat.html)
+* [Clients](https://pync.readthedocs.io/en/latest/api/clients.html)
+* [Servers](https://pync.readthedocs.io/en/latest/api/servers.html)
+* [Connections](https://pync.readthedocs.io/en/latest/api/connections.html)
+
 ## See Also
 * [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
