@@ -95,5 +95,5 @@ to execute.
 
 * :doc:`../options/quit-after-eof`
 * :doc:`../options/verbose`
-* :doc:`../examples/remote-code-exec`
+* :doc:`../usage/remote-code-exec`
 
