@@ -147,6 +147,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 * [Port Scanning](https://pync.readthedocs.io/en/latest/usage/port-scanning.html)
 * [Remote Command Execution](https://pync.readthedocs.io/en/latest/usage/remote-command-exec.html)
 * [Remote Code Execution](https://pync.readthedocs.io/en/latest/usage/remote-code-exec.html)
+* [pync For Developers](https://pync.readthedocs.io/en/latest/usage/pync-for-devs.html)
 
 ## See Also
 * [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
