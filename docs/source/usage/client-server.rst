@@ -2,22 +2,6 @@
 Client/Server Model
 ===================
 
-**pync** can be used as a client or a server:
-
-.. code-block:: text
-
-   pync --connect--> server
-   pync <--connect-- client
-   
-Once a connection has been established, any data
-read from stdin gets sent to the connection and any
-data received from the connection gets written to stdout:
-
-.. code-block:: text
-
-   stdin  --data--> pync --data--> connection
-   stdout <--data-- pync <--data-- connection
-
 To illustrate a basic client/server model, we can connect
 two **pync** instances together and send messages back and
 forth.
@@ -73,18 +57,6 @@ other and vice-versa.
 
 When finished, hit Ctrl+C from either console to close the
 connection.
-
-Common Uses
-===========
-While sending messages back and forth doesn't really seem all
-that useful, the core concept of redirecting input and output
-over the network can open up a range of other possibilities:
-
-* :doc:`data-transfer`
-* :doc:`talking-to-servers`
-* :doc:`port-scanning`
-* :doc:`remote-command-exec`
-* :doc:`remote-code-exec`
 
 .. raw:: html
 
