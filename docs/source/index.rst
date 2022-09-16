@@ -152,6 +152,7 @@ Usage
 * :doc:`usage/port-scanning`
 * :doc:`usage/remote-command-exec`
 * :doc:`usage/remote-code-exec`
+* :doc:`usage/pync-for-devs`
 
 See Also
 ========
