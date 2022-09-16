@@ -131,5 +131,5 @@ extra shell features such as pipelines and evironment variable expansion.
 
 :SEE ALSO:
 
-* :doc:`../examples/remote-command-exec`
+* :doc:`../usage/remote-command-exec`
 
