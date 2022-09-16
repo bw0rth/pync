@@ -151,7 +151,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 
 ## API
 * [pync](https://pync.readthedocs.io/en/latest/api/pync.html)
-* [Netcat](https://pync.readthedocs.io/en/latest/api/netcat.html)
+* [Netcat](https://pync.readthedocs.io/en/latest/api/Netcat.html)
 * [Clients](https://pync.readthedocs.io/en/latest/api/clients.html)
 * [Servers](https://pync.readthedocs.io/en/latest/api/servers.html)
 * [Connections](https://pync.readthedocs.io/en/latest/api/connections.html)
