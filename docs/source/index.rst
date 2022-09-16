@@ -146,12 +146,12 @@ Options
      
 Usage
 =====
-* :doc:`client-server`
-* :doc:`data-transfer`
-* :doc:`talking-to-servers`
-* :doc:`port-scanning`
-* :doc:`remote-command-exec`
-* :doc:`remote-code-exec`
+* :doc:`usage/client-server`
+* :doc:`usage/data-transfer`
+* :doc:`usage/talking-to-servers`
+* :doc:`usage/port-scanning`
+* :doc:`usage/remote-command-exec`
+* :doc:`usage/remote-code-exec`
 
 See Also
 ========
