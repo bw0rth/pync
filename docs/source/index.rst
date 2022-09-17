@@ -161,8 +161,8 @@ Usage
 * :doc:`usage/remote-code-exec`
 * :doc:`usage/pync-for-devs`
 
-API
-===
+API Reference
+=============
 * :doc:`api/pync`
 * :doc:`api/Netcat`
 * :doc:`api/clients`
