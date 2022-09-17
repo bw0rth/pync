@@ -149,7 +149,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 * [Remote Code Execution](https://pync.readthedocs.io/en/latest/usage/remote-code-exec.html)
 * [pync For Developers](https://pync.readthedocs.io/en/latest/usage/pync-for-devs.html)
 
-## API
+## API Reference
 * [pync](https://pync.readthedocs.io/en/latest/api/pync.html)
 * [Netcat](https://pync.readthedocs.io/en/latest/api/Netcat.html)
 * [Clients](https://pync.readthedocs.io/en/latest/api/clients.html)
