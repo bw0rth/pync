@@ -173,6 +173,7 @@ See Also
 ========
 .. toctree::
    
+   Example Scripts <https://github.com/brenw0rth/pync/tree/main/examples>
    GitHub Repository <https://github.com/brenw0rth/pync>
 
 Caveats
