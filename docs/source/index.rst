@@ -5,6 +5,13 @@
 |identicon| pync - documentation
 ********************************
 
+.. toctree::
+   :hidden:
+   
+   options/index
+   usage/*
+   api/*
+
 Name
 ====
 **pync** - arbitrary TCP and UDP connections and listens (Netcat for Python).
