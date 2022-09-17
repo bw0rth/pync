@@ -9,8 +9,8 @@
    :hidden:
    
    options/index
-   usage/*
-   api/*
+   usage/index
+   api/index
 
 Name
 ====
