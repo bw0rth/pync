@@ -169,11 +169,30 @@ API Reference
 * :doc:`api/servers`
 * :doc:`api/connections`
 
+Examples
+========
+
+.. list-table::
+   :align: left
+   :widths: auto
+   
+   * - Example
+     - Description
+   * - `chat.py <https://github.com/brenw0rth/pync/blob/main/examples/chat.py>`_
+     - Simple chat protocol with custom username
+   * - `ftransfer <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer>`_
+     - Simple file transfer (use with caution).
+   * - `pyshell.py <https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py>`_
+     - Reverse or bind python interpreter shell (use with caution).
+   * - `scan.py <https://github.com/brenw0rth/pync/blob/main/examples/scan.py>`_
+     - Simple TCP connect port scanner
+   * - `shell.py <https://github.com/brenw0rth/pync/blob/main/examples/shell.py>`_
+     - Reverse or bind remote system shell (use with caution).
+
 See Also
 ========
 .. toctree::
    
-   Example Scripts <https://github.com/brenw0rth/pync/tree/main/examples>
    GitHub Repository <https://github.com/brenw0rth/pync>
 
 Caveats
