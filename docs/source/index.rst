@@ -8,8 +8,8 @@
 .. toctree::
    :hidden:
    
-   options/index
    usage/index
+   options/index
    api/index
 
 Name
