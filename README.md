@@ -104,6 +104,15 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ```
 </details>
 
+## Usage
+* [Client/Server Model](https://pync.readthedocs.io/en/latest/usage/client-server.html)
+* [Data Transfer](https://pync.readthedocs.io/en/latest/usage/data-transfer.html)
+* [Talking to Servers](https://pync.readthedocs.io/en/latest/usage/talking-to-servers.html)
+* [Port Scanning](https://pync.readthedocs.io/en/latest/usage/port-scanning.html)
+* [Remote Command Execution](https://pync.readthedocs.io/en/latest/usage/remote-command-exec.html)
+* [Remote Code Execution](https://pync.readthedocs.io/en/latest/usage/remote-code-exec.html)
+* [pync For Developers](https://pync.readthedocs.io/en/latest/usage/pync-for-devs.html)
+
 ## Options
 
 | Option         | Description
@@ -139,15 +148,6 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | [-z](https://pync.readthedocs.io/en/latest/options/zero-io.html) | Zero-I/O mode [used for scanning]
 | dest           | The destination host name or ip to connect or bind to
 | port           | The port number to connect or bind to
-
-## Usage
-* [Client/Server Model](https://pync.readthedocs.io/en/latest/usage/client-server.html)
-* [Data Transfer](https://pync.readthedocs.io/en/latest/usage/data-transfer.html)
-* [Talking to Servers](https://pync.readthedocs.io/en/latest/usage/talking-to-servers.html)
-* [Port Scanning](https://pync.readthedocs.io/en/latest/usage/port-scanning.html)
-* [Remote Command Execution](https://pync.readthedocs.io/en/latest/usage/remote-command-exec.html)
-* [Remote Code Execution](https://pync.readthedocs.io/en/latest/usage/remote-code-exec.html)
-* [pync For Developers](https://pync.readthedocs.io/en/latest/usage/pync-for-devs.html)
 
 ## API Reference
 * [pync](https://pync.readthedocs.io/en/latest/api/pync.html)
