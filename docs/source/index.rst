@@ -78,6 +78,16 @@ Use Python's pip command to install **pync** straight from GitHub:
    .. code-block:: sh
 
       py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
+      
+Usage
+=====
+* :doc:`usage/client-server`
+* :doc:`usage/data-transfer`
+* :doc:`usage/talking-to-servers`
+* :doc:`usage/port-scanning`
+* :doc:`usage/remote-command-exec`
+* :doc:`usage/remote-code-exec`
+* :doc:`usage/pync-for-devs`
 
 Options
 =======
@@ -150,16 +160,6 @@ Options
      - The destination host name or ip to connect or bind to
    * - port
      - The port number to connect or bind to
-     
-Usage
-=====
-* :doc:`usage/client-server`
-* :doc:`usage/data-transfer`
-* :doc:`usage/talking-to-servers`
-* :doc:`usage/port-scanning`
-* :doc:`usage/remote-command-exec`
-* :doc:`usage/remote-code-exec`
-* :doc:`usage/pync-for-devs`
 
 API Reference
 =============
@@ -180,8 +180,10 @@ Examples
      - Description
    * - `chat.py <https://github.com/brenw0rth/pync/blob/main/examples/chat.py>`_
      - Simple chat protocol with custom username
-   * - `ftransfer <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer>`_
-     - Simple file transfer (use with caution).
+   * - `upload.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/upload.py>`_
+     - Simple file upload (use with caution).
+   * - `download.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/download.py>`_
+     - Simple file download (use with caution).
    * - `pyshell.py <https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py>`_
      - Reverse or bind python interpreter shell (use with caution).
    * - `scan.py <https://github.com/brenw0rth/pync/blob/main/examples/scan.py>`_
