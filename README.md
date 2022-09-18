@@ -1,9 +1,9 @@
-<h1 align="center">
+<h1 align="left">
   <a href="https://github.com/brenw0rth/pync"><img src="identicon.png" alt="pync" width=50></a>
   pync
 </h1>
 
-<p align="center">
+<p align="left">
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg">
   </a>
