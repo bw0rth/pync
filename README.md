@@ -156,8 +156,15 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 * [Servers](https://pync.readthedocs.io/en/latest/api/servers.html)
 * [Connections](https://pync.readthedocs.io/en/latest/api/connections.html)
 
+## Examples
+| Example | Description
+| :------ | :----------
+| [chat.py](https://github.com/brenw0rth/pync/blob/main/examples/chat.py) | Simple chat protocol with custom username
+| [pyshell.py](https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py) | Reverse or bind python interpreter shell (use with caution).
+| [scan.py](https://github.com/brenw0rth/pync/blob/main/examples/scan.py) | Simple TCP connect port scanner
+| [shell.py](https://github.com/brenw0rth/pync/blob/main/examples/shell.py) | Reverse or bind remote system shell (use with caution).
+
 ## See Also
-* [Example Scripts](https://github.com/brenw0rth/pync/tree/main/examples)
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
 
 ## Caveats
