@@ -179,7 +179,7 @@ Examples
    * - Example
      - Description
    * - `chat.py <https://github.com/brenw0rth/pync/blob/main/examples/chat.py>`_
-     - Simple chat protocol with custom username
+     - Simple chat protocol with a custom username
    * - `upload.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/upload.py>`_
      - Simple file upload (use with caution).
    * - `download.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/download.py>`_
