@@ -160,7 +160,8 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | Example | Description
 | :------ | :----------
 | [chat.py](https://github.com/brenw0rth/pync/blob/main/examples/chat.py) | Simple chat protocol with custom username
-| [ftransfer](https://github.com/brenw0rth/pync/tree/main/examples/ftransfer) | Simple file transfer (use with caution).
+| [ftransfer/upload.py](https://github.com/brenw0rth/pync/blob/main/examples/ftransfer/upload.py) | Simple file upload (use with caution).
+| [ftransfer/download.py](https://github.com/brenw0rth/pync/blob/main/examples/ftransfer/download.py) | Simple file download (use with caution).
 | [pyshell.py](https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py) | Reverse or bind python interpreter shell (use with caution).
 | [scan.py](https://github.com/brenw0rth/pync/blob/main/examples/scan.py) | Simple TCP connect port scanner
 | [shell.py](https://github.com/brenw0rth/pync/blob/main/examples/shell.py) | Reverse or bind remote system shell (use with caution).
