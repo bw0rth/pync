@@ -115,7 +115,7 @@ Options
    * - `-e <https://pync.readthedocs.io/en/latest/options/exec.html>`_ filename
      - specify filename to exec after connect (use with caution).
    * - `-h <https://pync.readthedocs.io/en/latest/options/help.html>`_, `--help <https://pync.readthedocs.io/en/latest/options/help.html>`_
-     - show this help message and exit.
+     - show available options and exit.
    * - -I length
      - TCP receive buffer length
    * - -i secs
