@@ -25,7 +25,7 @@ You can send a GET request to a web server to receive the home page.
 
    First, create a text file (http_get.txt) containing the following:
 
-   .. literalinclude:: ../data/http_get.txt
+   .. literalinclude:: ../../data/http_get.txt
       :linenos:
 
    | That's the GET request followed by a blank line.
