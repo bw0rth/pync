@@ -1,6 +1,6 @@
-===========================
-Showing the [-h]elp Message
-===========================
+==
+-h
+==
 
 The **-h** option simply shows **pync**'s help message.
 
