@@ -12,25 +12,20 @@ You can send a GET request to a web server to receive the home page.
 
 .. tab:: Unix
 
-   On Unix, this can be as simple as piping the GET request string to
-   **pync**'s stdin stream:
-
    .. code-block:: sh
 
       printf "GET / HTTP/1.0\r\n\r\n" | pync host.example.com 80
 
 .. tab:: Windows
 
-   On Windows, it isn't as easy as just piping the GET request string to **pync**.
-
-   First, create a text file (http_get.txt) containing the following:
+   Create a text file (http_get.txt) containing the following:
 
    .. literalinclude:: ../../data/http_get.txt
       :linenos:
 
-   | That's the GET request followed by a blank line.
+   | That's a GET request line followed by a blank line.
    | The blank line tells the web server that you're done
-     sending the request.
+     sending the request and are now ready to receive a response.
 
    Once you've created the http_get.txt file, you can then pipe
    it into **pync**'s stdin stream to receive the web page:
