@@ -1,6 +1,6 @@
-============================
-[-l]istening for Connections
-============================
+=====================================
+-l: Listen mode, for inbound connects
+=====================================
 
 To create a TCP server, you can use the
 `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_
