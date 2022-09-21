@@ -1,6 +1,6 @@
-==========================
-[-k]eeping the Server Open
-==========================
+===================================================
+-k: Keep inbound sockets open for multiple connects
+===================================================
 
 By default, **pync**'s TCP server will accept one client before
 closing the server's socket.
