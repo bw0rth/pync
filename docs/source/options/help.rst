@@ -1,6 +1,6 @@
-======================================
--h -- show available options and exit.
-======================================
+====================================
+-h: show available options and exit.
+====================================
 
 The **-h** option simply shows **pync**'s help message.
 
