@@ -2,6 +2,13 @@
 Client/Server Model
 ===================
 
+**pync** can be used as a client or a server.
+
+.. code-block:: text
+
+   pync --> connect --> server
+   pync <-- connect <-- client
+
 To illustrate a basic client/server model, we can connect
 two **pync** instances together and send messages back and
 forth.
