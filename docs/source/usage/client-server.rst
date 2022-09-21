@@ -10,7 +10,7 @@ Client/Server Model
    pync <-- connect <-- client
 
 Once a connection has been established, any
-data read from stdin gets sent over the connection
+data read from stdin gets sent to the connection
 and any data received from the connection
 gets written to stdout:
 
