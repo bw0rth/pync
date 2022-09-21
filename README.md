@@ -172,6 +172,3 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 ## Caveats
 UDP port scans will always succeed (i.e report the port as open), rendering the -uz combination of flags
 relatively useless.
-
-## License
-See [LICENSE](https://github.com/brenw0rth/pync/blob/main/LICENSE)
