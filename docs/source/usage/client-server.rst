@@ -2,41 +2,21 @@
 Client/Server Model
 ===================
 
-**pync** can be used as a client or a server:
-
-.. code-block:: text
-
-   pync --> connect --> server
-   pync <-- connect <-- client
-
-Once a connection has been established, any
-data read from stdin gets sent to the connection
-and any data received from the connection
-gets written to stdout:
-
-.. code-block:: text
-
-   stdin  --data-> pync --data-> connection
-   stdout <-data-- pync <-data-- connection
-
-To illustrate a basic client/server model, you can connect
-two **pync** instances together and send messages back and
-forth.
-
-1. Create a local server to listen for incoming connections
-   on port 8000:
+To build a basic client/server model using
+**pync** is quite simple. On one console,
+create a server to listen on a specific port:
 
 .. tab:: Unix
 
    .. code-block:: sh
 
-      pync -l localhost 8000
+      pync -l 8000
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pync -l localhost 8000
+      py -m pync -l 8000
 
 .. tab:: Python
 
@@ -44,9 +24,11 @@ forth.
 
       # server.py
       from pync import pync
-      pync('-l localhost 8000')
+      pync('-l 8000')
 
-2. On a separate console, connect to the server:
+**pync** is now listening for a connection
+on port 8000. On a separate console, connect
+to the server on the port being listened on:
 
 .. tab:: Unix
 
