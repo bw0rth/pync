@@ -2,9 +2,8 @@
 Client/Server Model
 ===================
 
-Building a basic client/server model using
-**pync** is quite simple. On one console,
-create a server to listen on a specific port:
+It is quite simple to build a very basic client/server model using **pync**.
+On one console, create a server to listen on a specific port:
 
 .. tab:: Unix
 
