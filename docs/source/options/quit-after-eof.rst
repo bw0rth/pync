@@ -1,6 +1,6 @@
-=================
-[-q]uit After EOF
-=================
+================================================
+-q: quit after EOF on stdin and delay of seconds
+================================================
 
 | By default, :doc:`-q <quit-after-eof>` is set to 0 to tell **pync** to quit immediately after reaching EOF (End Of File) on stdin.
 | If you want to have it wait after EOF, set :doc:`-q <quit-after-eof>` to the number of seconds you want to wait.
