@@ -1,6 +1,6 @@
-==========
-[-v]erbose
-==========
+===========
+-v: Verbose
+===========
 
 | The :doc:`-v <verbose>` option will print status messages to stderr.
 | This can be useful to see whether a machine has connected to your server or whether a connection attempt was successful or not.
