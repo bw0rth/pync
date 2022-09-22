@@ -26,7 +26,7 @@ connection gets written to stdout:
 
 To illustrate a very basic client/server model,
 you can connect two **pync** instances together
-and send messages back and forth.
+to send messages back and forth.
 
 On one console, create a server to listen on a specific port:
 
