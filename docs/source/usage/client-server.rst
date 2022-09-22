@@ -83,8 +83,8 @@ other and vice-versa.
 When finished, hit Ctrl+C from either console to close the
 connection.
 
-What next?
-==========
+What's next?
+============
 
 While sending messages back and forth isn't all that interesting,
 this core concept of redirecting input and output opens up a range
