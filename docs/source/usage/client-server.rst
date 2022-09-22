@@ -91,3 +91,4 @@ connection.
 :SEE ALSO:
 
 * :doc:`../options/listen`
+* `Client-server model <https://en.wikipedia.org/wiki/Client%E2%80%93server_model>`_
