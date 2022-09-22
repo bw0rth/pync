@@ -54,7 +54,7 @@ Talking to a mail server
 | You could also submit emails to Simple Mail Transfer Protocol (SMTP) servers.
 | Suppose you have a text file (email_template.txt):
 
-.. literalinclude:: ../data/email_template.txt
+.. literalinclude:: ../../data/email_template.txt
    :language: text
    :linenos:
 
