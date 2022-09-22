@@ -2,11 +2,16 @@
 Client/Server Model
 ===================
 
-**pync** can act as a client or a server:
+**pync** can act as a client:
 
 .. code-block:: text
 
-   pync    --connect-> server
+   pync --connect-> server
+
+or a server:
+
+.. code-block:: text
+
    pync -l <-connect-- client
 
 Once a connection has been established, any
