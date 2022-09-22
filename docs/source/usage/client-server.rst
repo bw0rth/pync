@@ -6,13 +6,13 @@ Client/Server Model
 
 .. code-block:: text
 
-   pync --connect-> server
+   pync [options] dest port[s]
 
 or a server:
 
 .. code-block:: text
 
-   pync -l <-connect-- client
+   pync -l [options] [dest] port
 
 Once a connection has been established, any
 data read from stdin gets sent to the
