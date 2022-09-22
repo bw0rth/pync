@@ -4,6 +4,12 @@ Port Scanning
 .. warning::
    Please DO NOT scan machines without the owners prior permission first.
 
+.. warning::
+   | * Be CAREFUL and RESPONSIBLE with this
+       functionality.
+   | * Please DO NOT scan machines without
+       the owners permission first.
+
 Sometimes it's useful to know which ports are open and what services a
 target machine is running.
 
