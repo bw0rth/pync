@@ -16,8 +16,8 @@ connection gets written to stdout:
 
 .. code-block:: text
 
-   stdin.read()   --data-> connection.send()
-   stdout.write() <-data-- connection.recv()
+   stdin  --data-> connection
+   stdout <-data-- connection
 
 To illustrate a very basic client/server model,
 you can connect two **pync** instances together
