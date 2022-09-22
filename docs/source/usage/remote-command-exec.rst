@@ -1,9 +1,12 @@
 ========================
 Remote Command Execution
 ========================
+
 .. warning::
-   | Please BE CAREFUL with this functionality as it could expose your system to attackers.
-   | Also, please DO NOT use this functionality for evil purposes.
+   | * Be CAREFUL and RESPONSIBLE with this
+     functionality.
+   | * Please DO NOT use this functionality
+     for evil purposes.
 
 The **-e** option allows you to execute a process and have that process' stdin/stdout/stderr
 be connected to the network socket.
