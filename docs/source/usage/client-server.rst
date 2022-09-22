@@ -87,11 +87,11 @@ While sending messages back and forth isn't all that interesting,
 this core concept of redirecting input and output opens up a range
 of other possibilities:
 
-* :doc:`usage/data-transfer`
-* :doc:`usage/talking-to-servers`
-* :doc:`usage/port-scanning`
-* :doc:`usage/remote-command-exec`
-* :doc:`usage/remote-code-exec`
+* :doc:`data-transfer`
+* :doc:`talking-to-servers`
+* :doc:`port-scanning`
+* :doc:`remote-command-exec`
+* :doc:`remote-code-exec`
 
 .. raw:: html
 
