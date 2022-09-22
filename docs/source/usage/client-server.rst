@@ -2,6 +2,8 @@
 Client/Server Model
 ===================
 
+**pync** can act as a client or a server.
+
 To illustrate a very basic client/server model,
 you can connect two **pync** instances together
 and send messages back and forth.
