@@ -1,8 +1,6 @@
 =============
 Port Scanning
 =============
-.. warning::
-   Please DO NOT scan machines without the owners prior permission first.
 
 .. warning::
    | * Be CAREFUL and RESPONSIBLE with this
