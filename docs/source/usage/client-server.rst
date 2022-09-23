@@ -28,7 +28,7 @@ To illustrate a very basic client/server model,
 you can connect two **pync** instances together
 to send messages back and forth.
 
-On one console, create a server to listen on a specific port:
+1. On one console, create a server to listen on a specific port:
 
 .. tab:: Unix
 
@@ -53,8 +53,8 @@ On one console, create a server to listen on a specific port:
 **pync** is now listening for a connection
 on port 8000.
 
-On a separate console, connect
-to the server on the port being listened on:
+2. On a separate console, connect
+   to the server on the port being listened on:
 
 .. tab:: Unix
 
