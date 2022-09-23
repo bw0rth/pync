@@ -3,8 +3,8 @@ Executing P[-Yy]thon Code
 =========================
 
 .. warning::
-   | Please BE CAREFUL with this functionality as it could expose your system to attackers.
-   | Also, please DO NOT use this functionality for evil purposes.
+   | * Please be CAREFUL and RESPONSIBLE with this functionality.
+   | * Please DO NOT use this functionality for evil purposes.
 
 **pync** can execute python code in a separate process and connect the
 process' stdin/stdout/stderr to the network socket.
