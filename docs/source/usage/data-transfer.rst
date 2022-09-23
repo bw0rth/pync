@@ -2,8 +2,8 @@
 Data Transfer
 =============
 .. warning::
-   The following examples make no attempt at encrypting the data sent over the network.
-   Please DO NOT transfer any sensitive data using these methods.
+   | * Please DO NOT transfer any sensitive
+       data using the following methods.
 
 To build on the previous client/server example, we can
 transfer file data from one machine to another.
