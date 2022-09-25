@@ -69,7 +69,7 @@ class _UnixConsoleInput(_BaseConsoleInput):
 
     def readline(self):
         # Non-blocking console input for *nix.
-        readables, _, _ = select.select([self._stdin], [], [], .002)
+        readables, _, _ = select.select([self._stdin], [], [], 0)
         if self._stdin in readables:
             return self._stdin_readline()
 

@@ -72,7 +72,7 @@ class _WinPipeInput(_PipeIO):
 class _UnixPipeInput(_PipeIO):
 
     def read(self, n):
-        can_read, _, _ = select.select([self._fd], [], [], .002)
+        can_read, _, _ = select.select([self._fd], [], [], 0)
         if self._fd in can_read:
             return os.read(self._fd, n)
 
