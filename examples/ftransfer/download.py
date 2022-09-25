@@ -18,6 +18,7 @@ from pync import Netcat
 
 def main():
     parser = argparse.ArgumentParser('download.py',
+            formatter_class=argparse.RawTextHelpFormatter,
             description=__doc__,
     )
     parser.add_argument('dest',
@@ -49,6 +50,7 @@ def main():
         nc = Netcat(
                 dest=args.dest,
                 port=args.port,
+                v=True,          # Verbose
                 l=args.l,        # Listen for connections (server mode).
                 stdout=f,        # Write network data to stdout (f).
         )

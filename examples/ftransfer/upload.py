@@ -17,6 +17,7 @@ from pync import Netcat
 
 def main():
     parser = argparse.ArgumentParser('upload.py',
+            formatter_class=argparse.RawTextHelpFormatter,
             description=__doc__,
     )
     parser.add_argument('dest',
@@ -44,6 +45,7 @@ def main():
         nc = Netcat(
                 dest=args.dest,
                 port=args.port,
+                v=True,          # Verbose
                 l=args.l,        # Listen for connections (server mode).
                 stdin=f,         # Write stdin data (f) to the network.
         )
