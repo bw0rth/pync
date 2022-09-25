@@ -10,6 +10,8 @@ import contextlib
 import errno
 import itertools
 import logging
+import os
+import platform
 import random
 import select
 import shlex
@@ -95,6 +97,44 @@ class NetcatProxyError(NetcatError):
             msg = str(proxy_err.socket_err)
         super(NetcatProxyError, self).__init__(msg, proxy_err, *args)
         self.proxy_err =  proxy_err
+
+
+class NetcatFileIO(object):
+
+    def __init__(self, f):
+        self._file = f
+        
+    def fileno(self):
+        return self._file.fileno()
+
+
+if platform.system() == 'Windows':
+    class NetcatFileInput(NetcatFileIO):
+        
+        def read(self, *args, **kwargs):
+            return os.read(self.fileno(), *args, **kwargs)
+else:
+    class NetcatFileInput(NetcatFileIO):
+
+        def read(self, n):
+            readables, _, _ = select.select([self._file], [], [], 0)
+            if self._file in readables:
+                return os.read(self.fileno(), n)
+
+
+class NetcatFileOutput(NetcatFileIO):
+
+    def write(self, data):
+        os.write(self.fileno(), data)
+
+    def flush(self):
+        self._file.flush()
+
+
+class NetcatConsoleOutput(NetcatFileOutput):
+
+    def __init__(self):
+        super(NetcatConsoleOutput, self).__init__(sys.__stdout__)
 
 
 class NetcatContext(object):
@@ -192,8 +232,8 @@ class NetcatConnection(NetcatContext):
 
     def __init__(self, net, C=None, d=None, i=None, q=None, w=None, **kwargs):
         super(NetcatConnection, self).__init__(**kwargs)
-
         self.net = net
+        self.dest, self.port = self._getpeername(net)
 
         if C is not None:
             self.C = C
@@ -206,11 +246,15 @@ class NetcatConnection(NetcatContext):
         if w is not None:
             self.w = w
 
-        self.dest, self.port = self._getpeername(net)
-
-        # TODO: Move this into a property.setter?
         if self.stdin is sys.__stdin__ and self.stdin.isatty():
             self.stdin = NetcatConsoleInput()
+        elif hasattr(self.stdin, 'fileno'):
+            self.stdin = NetcatFileInput(self.stdin)
+
+        if self.stdout is sys.__stdout__:
+            self.stdout = NetcatConsoleOutput()
+        elif hasattr(self.stdout, 'fileno'):
+            self.stdout = NetcatFileOutput(self.stdout)
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
@@ -337,21 +381,10 @@ class NetcatConnection(NetcatContext):
         net_send, net_recv = self.send, self.recv
         net_shutdown_rd, net_shutdown_wr = self.shutdown_rd, self.shutdown_wr
 
-        try:
-            # py3 write bytes
-            stdout_write = self.stdout.buffer.write
-        except AttributeError:
-            # py2 write bytes
-            stdout_write = self.stdout.write
-        stdout_flush = self.stdout.flush
-
         stdin_detach = self.d
-        try:
-            # py3 read bytes
-            stdin_read = self.stdin.buffer.read
-        except AttributeError:
-            # py2 read bytes
-            stdin_read = self.stdin.read
+        stdin_read = self.stdin.read
+        stdout_write = self.stdout.write
+        stdout_flush = self.stdout.flush
 
         try:
             while not netin_eof:
