@@ -8,6 +8,7 @@ from __future__ import unicode_literals
 import argparse
 import contextlib
 import errno
+import io
 import itertools
 import logging
 import os
@@ -246,15 +247,25 @@ class NetcatConnection(NetcatContext):
         if w is not None:
             self.w = w
 
-        if self.stdin is sys.__stdin__ and self.stdin.isatty():
-            self.stdin = NetcatConsoleInput()
-        elif hasattr(self.stdin, 'fileno'):
-            self.stdin = NetcatFileInput(self.stdin)
+        try:
+            self.stdin.fileno()
+        except (AttributeError, io.UnsupportedOperation):
+            pass
+        else:
+            if self.stdin is sys.__stdin__ and self.stdin.isatty():
+                self.stdin = NetcatConsoleInput()
+            else:
+                self.stdin = NetcatFileInput(self.stdin)
 
-        if self.stdout is sys.__stdout__:
-            self.stdout = NetcatConsoleOutput()
-        elif hasattr(self.stdout, 'fileno'):
-            self.stdout = NetcatFileOutput(self.stdout)
+        try:
+            self.stdout.fileno()
+        except (AttributeError, io.UnsupportedOperation):
+            pass
+        else:
+            if self.stdout is sys.__stdout__:
+                self.stdout = NetcatConsoleOutput()
+            else:
+                self.stdout = NetcatFileOutput(self.stdout)
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
