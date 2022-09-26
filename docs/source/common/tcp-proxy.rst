@@ -2,9 +2,9 @@
 simple TCP proxies
 ******************
 
-By redirecting input and output through pipes,
-it's possible to create a simple TCP proxy
-server.
+By connecting a client and server's input and
+output together, it is possible to create a
+simple TCP proxy.
 
 .. tab:: Unix
 
