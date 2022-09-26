@@ -78,7 +78,7 @@ the goal of **pync** was to create an easy to use library that
 provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Common uses include:
-* simple TCP proxies
+* [simple TCP proxies](https://pync.readthedocs.io/en/latest/common/tcp-proxy.html)
 * shell-script based HTTP clients and servers
 * network daemon testing
 * a SOCKS or HTTP ProxyCommand for ssh(1)
