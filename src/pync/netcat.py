@@ -109,6 +109,12 @@ class NetcatFileIO(object):
         except (AttributeError, io.UnsupportedOperation):
             self._fileno = None
 
+    def read(self, n):
+        raise NotImplementedError
+
+    def write(self, data):
+        raise NotImplementedError
+
 
 class _NetcatFileReader(NetcatFileIO):
 
@@ -122,6 +128,9 @@ class _NetcatFileReader(NetcatFileIO):
 
     def _read_file(self, n):
         return self._file.read(n)
+
+    def _read_fileno(self, n):
+        raise NotImplementedError
 
 
 if platform.system() == 'Windows':
