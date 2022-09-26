@@ -15,8 +15,8 @@ simple TCP proxy.
 
       mkfifo backpipe
 
-   And then passing it as the server's input
-   and the client's output.
+   And then using it to connect the client's
+   output to the server's input:
 
    .. code-block:: sh
 
