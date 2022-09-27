@@ -4,5 +4,5 @@ Common Uses
 
 .. toctree::
 
-   pass
+   tcp-proxy
 
