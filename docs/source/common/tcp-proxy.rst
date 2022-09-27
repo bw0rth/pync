@@ -8,16 +8,17 @@ simple TCP proxy.
 
 .. tab:: Unix
 
-   On Unix, this can be done by creating a named
-   pipe:
-
+   1. Create a named pipe by using the mkfifo command:
+   
    .. code-block:: sh
 
       mkfifo backpipe
-
-   And then using it to connect the client's
-   output to the server's input:
+      
+   2. Create a server on port 8000 and feed it's output into
+      a connection to the destination host on port 80 while
+      using the backpipe to feed the host connection's output back
+      to the server's input stream:
 
    .. code-block:: sh
 
-      pync -l 8000 < backpipe | pync host.example.com 8001 > backpipe
+      pync -l 8000 < backpipe | pync host.example.com 80 > backpipe
