@@ -8,7 +8,6 @@
 .. toctree::
    :hidden:
    
-   common/index
    usage/index
    options/index
    api/index
