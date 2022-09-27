@@ -13,7 +13,7 @@ simple TCP proxy.
 
    .. code-block:: sh
 
-      mkfifo backpipe
+      $ mkfifo backpipe
 
    And then using it to connect the client's
    output to the server's input:
