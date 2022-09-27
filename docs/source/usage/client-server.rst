@@ -87,8 +87,8 @@ What's next?
 ============
 
 While sending messages back and forth isn't all that interesting,
-this core concept of redirecting input and output opens up a range
-of other possibilities:
+this core concept of redirecting input and output, to and from the
+network, opens up a range of other possibilities:
 
 * :doc:`data-transfer`
 * :doc:`talking-to-servers`
