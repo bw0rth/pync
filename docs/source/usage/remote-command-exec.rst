@@ -135,7 +135,7 @@ allows you to remotely execute commands on the server machine.
 
 :SEE ALSO:
 
-* :doc:`../options/execute`
+* :doc:`../options/exec`
 * :doc:`../options/listen`
 * :doc:`../options/verbose`
 
