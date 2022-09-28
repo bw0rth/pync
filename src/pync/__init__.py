@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from .netcat import (
-        pync,
+        pync, PIPE,
         Netcat,
         NetcatArgumentParser,
         NetcatConnection,

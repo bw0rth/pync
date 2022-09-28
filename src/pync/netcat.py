@@ -11,6 +11,7 @@ import errno
 import io
 import itertools
 import logging
+import multiprocessing
 import os
 import platform
 import random
@@ -70,6 +71,36 @@ TOSKEYWORDS = dict(
         reliability=0x04,
         throughput=0x08,
 )
+
+
+PIPE = -1
+
+
+class NetcatPipeIO(object):
+
+    def __init__(self, conn):
+        self._conn = conn
+
+
+class NetcatPipeReader(NetcatPipeIO):
+
+    def read(self, n):
+        if self._conn.poll():
+            return self._conn.recv_bytes()
+
+
+class NetcatPipeWriter(NetcatPipeIO):
+
+    def write(self, data):
+        self._conn.send_bytes(data)
+
+
+class NetcatPipe(object):
+
+    def __init__(self):
+        recv_conn, send_conn = multiprocessing.Pipe(False)
+        self.reader = NetcatPipeReader(recv_conn)
+        self.writer = NetcatPipeWriter(send_conn)
 
 
 class NetcatError(Exception):
@@ -201,9 +232,25 @@ class NetcatContext(object):
         if v is not None:
             self.v = v
 
-        self.stdin = stdin or self.stdin
-        self.stdout = stdout or self.stdout
+        self.stdin = stdin or self._stdin
+        self.stdout = stdout or self._stdout
         self.stderr = stderr or self.stderr
+
+        if self.stdin == PIPE:
+            pipe = NetcatPipe()
+            self._stdin = pipe.reader
+            self.stdin = pipe.writer
+        else:
+            self._stdin = self.stdin
+            self.stdin = None
+
+        if self.stdout == PIPE:
+            pipe = NetcatPipe()
+            self._stdout = pipe.writer
+            self.stdout = pipe.reader
+        else:
+            self._stdout = self.stdout
+            self.stdout = None
 
         self._init_kwargs(**kwargs)
 
@@ -293,15 +340,15 @@ class NetcatConnection(NetcatContext):
         if w is not None:
             self.w = w
 
-        if self.stdin is sys.__stdin__ and self.stdin.isatty():
-            self.stdin = NetcatConsoleInput()
+        if self._stdin is sys.__stdin__ and self._stdin.isatty():
+            self._stdin = NetcatConsoleInput()
         else:
-            self.stdin = NetcatFileReader(self.stdin)
+            self._stdin = NetcatFileReader(self._stdin)
 
-        if self.stdout is sys.__stdout__:
-            self.stdout = NetcatConsoleWriter()
+        if self._stdout is sys.__stdout__:
+            self._stdout = NetcatConsoleWriter()
         else:
-            self.stdout = NetcatFileWriter(self.stdout)
+            self._stdout = NetcatFileWriter(self._stdout)
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
@@ -429,19 +476,19 @@ class NetcatConnection(NetcatContext):
         net_shutdown_rd, net_shutdown_wr = self.shutdown_rd, self.shutdown_wr
 
         #try:
-        #    stdin_read = self.stdin.buffer.read
+        #    stdin_read = self._stdin.buffer.read
         #except AttributeError:
-        #    stdin_read = self.stdin.read
+        #    stdin_read = self._stdin.read
 
         #try:
-        #    stdout_write = self.stdout.buffer.write
+        #    stdout_write = self._stdout.buffer.write
         #except AttributeError:
-        #    stdout_write = self.stdout.write
+        #    stdout_write = self._stdout.write
 
         stdin_detach = self.d
-        stdin_read = self.stdin.read
-        stdout_write = self.stdout.write
-        #stdout_flush = self.stdout.flush
+        stdin_read = self._stdin.read
+        stdout_write = self._stdout.write
+        #stdout_flush = self._stdout.flush
 
         try:
             while not netin_eof:
@@ -490,7 +537,7 @@ class NetcatConnection(NetcatContext):
                         # If the user asked to exit on EOF, do it
                         if quit_eof == 0:
                             net_shutdown_wr()
-                            #self.stdin.close()
+                            #self._stdin.close()
                         # If the user asked to die after a while, arrange for it
                         if quit_eof > 0:
                             stdin_eof_elapsed = time_now() - stdin_eof
@@ -656,7 +703,7 @@ class NetcatIterator(NetcatContext):
         self._conn_kwargs = kwargs
 
     def _init_connection(self, sock):
-        inout = dict(stdin=self.stdin, stdout=self.stdout, stderr=self.stderr)
+        inout = dict(stdin=self._stdin, stdout=self._stdout, stderr=self.stderr)
 
         proc = None
         if self.c:
@@ -1347,10 +1394,10 @@ class NetcatUDPServer(NetcatServer):
         data, addr = self._sock.recvfrom(self.max_packet_size)
         try:
             # py3
-            self.stdout.buffer.write(data)
+            self._stdout.buffer.write(data)
         except AttributeError:
             # py2
-            self.stdout.write(data)
+            self._stdout.write(data)
 
         self._sock.connect(addr)
         return self._sock, addr
