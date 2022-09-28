@@ -73,6 +73,11 @@ TOSKEYWORDS = dict(
 )
 
 
+def dbg(s):
+    #sys.__stderr__.write(s+'\n')
+    pass
+
+
 PIPE = -1
 
 
@@ -85,14 +90,19 @@ class NetcatPipeIO(object):
 class NetcatPipeReader(NetcatPipeIO):
 
     def read(self, n):
+        dbg('reading pipe...')
         if self._conn.poll():
+            dbg('pipe ready to read.')
             return self._conn.recv_bytes()
+        dbg('no data in pipe.')
 
 
 class NetcatPipeWriter(NetcatPipeIO):
 
     def write(self, data):
+        dbg('writing data: {}'.format(data.decode()))
         self._conn.send_bytes(data)
+        dbg('data sent')
 
 
 class NetcatPipe(object):

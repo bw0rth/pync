@@ -10,8 +10,6 @@ def main():
             stdout=pync.PIPE,
     )
 
-    print(nc.stdin)
-
     nc.stdin.write(b'hello, world.\n')
     nc.readwrite()
 
