@@ -232,8 +232,8 @@ class NetcatContext(object):
         if v is not None:
             self.v = v
 
-        self.stdin = stdin or self._stdin
-        self.stdout = stdout or self._stdout
+        self.stdin = stdin or self.stdin
+        self.stdout = stdout or self.stdout
         self.stderr = stderr or self.stderr
 
         if self.stdin == PIPE:
