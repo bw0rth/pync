@@ -12,18 +12,23 @@ import pync
 
 
 def main():
-    server = pync.Netcat(8000,
+    raise NotImplementedError
+    server = pync.Netcat(port=8000,
             v=True,
             l=True,
             stdin=pync.PIPE,
             stdout=pync.PIPE,
     )
+    t = threading.Thread(target=server.readwrite)
+    t.daemon = True
+    t.start()
 
-    client = pync.Netcat('host.example.com', 80,
+    client = pync.Netcat('localhost', 8001,
             v=True,
             stdin=server.stdout,
             stdout=server.stdin,
     )
+    client.readwrite()
 
 
 if __name__ == '__main__':
