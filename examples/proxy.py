@@ -3,7 +3,7 @@
 '''
 simple TCP proxy using pync.
 
-usage:
+example usage:
     proxy.py 8000 host.example.com 80
 '''
 
@@ -12,7 +12,6 @@ import pync
 
 
 def main():
-    raise NotImplementedError
     server = pync.Netcat(port=8000,
             v=True,
             l=True,

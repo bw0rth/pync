@@ -81,6 +81,9 @@ class NetcatPipeIO(object):
     def __init__(self, conn):
         self._conn = conn
 
+    def fileno(self):
+        return self._conn.fileno()
+
 
 class NetcatPipeReader(NetcatPipeIO):
 
