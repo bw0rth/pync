@@ -173,31 +173,6 @@ class PythonProcess(object):
             pass
 
 
-class NonBlockingProcess(object):
-
-    def __init__(self, cmd, shell=False):
-        pipe = NonBlockingPipe()
-
-        if not shell:
-            cmd = shlex.split(cmd)
-
-        self._proc = subprocess.Popen(cmd, shell=shell,
-                stdin=subprocess.PIPE,
-                stdout=pipe.pout,
-                stderr=subprocess.STDOUT,
-        )
-        self.stdout = _ProcStdout(self._proc, pipe.pin)
-
-    def __getattr__(self, name):
-        return getattr(self._proc, name)
-
-    def close(self):
-        try:
-            self.kill()
-        except OSError:
-            pass
-
-
 class NonBlockingPopen(object):
 
     def __init__(self, args, stdout=None, **kwargs):
