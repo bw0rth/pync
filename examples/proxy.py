@@ -30,7 +30,8 @@ def main():
     )
     args = parser.parse_args()
 
-    server = pync.Netcat(port=8000,
+    server = pync.Netcat(
+            port=args.proxy_port,
             v=True,
             l=True,
             stdin=pync.PIPE,
@@ -40,7 +41,7 @@ def main():
     t.daemon = True
     t.start()
 
-    client = pync.Netcat('localhost', 8001,
+    client = pync.Netcat(args.dest, args.port,
             v=True,
             stdin=server.stdout,
             stdout=server.stdin,
