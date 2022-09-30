@@ -198,11 +198,34 @@ class NonBlockingProcess(object):
             pass
 
 
+class NonBlockingPopen(object):
+
+    def __init__(self, args, stdout=None, **kwargs):
+        pipe = None
+        if stdout == subprocess.PIPE:
+            pipe = NonBlockingPipe()
+            stdout = pipe.pout
+
+        self._proc = subprocess.Popen(args, stdout=stdout, **kwargs)
+
+        if pipe is not None:
+            self.stdout = ProcessReader(self._proc, pipe.pin)
+
+    def __getattr__(self, name):
+        return getattr(self._proc, name)
+
+    def close(self):
+        try:
+            self.kill()
+        except OSError:
+            pass
+
+
 class ProcessTerminated(Exception):
     pass
 
 
-class _ProcStdout(object):
+class ProcessReader(object):
 
     def __init__(self, proc, stdout):
         self._proc = proc

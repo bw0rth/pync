@@ -2,13 +2,13 @@
 
 from .netcat import (
         pync, PIPE,
-        Netcat,
+        Netcat, NetcatPopen as Popen,
         NetcatArgumentParser,
         NetcatConnection,
         NetcatClient, NetcatServer,
         NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
-        NetcatProcess, NetcatStopReadWrite, ConnectionRefused,
+        NetcatStopReadWrite, ConnectionRefused,
         NetcatConsoleInput,
         NetcatPythonProcess,
 )

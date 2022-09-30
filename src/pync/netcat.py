@@ -28,7 +28,7 @@ from .argparsing import GroupingArgumentParser
 from . import compat
 from .conin import NonBlockingConsoleInput as NetcatConsoleInput
 from .process import (
-        NonBlockingProcess, ProcessTerminated,
+        NonBlockingPopen, ProcessTerminated,
         PythonProcess, PythonStdinWriter, PythonStdoutReader,
 )
 
@@ -73,7 +73,8 @@ TOSKEYWORDS = dict(
 )
 
 
-PIPE = -1
+PIPE = subprocess.PIPE
+STDOUT = subprocess.STDOUT
 
 
 class NetcatPipeIO(object):
@@ -713,14 +714,24 @@ class NetcatIterator(NetcatContext):
             cmd = self.c
             sh = True
             try:
-                proc = NetcatProcess(cmd, shell=sh)
+                proc = NetcatPopen(cmd,
+                        shell=sh,
+                        stdin=PIPE,
+                        stdout=PIPE,
+                        stderr=STDOUT,
+                )
             except (FileNotFoundError, OSError) as e:
                 raise NetcatError(str(e))
         elif self.e:
-            cmd = self.e
+            cmd = shlex.split(self.e)
             sh = False
             try:
-                proc = NetcatProcess(cmd, shell=sh)
+                proc = NetcatPopen(cmd,
+                        shell=sh,
+                        stdin=PIPE,
+                        stdout=PIPE,
+                        stderr=STDOUT,
+                )
             except (FileNotFoundError, OSError) as e:
                 raise NetcatError(str(e))
         elif self.y:
@@ -1439,14 +1450,14 @@ class NetcatPythonProcess(PythonProcess):
     StdoutReader = NetcatPythonStdoutReader
 
 
-class NetcatProcess(NonBlockingProcess):
+class NetcatPopen(NonBlockingPopen):
     """
     A non-blocking process to be used with Netcat classes.
-    Use this instead of <subprocess.Process>.
+    Use this instead of <subprocess.Popen>.
     """
 
     def __init__(self, *args, **kwargs):
-        super(NetcatProcess, self).__init__(*args, **kwargs)
+        super(NetcatPopen, self).__init__(*args, **kwargs)
         self.stdin = NetcatProcessWriter(self.stdin)
         self.stdout = NetcatProcessReader(self.stdout)
 
