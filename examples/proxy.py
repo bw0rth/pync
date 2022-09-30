@@ -7,11 +7,18 @@ example usage:
     proxy.py 8000 host.example.com 80
 '''
 
+import argparse
 import threading
+
 import pync
 
 
 def main():
+    parser = argparse.ArgumentParser('proxy.py',
+            formatter_class=argparse.RawTextHelpFormatter,
+            description=__doc__,
+    )
+
     server = pync.Netcat(port=8000,
             v=True,
             l=True,
