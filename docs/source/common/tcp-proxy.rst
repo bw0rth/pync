@@ -22,3 +22,30 @@ simple TCP proxy.
    .. code-block:: sh
 
       pync -l 8000 < backpipe | pync host.example.com 80 > backpipe
+
+.. tab:: Python
+
+   import threading
+   import pync
+
+   server = pync.Netcat(port=8000,
+       v=True,
+       l=True,
+       stdin=pync.PIPE,
+       stdout=pync.PIPE,
+   )
+   t = threading.Thread(target=server.readwrite)
+   t.daemon = True
+   t.start()
+
+   client = pync.Netcat('host.example.com', 80,
+       v=True,
+       stdin=server.stdout,
+       stdout=server.stdin,
+   )
+
+   try:
+       client.readwrite()
+   finally:
+       client.close()
+       server.close()
