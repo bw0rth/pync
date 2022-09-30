@@ -25,27 +25,29 @@ simple TCP proxy.
 
 .. tab:: Python
 
-   import threading
-   import pync
+   .. code-block:: python
 
-   server = pync.Netcat(port=8000,
-       v=True,
-       l=True,
-       stdin=pync.PIPE,
-       stdout=pync.PIPE,
-   )
-   t = threading.Thread(target=server.readwrite)
-   t.daemon = True
-   t.start()
+      import threading
+      import pync
 
-   client = pync.Netcat('host.example.com', 80,
-       v=True,
-       stdin=server.stdout,
-       stdout=server.stdin,
-   )
+      server = pync.Netcat(port=8000,
+          v=True,
+          l=True,
+          stdin=pync.PIPE,
+          stdout=pync.PIPE,
+      )
+      t = threading.Thread(target=server.readwrite)
+      t.daemon = True
+      t.start()
 
-   try:
-       client.readwrite()
-   finally:
-       client.close()
-       server.close()
+      client = pync.Netcat('host.example.com', 80,
+          v=True,
+          stdin=server.stdout,
+          stdout=server.stdin,
+      )
+
+      try:
+          client.readwrite()
+      finally:
+          client.close()
+          server.close()
