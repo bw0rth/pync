@@ -173,20 +173,18 @@ class PythonProcess(object):
             pass
 
 
-class NonBlockingProcess(object):
+class NonBlockingPopen(object):
 
-    def __init__(self, cmd, shell=False):
-        pipe = NonBlockingPipe()
+    def __init__(self, args, stdout=None, **kwargs):
+        pipe = None
+        if stdout == subprocess.PIPE:
+            pipe = NonBlockingPipe()
+            stdout = pipe.pout
 
-        if not shell:
-            cmd = shlex.split(cmd)
+        self._proc = subprocess.Popen(args, stdout=stdout, **kwargs)
 
-        self._proc = subprocess.Popen(cmd, shell=shell,
-                stdin=subprocess.PIPE,
-                stdout=pipe.pout,
-                stderr=subprocess.STDOUT,
-        )
-        self.stdout = _ProcStdout(self._proc, pipe.pin)
+        if pipe is not None:
+            self.stdout = ProcessReader(self._proc, pipe.pin)
 
     def __getattr__(self, name):
         return getattr(self._proc, name)
@@ -202,7 +200,7 @@ class ProcessTerminated(Exception):
     pass
 
 
-class _ProcStdout(object):
+class ProcessReader(object):
 
     def __init__(self, proc, stdout):
         self._proc = proc

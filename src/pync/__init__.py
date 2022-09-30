@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from .netcat import (
-        pync,
-        Netcat,
+        pync, PIPE, STDOUT,
+        Netcat, NetcatPopen as Popen,
         NetcatArgumentParser,
         NetcatConnection,
         NetcatClient, NetcatServer,
         NetcatTCPClient, NetcatTCPServer, NetcatTCPConnection,
         NetcatUDPClient, NetcatUDPServer, NetcatUDPConnection,
-        NetcatProcess, NetcatStopReadWrite, ConnectionRefused,
+        NetcatStopReadWrite, ConnectionRefused,
         NetcatConsoleInput,
         NetcatPythonProcess,
 )
