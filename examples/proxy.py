@@ -19,6 +19,17 @@ def main():
             description=__doc__,
     )
 
+    parser.add_argument('proxy_port',
+        help='proxy port to listen on',
+    )
+    parser.add_argument('dest',
+        help='destination host to connect to',
+    )
+    parser.add_argument('port',
+        help='destination port to connect to',
+    )
+    args = parser.parse_args()
+
     server = pync.Netcat(port=8000,
             v=True,
             l=True,
