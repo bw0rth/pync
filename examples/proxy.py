@@ -27,7 +27,12 @@ def main():
             stdin=server.stdout,
             stdout=server.stdin,
     )
-    client.readwrite()
+
+    try:
+        client.readwrite()
+    finally:
+        client.close()
+        server.close()
 
 
 if __name__ == '__main__':
