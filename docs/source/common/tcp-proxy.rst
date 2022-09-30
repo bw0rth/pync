@@ -26,6 +26,7 @@ simple TCP proxy.
 .. tab:: Python
 
    .. code-block:: python
+      :linenos:
 
       import threading
       import pync
