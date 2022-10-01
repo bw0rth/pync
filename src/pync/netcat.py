@@ -163,49 +163,39 @@ class NetcatFileIO(object):
 
 class NetcatFileReader(NetcatFileIO):
 
-    def __init__(self, f):
-        super(NetcatFileReader, self).__init__(f)
+    def read(self, n):
+        if self.poll():
+            try:
+                return self._read_fileno(n)
+            except OSError as e:
+                if e.errno != errno.EBADF:
+                    raise
+                return self._read_file(n)
 
-        if self._fileno is None:
-            self.read = self._read_file
-            self.ready = self._ready
-        else:
-            self.read = self._read_fileno
-            self.ready = self._fileno_ready
+    def poll(self):
+        try:
+            return self._fileno_ready()
+        except:
+            return self._file_ready()
+
+    def _read_fileno(self, n):
+        debug('read_fileno')
+        return os.read(self._fileno, n)
 
     def _read_file(self, n):
-        debug('_read_file...')
-        if self.ready:
-            debug('_read_file ready')
-            return self._file.read(n)
+        debug('read_file')
+        return self._file.read(n)
 
-    @property
-    def _ready(self):
+    def _file_ready(self):
+        debug('file_ready')
         return True
 
-    @property
     def _fileno_ready(self):
-        try:
-            readables, _, _ = select.select([self._fileno], [], [], 0)
-        except:
-            self.ready = self._ready
-            return True
+        debug('fileno_ready')
+        readables, _, _ = select.select([self._fileno], [], [], 0)
         if self._file in readables:
             return True
         return False
-
-    def _read_fileno(self, n):
-        debug('_read_fileno...')
-        if self.ready:
-            debug('_read_fileno ready')
-            try:
-                return os.read(self._fileno, n)
-            except OSError as e:
-                debug('OSError...')
-                if e.errno != errno.EBADF:
-                    raise
-                debug('ERRNO EBADF')
-                self.read = self._read_file
 
 
 class NetcatFileWriter(NetcatFileIO):
