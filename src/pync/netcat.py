@@ -170,7 +170,9 @@ class NetcatFileReader(NetcatFileIO):
             except OSError as e:
                 if e.errno != errno.EBADF:
                     raise
-                return self._read_file(n)
+            except TypeError:
+                pass
+            return self._read_file(n)
 
     def poll(self):
         try:
