@@ -154,7 +154,7 @@ class NetcatFileIO(object):
 class NetcatFileReader(NetcatFileIO):
 
     def __init__(self, f):
-        super(_NetcatFileReader, self).__init__(f)
+        super(NetcatFileReader, self).__init__(f)
 
         if self._fileno is None:
             self.read = self._read_file
