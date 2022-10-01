@@ -174,12 +174,6 @@ class NetcatFileReader(NetcatFileIO):
                 pass
             return self._read_file(n)
 
-    def poll(self):
-        try:
-            return self._fileno_ready()
-        except:
-            return self._file_ready()
-
     def _read_fileno(self, n):
         debug('read_fileno')
         return os.read(self._fileno, n)
@@ -187,6 +181,12 @@ class NetcatFileReader(NetcatFileIO):
     def _read_file(self, n):
         debug('read_file')
         return self._file.read(n)
+
+    def poll(self):
+        try:
+            return self._fileno_ready()
+        except:
+            return self._file_ready()
 
     def _file_ready(self):
         debug('file_ready')
@@ -202,26 +202,22 @@ class NetcatFileReader(NetcatFileIO):
 
 class NetcatFileWriter(NetcatFileIO):
 
-    def __init__(self, f):
-        super(NetcatFileWriter, self).__init__(f)
-
-        if self._fileno is None:
-            self.write = self._write_file
-        else:
-            self.write = self._write_fileno
-
-    def _write_file(self, data):
-        self._file.write(data)
-        self.flush()
-
-    def _write_fileno(self, data):
+    def write(self, data):
         try:
-            os.write(self._fileno, data)
+            self._write_fileno(data)
         except OSError as e:
             if e.errno != errno.EBADF:
                 raise
-            self.write = self._write_file
-        self.flush()
+            self._write_file(data)
+            self.flush()
+        else:
+            self.flush()
+
+    def _write_file(self, data):
+        self._file.write(data)
+
+    def _write_fileno(self, data):
+        os.write(self._fileno, data)
 
     def flush(self):
         try:
