@@ -78,7 +78,7 @@ STDOUT = subprocess.STDOUT
 
 
 def debug(s):
-    sys.__stderr__.write(s)
+    sys.__stderr__.write(s+'\n')
     sys.__stderr__.flush()
 
 
