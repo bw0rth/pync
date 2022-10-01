@@ -151,51 +151,40 @@ class NetcatFileIO(object):
         raise NotImplementedError
 
 
-class _NetcatFileReader(NetcatFileIO):
+class NetcatFileReader(NetcatFileIO):
 
     def __init__(self, f):
         super(_NetcatFileReader, self).__init__(f)
 
         if self._fileno is None:
             self.read = self._read_file
+            self.ready = self._ready
         else:
             self.read = self._read_fileno
+            self.ready = self._select_ready
 
     def _read_file(self, n):
         return self._file.read(n)
 
+    @property
+    def _ready(self):
+        return True
+
+    @property
+    def _select_ready(self):
+        readables, _, _ = select.select([self._file], [], [], 0)
+        if self._file in readables:
+            return True
+        return False
+
     def _read_fileno(self, n):
-        raise NotImplementedError
-
-
-if platform.system() == 'Windows':
-    class NetcatFileReader(_NetcatFileReader):
-
-        def _read_fileno(self, n):
+        if self.ready:
             try:
                 return os.read(self._fileno, n)
             except OSError as e:
                 if e.errno != errno.EBADF:
                     raise
                 self.read = self._read_file
-else:
-    class NetcatFileReader(_NetcatFileReader):
-
-        @property
-        def _ready(self):
-            readables, _, _ = select.select([self._file], [], [], 0)
-            if self._file in readables:
-                return True
-            return False
-
-        def _read_fileno(self, n):
-            if self._ready:
-                try:
-                    return os.read(self._fileno, n)
-                except OSError as e:
-                    if e.errno != errno.EBADF:
-                        raise
-                    self.read = self._read_file
 
 
 class NetcatFileWriter(NetcatFileIO):
