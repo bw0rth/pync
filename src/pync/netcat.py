@@ -85,9 +85,6 @@ class NetcatPipeIO(object):
     def fileno(self):
         return self._conn.fileno()
 
-    def poll(self):
-        return self._conn.poll()
-
 
 class NetcatPipeReader(NetcatPipeIO):
 
@@ -164,7 +161,7 @@ class NetcatFileReader(NetcatFileIO):
             self.ready = self._ready
         else:
             self.read = self._read_fileno
-            self.ready = self._select_ready
+            self.ready = self._fileno_ready
 
     def _read_file(self, n):
         if self.ready:
@@ -172,15 +169,12 @@ class NetcatFileReader(NetcatFileIO):
 
     @property
     def _ready(self):
-        try:
-            return self._file.poll()
-        except AttributeError:
-            return True
+        return True
 
     @property
-    def _select_ready(self):
+    def _fileno_ready(self):
         try:
-            readables, _, _ = select.select([self._file], [], [], 0)
+            readables, _, _ = select.select([self._fileno], [], [], 0)
         except:
             self.ready = self._ready
             return True
