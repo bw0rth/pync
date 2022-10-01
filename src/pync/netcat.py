@@ -164,11 +164,15 @@ class NetcatFileReader(NetcatFileIO):
             self.ready = self._select_ready
 
     def _read_file(self, n):
-        return self._file.read(n)
+        if self.ready:
+            return self._file.read(n)
 
     @property
     def _ready(self):
-        return True
+        try:
+            return self._file.poll()
+        except AttributeError:
+            return True
 
     @property
     def _select_ready(self):
