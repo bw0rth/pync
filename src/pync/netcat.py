@@ -77,7 +77,7 @@ PIPE = subprocess.PIPE
 STDOUT = subprocess.STDOUT
 
 
-def debug(s):
+def _debug(s):
     sys.__stderr__.write(s+'\n')
     sys.__stderr__.flush()
 
@@ -169,17 +169,17 @@ class NetcatFileReader(NetcatFileIO):
                 pass
             return self._read_file(n)
 
-    def _read_fileno(self, n):
-        return os.read(self._fileno, n)
-
-    def _read_file(self, n):
-        return self._file.read(n)
-
     def poll(self):
         try:
             return self._fileno_ready()
         except:
             return self._file_ready()
+
+    def _read_fileno(self, n):
+        return os.read(self._fileno, n)
+
+    def _read_file(self, n):
+        return self._file.read(n)
 
     def _file_ready(self):
         return True
