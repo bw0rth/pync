@@ -144,6 +144,7 @@ class NetcatFileIO(object):
 
     def __init__(self, f):
         self._file = f
+        _debug(repr(f))
         try:
             self._fileno = f.fileno()
         except (AttributeError, io.UnsupportedOperation):
@@ -159,6 +160,7 @@ class NetcatFileIO(object):
 class NetcatFileReader(NetcatFileIO):
 
     def read(self, n):
+        _debug('read...')
         if self.poll():
             try:
                 return self._read_fileno(n)
@@ -168,6 +170,7 @@ class NetcatFileReader(NetcatFileIO):
             except TypeError:
                 pass
             return self._read_file(n)
+        _debug('nothing to read')
 
     def poll(self):
         try:
@@ -179,12 +182,15 @@ class NetcatFileReader(NetcatFileIO):
         return os.read(self._fileno, n)
 
     def _read_file(self, n):
+        _debug('read_file')
         return self._file.read(n)
 
     def _file_ready(self):
+        _debug('file_ready...')
         return True
 
     def _fileno_ready(self):
+        _debug('fileno_ready...')
         readables, _, _ = select.select([self._fileno], [], [], 0)
         if self._file in readables:
             return True
