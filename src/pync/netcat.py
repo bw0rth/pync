@@ -174,7 +174,9 @@ class NetcatFileReader(NetcatFileIO):
             self.ready = self._fileno_ready
 
     def _read_file(self, n):
+        debug('_read_file...')
         if self.ready:
+            debug('_read_file ready')
             return self._file.read(n)
 
     @property
@@ -193,7 +195,9 @@ class NetcatFileReader(NetcatFileIO):
         return False
 
     def _read_fileno(self, n):
+        debug('_read_fileno...')
         if self.ready:
+            debug('_read_fileno ready')
             try:
                 return os.read(self._fileno, n)
             except OSError as e:
