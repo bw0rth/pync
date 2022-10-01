@@ -175,9 +175,9 @@ if platform.system() == 'Windows':
             try:
                 return os.read(self._fileno, n)
             except OSError as e:
-                if e.errno == errno.EBADF:
-                    self.read = self._read_file
-                raise
+                if e.errno != errno.EBADF:
+                    raise
+                self.read = self._read_file
 else:
     class NetcatFileReader(_NetcatFileReader):
 
@@ -193,9 +193,9 @@ else:
                 try:
                     return os.read(self._fileno, n)
                 except OSError as e:
-                    if e.errno == errno.EBADF:
-                        self.read = self._read_file
-                    raise
+                    if e.errno != errno.EBADF:
+                        raise
+                    self.read = self._read_file
 
 
 class NetcatFileWriter(NetcatFileIO):
@@ -216,9 +216,9 @@ class NetcatFileWriter(NetcatFileIO):
         try:
             os.write(self._fileno, data)
         except OSError as e:
-            if e.errno == errno.EBADF:
-                self.write = self._write_file
-            raise
+            if e.errno != errno.EBADF:
+                raise
+            self.write = self._write_file
         self.flush()
 
     def flush(self):
