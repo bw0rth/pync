@@ -21,12 +21,14 @@ def main():
 
     parser.add_argument('proxy_port',
         help='proxy port to listen on',
+        type=int,
     )
     parser.add_argument('dest',
         help='destination host to connect to',
     )
     parser.add_argument('port',
         help='destination port to connect to',
+        type=int,
     )
     args = parser.parse_args()
 
