@@ -201,8 +201,10 @@ class NetcatFileReader(NetcatFileIO):
             try:
                 return os.read(self._fileno, n)
             except OSError as e:
+                debug('OSError...')
                 if e.errno != errno.EBADF:
                     raise
+                debug('ERRNO EBADF')
                 self.read = self._read_file
 
 
