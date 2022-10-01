@@ -172,7 +172,11 @@ class NetcatFileReader(NetcatFileIO):
 
     @property
     def _select_ready(self):
-        readables, _, _ = select.select([self._file], [], [], 0)
+        try:
+            readables, _, _ = select.select([self._file], [], [], 0)
+        except:
+            self.ready = self._ready
+            return True
         if self._file in readables:
             return True
         return False
