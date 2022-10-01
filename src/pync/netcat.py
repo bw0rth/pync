@@ -77,6 +77,11 @@ PIPE = subprocess.PIPE
 STDOUT = subprocess.STDOUT
 
 
+def debug(s):
+    sys.__stderr__.write(s)
+    sys.__stderr__.flush()
+
+
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
@@ -89,14 +94,19 @@ class NetcatPipeIO(object):
 class NetcatPipeReader(NetcatPipeIO):
 
     def read(self, n):
+        debug('Pipe.read...')
         if self._conn.poll():
+            debug('Pipe ready to read.')
             return self._conn.recv_bytes()
+        debug('Pipe not ready to read.')
 
 
 class NetcatPipeWriter(NetcatPipeIO):
 
     def write(self, data):
+        debug('Pipe.write...')
         self._conn.send_bytes(data)
+        debug('Pipe.written')
 
 
 class NetcatPipe(object):
@@ -111,7 +121,7 @@ class NetcatError(Exception):
     
     def __init__(self, msg, *args):
         super(NetcatError, self).__init__(msg, *args)
-        self.msg = msg 
+        self.msg = msg
 
     def __str__(self):
         return str(self.msg)
