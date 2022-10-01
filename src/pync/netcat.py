@@ -172,7 +172,10 @@ if platform.system() == 'Windows':
     class NetcatFileReader(_NetcatFileReader):
 
         def _read_fileno(self, n):
-            return os.read(self._fileno, n)
+            try:
+                return os.read(self._fileno, n)
+            except OSError:
+                self.read = self._read_file
 else:
     class NetcatFileReader(_NetcatFileReader):
 
@@ -185,7 +188,10 @@ else:
 
         def _read_fileno(self, n):
             if self._ready:
-                return os.read(self._fileno, n)
+                try:
+                    return os.read(self._fileno, n)
+                except OSError:
+                    self.read = self._read_file
 
 
 class NetcatFileWriter(NetcatFileIO):
