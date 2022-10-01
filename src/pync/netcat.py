@@ -94,19 +94,14 @@ class NetcatPipeIO(object):
 class NetcatPipeReader(NetcatPipeIO):
 
     def read(self, n):
-        debug('Pipe.read...')
         if self._conn.poll():
-            debug('Pipe ready to read.')
             return self._conn.recv_bytes()
-        debug('Pipe not ready to read.')
 
 
 class NetcatPipeWriter(NetcatPipeIO):
 
     def write(self, data):
-        debug('Pipe.write...')
         self._conn.send_bytes(data)
-        debug('Pipe.written')
 
 
 class NetcatPipe(object):
@@ -175,11 +170,9 @@ class NetcatFileReader(NetcatFileIO):
             return self._read_file(n)
 
     def _read_fileno(self, n):
-        debug('read_fileno')
         return os.read(self._fileno, n)
 
     def _read_file(self, n):
-        debug('read_file')
         return self._file.read(n)
 
     def poll(self):
@@ -189,11 +182,9 @@ class NetcatFileReader(NetcatFileIO):
             return self._file_ready()
 
     def _file_ready(self):
-        debug('file_ready')
         return True
 
     def _fileno_ready(self):
-        debug('fileno_ready')
         readables, _, _ = select.select([self._fileno], [], [], 0)
         if self._file in readables:
             return True
