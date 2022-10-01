@@ -85,6 +85,9 @@ class NetcatPipeIO(object):
     def fileno(self):
         return self._conn.fileno()
 
+    def poll(self):
+        return self._conn.poll()
+
 
 class NetcatPipeReader(NetcatPipeIO):
 
