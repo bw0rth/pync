@@ -209,7 +209,10 @@ class NetcatFileWriter(NetcatFileIO):
         self.flush()
 
     def _write_fileno(self, data):
-        os.write(self._fileno, data)
+        try:
+            os.write(self._fileno, data)
+        except OSError:
+            self.write = self._write_file
         self.flush()
 
     def flush(self):
