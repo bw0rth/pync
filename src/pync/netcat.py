@@ -208,10 +208,13 @@ class NetcatFileWriter(NetcatFileIO):
         except OSError as e:
             if e.errno != errno.EBADF:
                 raise
-            self._write_file(data)
-            self.flush()
+        except TypeError:
+            pass
         else:
             self.flush()
+            return
+        self._write_file(data)
+        self.flush()
 
     def _write_file(self, data):
         self._file.write(data)
