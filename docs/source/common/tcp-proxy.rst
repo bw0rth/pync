@@ -32,7 +32,6 @@ simple TCP proxy.
       import pync
 
       server = pync.Netcat(port=8000,
-          v=True,
           l=True,
           stdin=pync.PIPE,
           stdout=pync.PIPE,
@@ -42,7 +41,6 @@ simple TCP proxy.
       t.start()
 
       client = pync.Netcat('host.example.com', 80,
-          v=True,
           stdin=server.stdout,
           stdout=server.stdin,
       )
