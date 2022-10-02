@@ -172,7 +172,7 @@ class NetcatFileReader(NetcatFileIO):
     def poll(self):
         try:
             return self._fileno_ready()
-        except OSError:
+        except (OSError, TypeError):
             return self._file_ready()
 
     def _read_fileno(self, n):
