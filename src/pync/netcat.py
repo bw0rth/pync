@@ -77,6 +77,11 @@ PIPE = subprocess.PIPE
 STDOUT = subprocess.STDOUT
 
 
+def _debug(s):
+    sys.__stderr__.write(s+'\n')
+    sys.__stderr__.flush()
+
+
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
@@ -111,7 +116,7 @@ class NetcatError(Exception):
     
     def __init__(self, msg, *args):
         super(NetcatError, self).__init__(msg, *args)
-        self.msg = msg 
+        self.msg = msg
 
     def __str__(self):
         return str(self.msg)
@@ -151,75 +156,62 @@ class NetcatFileIO(object):
         raise NotImplementedError
 
 
-class _NetcatFileReader(NetcatFileIO):
+class NetcatFileReader(NetcatFileIO):
 
-    def __init__(self, f):
-        super(_NetcatFileReader, self).__init__(f)
+    def read(self, n):
+        if self.poll():
+            try:
+                return self._read_fileno(n)
+            except OSError as e:
+                if e.errno != errno.EBADF:
+                    raise
+            except TypeError:
+                pass
+            return self._read_file(n)
 
-        if self._fileno is None:
-            self.read = self._read_file
-        else:
-            self.read = self._read_fileno
+    def poll(self):
+        try:
+            return self._fileno_ready()
+        except:
+            return self._file_ready()
+
+    def _read_fileno(self, n):
+        return os.read(self._fileno, n)
 
     def _read_file(self, n):
         return self._file.read(n)
 
-    def _read_fileno(self, n):
-        raise NotImplementedError
+    def _file_ready(self):
+        return True
 
-
-if platform.system() == 'Windows':
-    class NetcatFileReader(_NetcatFileReader):
-
-        def _read_fileno(self, n):
-            try:
-                return os.read(self._fileno, n)
-            except OSError as e:
-                if e.errno != errno.EBADF:
-                    raise
-                self.read = self._read_file
-else:
-    class NetcatFileReader(_NetcatFileReader):
-
-        @property
-        def _ready(self):
-            readables, _, _ = select.select([self._file], [], [], 0)
-            if self._file in readables:
-                return True
-            return False
-
-        def _read_fileno(self, n):
-            if self._ready:
-                try:
-                    return os.read(self._fileno, n)
-                except OSError as e:
-                    if e.errno != errno.EBADF:
-                        raise
-                    self.read = self._read_file
+    def _fileno_ready(self):
+        readables, _, _ = select.select([self._fileno], [], [], 0)
+        if self._fileno in readables:
+            return True
+        return False
 
 
 class NetcatFileWriter(NetcatFileIO):
 
-    def __init__(self, f):
-        super(NetcatFileWriter, self).__init__(f)
-
-        if self._fileno is None:
-            self.write = self._write_file
-        else:
-            self.write = self._write_fileno
-
-    def _write_file(self, data):
-        self._file.write(data)
-        self.flush()
-
-    def _write_fileno(self, data):
+    def write(self, data):
         try:
-            os.write(self._fileno, data)
+            self._write_fileno(data)
         except OSError as e:
             if e.errno != errno.EBADF:
                 raise
-            self.write = self._write_file
+        except TypeError:
+            pass
+        else:
+            self.flush()
+            return
+        self._write_file(data)
         self.flush()
+
+    def _write_file(self, data):
+        self._file.write(data)
+
+    def _write_fileno(self, data):
+        os.write(self._fileno, data)
 
     def flush(self):
         try:
