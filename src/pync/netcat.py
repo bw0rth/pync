@@ -82,6 +82,34 @@ def _debug(s):
     sys.__stderr__.flush()
 
 
+class NetcatError(Exception):
+    
+    def __init__(self, msg, *args):
+        super(NetcatError, self).__init__(msg, *args)
+        self.msg = msg
+
+    def __str__(self):
+        return str(self.msg)
+
+
+class NetcatSocketError(NetcatError):
+    
+    def __init__(self, socket_err, *args):
+        msg = str(socket_err)
+        super(NetcatSocketError, self).__init__(msg, socket_err, *args)
+        self.socket_err = socket_err
+
+
+class NetcatProxyError(NetcatError):
+    
+    def __init__(self, proxy_err, *args):
+        msg = str(proxy_err)
+        if proxy_err.socket_err is not None:
+            msg = str(proxy_err.socket_err)
+        super(NetcatProxyError, self).__init__(msg, proxy_err, *args)
+        self.proxy_err =  proxy_err
+
+
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
@@ -112,34 +140,6 @@ class NetcatPipe(object):
         self.writer = NetcatPipeWriter(send_conn)
 
 
-class NetcatError(Exception):
-    
-    def __init__(self, msg, *args):
-        super(NetcatError, self).__init__(msg, *args)
-        self.msg = msg
-
-    def __str__(self):
-        return str(self.msg)
-
-
-class NetcatSocketError(NetcatError):
-    
-    def __init__(self, socket_err, *args):
-        msg = str(socket_err)
-        super(NetcatSocketError, self).__init__(msg, socket_err, *args)
-        self.socket_err = socket_err
-
-
-class NetcatProxyError(NetcatError):
-    
-    def __init__(self, proxy_err, *args):
-        msg = str(proxy_err)
-        if proxy_err.socket_err is not None:
-            msg = str(proxy_err.socket_err)
-        super(NetcatProxyError, self).__init__(msg, proxy_err, *args)
-        self.proxy_err =  proxy_err
-
-
 class NetcatFileIO(object):
 
     def __init__(self, f):
@@ -158,22 +158,31 @@ class NetcatFileIO(object):
 
 class NetcatFileReader(NetcatFileIO):
 
+    def __init__(self, f):
+        super(NetcatFileReader, self).__init__(f)
+        self.__poll_fileno = True
+        self.__read_fileno = True
+
     def read(self, n):
         if self.poll():
-            try:
-                return self._read_fileno(n)
-            except OSError as e:
-                if e.errno != errno.EBADF:
-                    raise
-            except TypeError:
-                pass
+            if self.__read_fileno:
+                try:
+                    return self._read_fileno(n)
+                except OSError as e:
+                    if e.errno != errno.EBADF:
+                        raise
+                except TypeError:
+                    pass
+                self.__read_fileno = False
             return self._read_file(n)
 
     def poll(self):
-        try:
-            return self._fileno_ready()
-        except (OSError, TypeError):
-            return self._file_ready()
+        if self.__poll_fileno:
+            try:
+                return self._poll_fileno()
+            except (OSError, TypeError):
+                self.__poll_fileno = False
+        return self._poll_file()
 
     def _read_fileno(self, n):
         return os.read(self._fileno, n)
@@ -181,10 +190,10 @@ class NetcatFileReader(NetcatFileIO):
     def _read_file(self, n):
         return self._file.read(n)
 
-    def _file_ready(self):
+    def _poll_file(self):
         return True
 
-    def _fileno_ready(self):
+    def _poll_fileno(self):
         readables, _, _ = select.select([self._fileno], [], [], 0)
         if self._fileno in readables:
             return True
@@ -193,17 +202,23 @@ class NetcatFileReader(NetcatFileIO):
 
 class NetcatFileWriter(NetcatFileIO):
 
+    def __init__(self, f):
+        super(NetcatFileWriter, self).__init__(f)
+        self.__write_fileno = True
+
     def write(self, data):
-        try:
-            self._write_fileno(data)
-        except OSError as e:
-            if e.errno != errno.EBADF:
-                raise
-        except TypeError:
-            pass
-        else:
-            self.flush()
-            return
+        if self.__write_fileno:
+            try:
+                self._write_fileno(data)
+            except OSError as e:
+                if e.errno != errno.EBADF:
+                    raise
+            except TypeError:
+                pass
+            else:
+                self.flush()
+                return
+            self.__write_fileno = False
         self._write_file(data)
         self.flush()
 
