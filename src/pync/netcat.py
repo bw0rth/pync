@@ -314,7 +314,7 @@ class NetcatContext(object):
     def _print_message(self, message, file=None):
         if message:
             if file is None:
-                file = self.stderr
+                file = self._stderr
             try:
                 file.write(message+'\n')
             except TypeError:
