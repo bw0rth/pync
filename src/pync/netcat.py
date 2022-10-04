@@ -290,7 +290,7 @@ class NetcatContext(object):
         if self.stderr == PIPE:
             pipe = NetcatPipe()
             self._stderr = pipe.writer
-            self.stderr = pipe.reading
+            self.stderr = pipe.reader
         elif self.stderr == STDOUT:
             self._stderr = self._stdout
             self.stderr = self.stdout
