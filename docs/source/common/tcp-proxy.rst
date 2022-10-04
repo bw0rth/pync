@@ -28,7 +28,7 @@ simple TCP proxy.
    .. code-block:: python
       :linenos:
 
-      import multiprocessing
+      import threading
       import pync
 
       server = pync.Netcat(port=8000,
@@ -36,9 +36,9 @@ simple TCP proxy.
           stdin=pync.PIPE,
           stdout=pync.PIPE,
       )
-      p = multiprocessing.Process(target=server.readwrite)
-      p.daemon = True
-      p.start()
+      t = threading.Thread(target=server.readwrite)
+      t.daemon = True
+      t.start()
 
       client = pync.Netcat('host.example.com', 80,
           stdin=server.stdout,
