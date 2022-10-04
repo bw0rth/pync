@@ -255,9 +255,9 @@ class NetcatConsoleWriter(NetcatFileWriter):
 class NetcatContext(object):
     D = False
     v = False
-    stdin = STDIN
-    stdout = STDOUT
-    stderr = STDERR
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
 
     def __init__(self,
             D=None,
@@ -275,50 +275,32 @@ class NetcatContext(object):
 
         if self.stdin == PIPE:
             pipe = NetcatPipe()
-            self.__stdin = pipe.reader
+            self._stdin = pipe.reader
             self.stdin = pipe.writer
         else:
-            self.__stdin = self.stdin
+            self._stdin = self.stdin
             self.stdin = None
 
         if self.stdout == PIPE:
             pipe = NetcatPipe()
-            self.__stdout = pipe.writer
+            self._stdout = pipe.writer
             self.stdout = pipe.reader
         else:
-            self.__stdout = self.stdout
+            self._stdout = self.stdout
             self.stdout = None
 
         if self.stderr == PIPE:
             pipe = NetcatPipe()
-            self.__stderr = pipe.writer
+            self._stderr = pipe.writer
             self.stderr = pipe.reader
         elif self.stderr == STDOUT:
-            self.__stderr = self._stdout
+            self._stderr = self._stdout
             self.stderr = self.stdout
         else:
-            self.__stderr = self.stderr
+            self._stderr = self.stderr
             self.stderr = None
 
         self._init_kwargs(**kwargs)
-
-    @property
-    def _stdin(self):
-        if self.__stdin == STDIN:
-            return sys.stdin
-        return self.__stdin
-
-    @property
-    def _stdout(self):
-        if self.__stdout == STDOUT:
-            return sys.stdout
-        return self.__stdout
-
-    @property
-    def _stderr(self):
-        if self.__stderr == STDERR:
-            return sys.stderr
-        return self.__stderr
 
     def _init_kwargs(self, **kwargs):
         """
@@ -2007,9 +1989,9 @@ class Netcat(object):
     UDPClient = NetcatUDPClient
     UDPServer = NetcatUDPServer
 
-    stdin = STDIN
-    stdout = STDOUT
-    stderr = STDERR
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
 
     def __new__(cls, dest='', port=None, l=False, u=False, p=None,
             stdin=None, stdout=None, stderr=None, **kwargs):
@@ -2140,13 +2122,6 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     _stdin = stdin or Netcat.stdin
     _stdout = stdout or Netcat.stdout
     _stderr = stderr or Netcat.stderr
-
-    if _stdin == STDIN:
-        _stdin = sys.stdin
-    if _stdout == STDOUT:
-        _stdout = sys.stdout
-    if _stderr == STDERR:
-        _stderr = sys.stderr
 
     exit = argparse.Namespace()
     exit.status = 1
