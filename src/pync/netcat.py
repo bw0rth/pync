@@ -278,6 +278,17 @@ class NetcatContext(object):
             self._stdout = self.stdout
             self.stdout = None
 
+        if self.stderr == PIPE:
+            pipe = NetcatPipe()
+            self._stderr = pipe.writer
+            self.stderr = pipe.reading
+        elif self.stderr == STDOUT:
+            self._stderr = self._stdout
+            self.stderr = self.stdout
+        else:
+            self._stderr = self.stderr
+            self.stderr = None
+
         self._init_kwargs(**kwargs)
 
     def _init_kwargs(self, **kwargs):
