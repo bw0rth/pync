@@ -75,8 +75,6 @@ TOSKEYWORDS = dict(
 
 PIPE = subprocess.PIPE
 STDOUT = subprocess.STDOUT
-STDIN = -3
-STDERR = -4
 
 
 def _debug(s):
@@ -114,35 +112,29 @@ class NetcatProxyError(NetcatError):
 
 class NetcatStdinReader(object):
 
-    def fileno(self):
-        return sys.stdin.fileno()
+    def __getattr__(self, name):
+        return getattr(sys.stdin, name)
 
-    def read(self, n):
-        return sys.stdin.read(n)
+    def __eq__(self, other):
+        return other == sys.stdin
 
 
 class NetcatStdoutWriter(object):
 
-    def fileno(self):
-        return sys.stdout.fileno()
+    def __getattr__(self, name):
+        return getattr(sys.stdout, name)
 
-    def write(self, data):
-        sys.stdout.write(data)
-
-    def flush(self):
-        sys.stdout.flush()
+    def __eq__(self, other):
+        return other == sys.stdout
 
 
 class NetcatStderrWriter(object):
 
-    def fileno(self):
-        return sys.stderr.fileno()
+    def __getattr__(self, name):
+        return getattr(sys.stderr, name)
 
-    def write(self, data):
-        sys.stderr.write(data)
-
-    def flush(self):
-        sys.stderr.flush()
+    def __eq__(self, other):
+        return other == sys.stderr
 
 
 class NetcatPipeIO(object):
@@ -430,12 +422,12 @@ class NetcatConnection(NetcatContext):
         if w is not None:
             self.w = w
 
-        if self._stdin is sys.__stdin__ and self._stdin.isatty():
+        if self._stdin == sys.stdin and self._stdin.isatty():
             self._stdin = NetcatConsoleInput()
         else:
             self._stdin = NetcatFileReader(self._stdin)
 
-        if self._stdout is sys.__stdout__:
+        if self._stdout == sys.stdout:
             self._stdout = NetcatConsoleWriter()
         else:
             self._stdout = NetcatFileWriter(self._stdout)
