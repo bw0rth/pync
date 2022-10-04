@@ -118,6 +118,15 @@ class NetcatPipeIO(object):
     def fileno(self):
         return self._conn.fileno()
 
+    def read(self, n):
+        raise NotImplementedError
+
+    def write(self, data):
+        raise NotImplementedError
+
+    def flush(self):
+        pass
+
 
 class NetcatPipeReader(NetcatPipeIO):
 
