@@ -8,7 +8,7 @@ example usage:
 '''
 
 import argparse
-import threading
+import multiprocessing
 
 import pync
 
@@ -39,9 +39,9 @@ def main():
             stdin=pync.PIPE,
             stdout=pync.PIPE,
     )
-    t = threading.Thread(target=server.readwrite)
-    t.daemon = True
-    t.start()
+    p = multiprocessing.Process(target=server.readwrite)
+    p.daemon = True
+    p.start()
 
     client = pync.Netcat(args.dest, args.port,
             v=True,

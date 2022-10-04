@@ -110,6 +110,33 @@ class NetcatProxyError(NetcatError):
         self.proxy_err =  proxy_err
 
 
+class NetcatStdinReader(object):
+
+    def __getattr__(self, name):
+        return getattr(sys.stdin, name)
+
+    def __eq__(self, other):
+        return other == sys.stdin
+
+
+class NetcatStdoutWriter(object):
+
+    def __getattr__(self, name):
+        return getattr(sys.stdout, name)
+
+    def __eq__(self, other):
+        return other == sys.stdout
+
+
+class NetcatStderrWriter(object):
+
+    def __getattr__(self, name):
+        return getattr(sys.stderr, name)
+
+    def __eq__(self, other):
+        return other == sys.stderr
+
+
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
@@ -117,6 +144,15 @@ class NetcatPipeIO(object):
 
     def fileno(self):
         return self._conn.fileno()
+
+    def read(self, n):
+        raise NotImplementedError
+
+    def write(self, data):
+        raise NotImplementedError
+
+    def flush(self):
+        pass
 
 
 class NetcatPipeReader(NetcatPipeIO):
@@ -262,7 +298,10 @@ class NetcatContext(object):
         self.stdout = stdout or self.stdout
         self.stderr = stderr or self.stderr
 
-        if self.stdin == PIPE:
+        if self.stdin is sys.stdin:
+            self._stdin = NetcatStdinReader()
+            self.stdin = None
+        elif self.stdin == PIPE:
             pipe = NetcatPipe()
             self._stdin = pipe.reader
             self.stdin = pipe.writer
@@ -270,13 +309,30 @@ class NetcatContext(object):
             self._stdin = self.stdin
             self.stdin = None
 
-        if self.stdout == PIPE:
+        if self.stdout is sys.stdout:
+            self._stdout = NetcatStdoutWriter()
+            self.stdout = None
+        elif self.stdout == PIPE:
             pipe = NetcatPipe()
             self._stdout = pipe.writer
             self.stdout = pipe.reader
         else:
             self._stdout = self.stdout
             self.stdout = None
+
+        if self.stderr is sys.stderr:
+            self._stderr = NetcatStderrWriter()
+            self.stderr = None
+        elif self.stderr == PIPE:
+            pipe = NetcatPipe()
+            self._stderr = pipe.writer
+            self.stderr = pipe.reader
+        elif self.stderr == STDOUT:
+            self._stderr = self._stdout
+            self.stderr = self.stdout
+        else:
+            self._stderr = self.stderr
+            self.stderr = None
 
         self._init_kwargs(**kwargs)
 
@@ -303,7 +359,7 @@ class NetcatContext(object):
     def _print_message(self, message, file=None):
         if message:
             if file is None:
-                file = self.stderr
+                file = self._stderr
             try:
                 file.write(message+'\n')
             except TypeError:
@@ -312,11 +368,11 @@ class NetcatContext(object):
 
     def print_verbose(self, message):
         if self.v:
-            self._print_message(message, file=self.stderr)
+            self._print_message(message, file=self._stderr)
 
     def print_debug(self, message):
         if self.D:
-            self._print_message(message, file=self.stderr)
+            self._print_message(message, file=self._stderr)
 
 
 class NetcatConnection(NetcatContext):
@@ -366,12 +422,12 @@ class NetcatConnection(NetcatContext):
         if w is not None:
             self.w = w
 
-        if self._stdin is sys.__stdin__ and self._stdin.isatty():
+        if self._stdin == sys.stdin and self._stdin.isatty():
             self._stdin = NetcatConsoleInput()
         else:
             self._stdin = NetcatFileReader(self._stdin)
 
-        if self._stdout is sys.__stdout__:
+        if self._stdout == sys.stdout:
             self._stdout = NetcatConsoleWriter()
         else:
             self._stdout = NetcatFileWriter(self._stdout)
@@ -500,16 +556,6 @@ class NetcatConnection(NetcatContext):
 
         net_send, net_recv = self.send, self.recv
         net_shutdown_rd, net_shutdown_wr = self.shutdown_rd, self.shutdown_wr
-
-        #try:
-        #    stdin_read = self._stdin.buffer.read
-        #except AttributeError:
-        #    stdin_read = self._stdin.read
-
-        #try:
-        #    stdout_write = self._stdout.buffer.write
-        #except AttributeError:
-        #    stdout_write = self._stdout.write
 
         stdin_detach = self.d
         stdin_read = self._stdin.read
