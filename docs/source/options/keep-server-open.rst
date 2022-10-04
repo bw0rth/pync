@@ -65,8 +65,7 @@ Creating a Date/Time Server
       from pync import pync
       pync('localhost 8000')
 
-Because we set the `-k <https://pync.readthedocs.io/en/latest/options/keep-server-open.html>`_
-option on the server, we should be able to keep connecting
+By setting the **-k** option on the server, you should be able to keep connecting
 to it to get the current time and date.
 
 When you're finished, hit Ctrl+C on the server console to close the server.
