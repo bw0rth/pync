@@ -112,6 +112,39 @@ class NetcatProxyError(NetcatError):
         self.proxy_err =  proxy_err
 
 
+class NetcatStdinReader(object):
+
+    def fileno(self):
+        return sys.stdin.fileno()
+
+    def read(self, n):
+        return sys.stdin.read(n)
+
+
+class NetcatStdoutWriter(object):
+
+    def fileno(self):
+        return sys.stdout.fileno()
+
+    def write(self, data):
+        sys.stdout.write(data)
+
+    def flush(self):
+        sys.stdout.flush()
+
+
+class NetcatStderrWriter(object):
+
+    def fileno(self):
+        return sys.stderr.fileno()
+
+    def write(self, data):
+        sys.stderr.write(data)
+
+    def flush(self):
+        sys.stderr.flush()
+
+
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
@@ -273,7 +306,10 @@ class NetcatContext(object):
         self.stdout = stdout or self.stdout
         self.stderr = stderr or self.stderr
 
-        if self.stdin == PIPE:
+        if self.stdin is sys.stdin:
+            self._stdin = NetcatStdinReader()
+            self.stdin = None
+        elif self.stdin == PIPE:
             pipe = NetcatPipe()
             self._stdin = pipe.reader
             self.stdin = pipe.writer
@@ -281,7 +317,10 @@ class NetcatContext(object):
             self._stdin = self.stdin
             self.stdin = None
 
-        if self.stdout == PIPE:
+        if self.stdout is sys.stdout:
+            self._stdout = NetcatStdoutWriter()
+            self.stdout = None
+        elif self.stdout == PIPE:
             pipe = NetcatPipe()
             self._stdout = pipe.writer
             self.stdout = pipe.reader
@@ -289,7 +328,10 @@ class NetcatContext(object):
             self._stdout = self.stdout
             self.stdout = None
 
-        if self.stderr == PIPE:
+        if self.stderr is sys.stderr:
+            self._stderr = NetcatStderrWriter()
+            self.stderr = None
+        elif self.stderr == PIPE:
             pipe = NetcatPipe()
             self._stderr = pipe.writer
             self.stderr = pipe.reader
