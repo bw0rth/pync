@@ -557,16 +557,6 @@ class NetcatConnection(NetcatContext):
         net_send, net_recv = self.send, self.recv
         net_shutdown_rd, net_shutdown_wr = self.shutdown_rd, self.shutdown_wr
 
-        #try:
-        #    stdin_read = self._stdin.buffer.read
-        #except AttributeError:
-        #    stdin_read = self._stdin.read
-
-        #try:
-        #    stdout_write = self._stdout.buffer.write
-        #except AttributeError:
-        #    stdout_write = self._stdout.write
-
         stdin_detach = self.d
         stdin_read = self._stdin.read
         stdout_write = self._stdout.write
