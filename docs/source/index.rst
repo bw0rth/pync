@@ -184,6 +184,8 @@ Examples
      - Simple file upload (use with caution).
    * - `download.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/download.py>`_
      - Simple file download (use with caution).
+   * - `proxy.py <https://github.com/brenw0rth/pync/blob/main/examples/proxy.py>`_
+     - Simple TCP proxy server
    * - `pyshell.py <https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py>`_
      - Reverse or bind python interpreter shell (use with caution).
    * - `scan.py <https://github.com/brenw0rth/pync/blob/main/examples/scan.py>`_
