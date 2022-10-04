@@ -323,11 +323,11 @@ class NetcatContext(object):
 
     def print_verbose(self, message):
         if self.v:
-            self._print_message(message, file=self.stderr)
+            self._print_message(message, file=self._stderr)
 
     def print_debug(self, message):
         if self.D:
-            self._print_message(message, file=self.stderr)
+            self._print_message(message, file=self._stderr)
 
 
 class NetcatConnection(NetcatContext):
