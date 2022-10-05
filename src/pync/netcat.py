@@ -22,6 +22,13 @@ import subprocess
 import sys
 import time
 
+try:
+    # py2
+    import Queue as queue
+except ImportError:
+    # py3
+    import queue
+
 import socks
 
 from .argparsing import GroupingArgumentParser
@@ -75,6 +82,7 @@ TOSKEYWORDS = dict(
 
 PIPE = subprocess.PIPE
 STDOUT = subprocess.STDOUT
+QUEUE = -3
 
 
 def _debug(s):
@@ -140,10 +148,10 @@ class NetcatStderrWriter(object):
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
-        self._conn = conn
+        self.connection = conn
 
     def fileno(self):
-        return self._conn.fileno()
+        raise io.UnsupportedOperation
 
     def read(self, n):
         raise NotImplementedError
@@ -158,14 +166,14 @@ class NetcatPipeIO(object):
 class NetcatPipeReader(NetcatPipeIO):
 
     def read(self, n):
-        if self._conn.poll():
-            return self._conn.recv_bytes()
+        if self.connection.poll():
+            return self.connection.recv_bytes(n)
 
 
 class NetcatPipeWriter(NetcatPipeIO):
 
     def write(self, data):
-        self._conn.send_bytes(data)
+        self.connection.send_bytes(data)
 
 
 class NetcatPipe(object):
@@ -174,6 +182,47 @@ class NetcatPipe(object):
         recv_conn, send_conn = multiprocessing.Pipe(False)
         self.reader = NetcatPipeReader(recv_conn)
         self.writer = NetcatPipeWriter(send_conn)
+
+
+class NetcatQueueIO(object):
+
+    def __init__(self, q):
+        self.queue = q
+
+    def fileno(self):
+        raise io.UnsupportedOperation
+
+    def read(self, n):
+        raise NotImplementedError
+
+    def write(self, data):
+        raise NotImplementedError
+
+    def flush(self):
+        pass
+
+
+class NetcatQueueReader(NetcatQueueIO):
+
+    def read(self, n):
+        try:
+            return self.queue.get_nowait()
+        except queue.Empty:
+            pass
+
+
+class NetcatQueueWriter(NetcatQueueIO):
+
+    def write(self, data):
+        self.queue.put(data)
+
+
+class NetcatQueue(object):
+
+    def __init__(self):
+        q = multiprocessing.Queue()
+        self.reader = NetcatQueueReader(q)
+        self.writer = NetcatQueueWriter(q)
 
 
 class NetcatFileIO(object):
@@ -305,6 +354,10 @@ class NetcatContext(object):
             pipe = NetcatPipe()
             self._stdin = pipe.reader
             self.stdin = pipe.writer
+        elif self.stdin == QUEUE:
+            q = NetcatQueue()
+            self._stdin = q.reader
+            self.stdin = q.writer
         else:
             self._stdin = self.stdin
             self.stdin = None
@@ -316,6 +369,10 @@ class NetcatContext(object):
             pipe = NetcatPipe()
             self._stdout = pipe.writer
             self.stdout = pipe.reader
+        elif self.stdout == QUEUE:
+            q = NetcatQueue()
+            self._stdout = q.writer
+            self.stdout = q.reader
         else:
             self._stdout = self.stdout
             self.stdout = None
@@ -327,6 +384,10 @@ class NetcatContext(object):
             pipe = NetcatPipe()
             self._stderr = pipe.writer
             self.stderr = pipe.reader
+        elif self.stderr == QUEUE:
+            q = NetcatQueue()
+            self._stderr = q.writer
+            self.stderr = q.reader
         elif self.stderr == STDOUT:
             self._stderr = self._stdout
             self.stderr = self.stdout
