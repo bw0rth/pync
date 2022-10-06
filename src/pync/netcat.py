@@ -347,8 +347,11 @@ class NetcatContext(object):
         self.stdout = stdout or self.stdout
         self.stderr = stderr or self.stderr
 
-        if self.stdin is sys.stdin and self.stdin.isatty():
-            self._stdin = NetcatConsoleInput()
+        if self.stdin is sys.stdin:
+            if self.stdin.isatty():
+                self._stdin = NetcatConsoleInput()
+            else:
+                self._stdin = NetcatFileReader(NetcatStdinReader())
             self.stdin = None
         elif self.stdin == PIPE:
             pipe = NetcatPipe()
@@ -363,7 +366,7 @@ class NetcatContext(object):
             self.stdin = None
 
         if self.stdout is sys.stdout:
-            self._stdout = NetcatStdoutWriter()
+            self._stdout = NetcatFileWriter(NetcatStdoutWriter())
             self.stdout = None
         elif self.stdout == PIPE:
             pipe = NetcatPipe()
@@ -378,7 +381,7 @@ class NetcatContext(object):
             self.stdout = None
 
         if self.stderr is sys.stderr:
-            self._stderr = NetcatStderrWriter()
+            self._stderr = NetcatFileWriter(NetcatStderrWriter())
             self.stderr = None
         elif self.stderr == PIPE:
             pipe = NetcatPipe()
