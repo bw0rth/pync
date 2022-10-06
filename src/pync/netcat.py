@@ -347,8 +347,8 @@ class NetcatContext(object):
         self.stdout = stdout or self.stdout
         self.stderr = stderr or self.stderr
 
-        if self.stdin is sys.stdin:
-            self._stdin = NetcatStdinReader()
+        if self.stdin is sys.stdin and self.stdin.isatty():
+            self._stdin = NetcatConsoleInput()
             self.stdin = None
         elif self.stdin == PIPE:
             pipe = NetcatPipe()
@@ -359,7 +359,7 @@ class NetcatContext(object):
             self._stdin = q.reader
             self.stdin = q.writer
         else:
-            self._stdin = self.stdin
+            self._stdin = NetcatFileReader(self.stdin)
             self.stdin = None
 
         if self.stdout is sys.stdout:
@@ -374,9 +374,8 @@ class NetcatContext(object):
             self._stdout = q.writer
             self.stdout = q.reader
         else:
-            self._stdout = self.stdout
+            self._stdout = NetcatFileWriter(self.stdout)
             self.stdout = None
-        self._stdout = NetcatFileWriter(self._stdout)
 
         if self.stderr is sys.stderr:
             self._stderr = NetcatStderrWriter()
@@ -393,13 +392,8 @@ class NetcatContext(object):
             self._stderr = self._stdout
             self.stderr = self.stdout
         else:
-            self._stderr = self.stderr
+            self._stderr = NetcatFileWriter(self.stderr)
             self.stderr = None
-
-        if self._stdin == sys.stdin and self._stdin.isatty():
-            self._stdin = NetcatConsoleInput()
-        else:
-            self._stdin = NetcatFileReader(self._stdin)
 
         self._init_kwargs(**kwargs)
 
