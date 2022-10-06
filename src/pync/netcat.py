@@ -376,6 +376,7 @@ class NetcatContext(object):
         else:
             self._stdout = self.stdout
             self.stdout = None
+        self._stdout = NetcatFileWriter(self._stdout)
 
         if self.stderr is sys.stderr:
             self._stderr = NetcatStderrWriter()
@@ -394,6 +395,11 @@ class NetcatContext(object):
         else:
             self._stderr = self.stderr
             self.stderr = None
+
+        if self._stdin == sys.stdin and self._stdin.isatty():
+            self._stdin = NetcatConsoleInput()
+        else:
+            self._stdin = NetcatFileReader(self._stdin)
 
         self._init_kwargs(**kwargs)
 
@@ -482,16 +488,6 @@ class NetcatConnection(NetcatContext):
             self.q = q
         if w is not None:
             self.w = w
-
-        if self._stdin == sys.stdin and self._stdin.isatty():
-            self._stdin = NetcatConsoleInput()
-        else:
-            self._stdin = NetcatFileReader(self._stdin)
-
-        if self._stdout == sys.stdout:
-            self._stdout = NetcatConsoleWriter()
-        else:
-            self._stdout = NetcatFileWriter(self._stdout)
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
