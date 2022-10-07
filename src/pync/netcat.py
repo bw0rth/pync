@@ -145,13 +145,22 @@ class NetcatStderrWriter(object):
         return other == sys.stderr
 
 
+class NetcatIO(object):
+
+    def fileno(self):
+        raise io.UnsupportedOperation
+
+    def read(self, n):
+        raise io.UnsupportedOperation
+
+
 class NetcatPipeIO(object):
 
     def __init__(self, conn):
         self.connection = conn
 
-    def fileno(self):
-        raise io.UnsupportedOperation
+    def __getattr__(self, name):
+        return getattr(self.connection, name)
 
     def read(self, n):
         raise NotImplementedError
@@ -167,7 +176,7 @@ class NetcatPipeReader(NetcatPipeIO):
 
     def read(self, n):
         if self.connection.poll():
-            return self.connection.recv_bytes(n)
+            return self.connection.recv_bytes()
 
 
 class NetcatPipeWriter(NetcatPipeIO):
@@ -189,8 +198,8 @@ class NetcatQueueIO(object):
     def __init__(self, q):
         self.queue = q
 
-    def fileno(self):
-        raise io.UnsupportedOperation
+    def __getattr__(self, name):
+        return getattr(self.queue, name)
 
     def read(self, n):
         raise NotImplementedError
@@ -347,7 +356,10 @@ class NetcatContext(object):
         self.stdout = stdout or self.stdout
         self.stderr = stderr or self.stderr
 
-        if self.stdin is sys.stdin:
+        if isinstance(self.stdin, NetcatIO):
+            self._stdin = self.stdin.reader
+            self.stdin = self.stdin.writer
+        elif self.stdin is sys.stdin:
             if self.stdin.isatty():
                 self._stdin = NetcatConsoleInput()
             else:
@@ -485,6 +497,12 @@ class NetcatConnection(NetcatContext):
             self.q = q
         if w is not None:
             self.w = w
+
+    @classmethod
+    def from_other(cls, other, sock, **kwargs):
+        conn = cls(sock, **kwargs)
+        conn._stdin, conn.stdin = other._stdin, other.stdin
+        raise NotImplementedError
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
@@ -829,7 +847,7 @@ class NetcatIterator(NetcatContext):
         self._conn_kwargs = kwargs
 
     def _init_connection(self, sock):
-        inout = dict(stdin=self._stdin, stdout=self._stdout, stderr=self.stderr)
+        inout = dict(stdin=self._stdin, stdout=self._stdout, stderr=self._stderr)
 
         proc = None
         if self.c:
