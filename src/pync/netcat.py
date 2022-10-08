@@ -118,7 +118,38 @@ class NetcatProxyError(NetcatError):
         self.proxy_err =  proxy_err
 
 
-class NetcatStdinReader(object):
+class NetcatReader(object):
+
+    def read(self, n):
+        raise NotImplementedError
+
+
+class NetcatWriter(object):
+
+    def write(self, data):
+        raise NotImplementedError
+
+
+class NetcatIO(object):
+    Reader = None
+    Writer = None
+
+    def __init__(self, reader=None, writer=None):
+        self.reader = reader
+        self.writer = writer
+        if self.reader is None and self.Reader is not None:
+            self.reader = self.Reader()
+        if self.writer is None and self.Writer is not None:
+            self.writer = self.Writer()
+
+    def read(self, n):
+        return self.reader.read(n)
+
+    def write(self, data):
+        return self.writer.write(data)
+
+
+class NetcatStdinReader(NetcatReader):
 
     def __getattr__(self, name):
         return getattr(sys.stdin, name)
@@ -126,8 +157,11 @@ class NetcatStdinReader(object):
     def __eq__(self, other):
         return other == sys.stdin
 
+    def read(self, n):
+        return sys.stdin.read(n)
 
-class NetcatStdoutWriter(object):
+
+class NetcatStdoutWriter(NetcatWriter):
 
     def __getattr__(self, name):
         return getattr(sys.stdout, name)
@@ -135,8 +169,11 @@ class NetcatStdoutWriter(object):
     def __eq__(self, other):
         return other == sys.stdout
 
+    def write(self, data):
+        return sys.stdout.write(data)
 
-class NetcatStderrWriter(object):
+
+class NetcatStderrWriter(NetcatWriter):
 
     def __getattr__(self, name):
         return getattr(sys.stderr, name)
@@ -144,14 +181,8 @@ class NetcatStderrWriter(object):
     def __eq__(self, other):
         return other == sys.stderr
 
-
-class NetcatIO(object):
-
-    def fileno(self):
-        raise io.UnsupportedOperation
-
-    def read(self, n):
-        raise io.UnsupportedOperation
+    def write(self, data):
+        return sys.stderr.write(data)
 
 
 class NetcatPipeIO(object):
@@ -162,35 +193,29 @@ class NetcatPipeIO(object):
     def __getattr__(self, name):
         return getattr(self.connection, name)
 
-    def read(self, n):
-        raise NotImplementedError
 
-    def write(self, data):
-        raise NotImplementedError
-
-    def flush(self):
-        pass
-
-
-class NetcatPipeReader(NetcatPipeIO):
+class NetcatPipeReader(NetcatReader, NetcatPipeIO):
 
     def read(self, n):
         if self.connection.poll():
             return self.connection.recv_bytes()
 
 
-class NetcatPipeWriter(NetcatPipeIO):
+class NetcatPipeWriter(NetcatWriter, NetcatPipeIO):
 
     def write(self, data):
         self.connection.send_bytes(data)
 
 
-class NetcatPipe(object):
+class NetcatPipe(NetcatIO):
+    Reader = NetcatPipeReader
+    Writer = NetcatPipeWriter
 
     def __init__(self):
         recv_conn, send_conn = multiprocessing.Pipe(False)
-        self.reader = NetcatPipeReader(recv_conn)
-        self.writer = NetcatPipeWriter(send_conn)
+        reader = self.Reader(recv_conn)
+        writer = self.Writer(send_conn)
+        super(NetcatPipe, self).__init__(reader, writer)
 
 
 class NetcatQueueIO(object):
@@ -201,17 +226,8 @@ class NetcatQueueIO(object):
     def __getattr__(self, name):
         return getattr(self.queue, name)
 
-    def read(self, n):
-        raise NotImplementedError
 
-    def write(self, data):
-        raise NotImplementedError
-
-    def flush(self):
-        pass
-
-
-class NetcatQueueReader(NetcatQueueIO):
+class NetcatQueueReader(NetcatReader, NetcatQueueIO):
 
     def read(self, n):
         try:
@@ -220,18 +236,21 @@ class NetcatQueueReader(NetcatQueueIO):
             pass
 
 
-class NetcatQueueWriter(NetcatQueueIO):
+class NetcatQueueWriter(NetcatWriter, NetcatQueueIO):
 
     def write(self, data):
         self.queue.put(data)
 
 
-class NetcatQueue(object):
+class NetcatQueue(NetcatIO):
+    Reader = NetcatQueueReader
+    Writer = NetcatQueueWriter
 
     def __init__(self):
         q = multiprocessing.Queue()
-        self.reader = NetcatQueueReader(q)
-        self.writer = NetcatQueueWriter(q)
+        reader = self.Reader(q)
+        writer = self.Writer(q)
+        super(NetcatQueue, self).__init__(reader, writer)
 
 
 class NetcatFileIO(object):
@@ -250,7 +269,7 @@ class NetcatFileIO(object):
         raise NotImplementedError
 
 
-class NetcatFileReader(NetcatFileIO):
+class NetcatFileReader(NetcatReader, NetcatFileIO):
 
     def __init__(self, f):
         super(NetcatFileReader, self).__init__(f)
@@ -294,7 +313,7 @@ class NetcatFileReader(NetcatFileIO):
         return False
 
 
-class NetcatFileWriter(NetcatFileIO):
+class NetcatFileWriter(NetcatWriter, NetcatFileIO):
 
     def __init__(self, f):
         super(NetcatFileWriter, self).__init__(f)
@@ -329,6 +348,14 @@ class NetcatFileWriter(NetcatFileIO):
             pass
 
 
+class NetcatFile(NetcatIO):
+    Reader = NetcatFileReader
+    Writer = NetcatFileWriter
+
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError
+
+
 class NetcatConsoleWriter(NetcatFileWriter):
 
     def __init__(self):
@@ -359,6 +386,9 @@ class NetcatContext(object):
         if isinstance(self.stdin, NetcatIO):
             self._stdin = self.stdin.reader
             self.stdin = self.stdin.writer
+        elif isinstance(self.stdin, NetcatReader):
+            self._stdin = self.stdin
+            self.stdin = None
         elif self.stdin is sys.stdin:
             if self.stdin.isatty():
                 self._stdin = NetcatConsoleInput()
@@ -377,7 +407,13 @@ class NetcatContext(object):
             self._stdin = NetcatFileReader(self.stdin)
             self.stdin = None
 
-        if self.stdout is sys.stdout:
+        if isinstance(self.stdout, NetcatIO):
+            self._stdout = self.stdout.writer
+            self.stdout = self.stdout.reader
+        elif isinstance(self.stdout, NetcatWriter):
+            self._stdout = self.stdout
+            self.stdout = None
+        elif self.stdout is sys.stdout:
             self._stdout = NetcatFileWriter(NetcatStdoutWriter())
             self.stdout = None
         elif self.stdout == PIPE:
@@ -392,7 +428,13 @@ class NetcatContext(object):
             self._stdout = NetcatFileWriter(self.stdout)
             self.stdout = None
 
-        if self.stderr is sys.stderr:
+        if isinstance(self.stderr, NetcatIO):
+            self._stderr = self.stderr.writer
+            self.stderr = self.stderr.reader
+        if isinstance(self.stderr, NetcatWriter):
+            self._stderr = self.stderr
+            self.stderr = None
+        elif self.stderr is sys.stderr:
             self._stderr = NetcatFileWriter(NetcatStderrWriter())
             self.stderr = None
         elif self.stderr == PIPE:
@@ -411,6 +453,14 @@ class NetcatContext(object):
             self.stderr = None
 
         self._init_kwargs(**kwargs)
+
+    @classmethod
+    def from_other(cls, other, *args, **kwargs):
+        obj = cls(*args, **kwargs)
+        obj._stdin, obj.stdin = other._stdin, other.stdin
+        obj._stdout, obj.stdout = other._stdout, other.stdout
+        obj._stderr, obj.stderr = other._stderr, other.stderr
+        return obj
 
     def _init_kwargs(self, **kwargs):
         """
@@ -497,12 +547,6 @@ class NetcatConnection(NetcatContext):
             self.q = q
         if w is not None:
             self.w = w
-
-    @classmethod
-    def from_other(cls, other, sock, **kwargs):
-        conn = cls(sock, **kwargs)
-        conn._stdin, conn.stdin = other._stdin, other.stdin
-        raise NotImplementedError
 
     @classmethod
     def connect(cls, dest, port, **kwargs):
@@ -847,7 +891,11 @@ class NetcatIterator(NetcatContext):
         self._conn_kwargs = kwargs
 
     def _init_connection(self, sock):
-        inout = dict(stdin=self._stdin, stdout=self._stdout, stderr=self._stderr)
+        inout = dict(
+                stdin=NetcatIO(reader=self._stdin, writer=self.stdin),
+                stdout=NetcatIO(reader=self.stdout, writer=self._stdout),
+                stderr=NetcatIO(reader=self.stderr, writer=self._stderr),
+        )
 
         proc = None
         if self.c:
