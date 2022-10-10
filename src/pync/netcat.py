@@ -685,6 +685,7 @@ class NetcatConnection(NetcatContext):
                     last_io, sleep = time_now(), False
                 elif net_data is not None:
                     # netin EOF
+                    stdout_write(b'')
                     net_shutdown_rd()
                     netin_eof = True
 
