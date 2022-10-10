@@ -118,25 +118,16 @@ class NetcatProxyError(NetcatError):
         self.proxy_err =  proxy_err
 
 
-class NetcatReader(object):
-
-    def __init__(self, reader=None):
-        self._reader = reader
+class NetcatIOBase(object):
 
     def read(self, n):
-        return self._reader.read(n)
-
-
-class NetcatWriter(object):
-
-    def __init__(self, writer=None):
-        self._writer = writer
+        raise io.UnsupportedOperation
 
     def write(self, data):
-        return self._writer.write(data)
+        raise io.UnsupportedOperation
 
 
-class NetcatIO(object):
+class NetcatIO(NetcatIOBase):
     Reader = None
     Writer = None
 
@@ -155,7 +146,7 @@ class NetcatIO(object):
         return self.writer.write(data)
 
 
-class NetcatStdinReader(NetcatReader):
+class NetcatStdinReader(NetcatIOBase):
 
     def __getattr__(self, name):
         return getattr(sys.stdin, name)
@@ -167,7 +158,7 @@ class NetcatStdinReader(NetcatReader):
         return sys.stdin.read(n)
 
 
-class NetcatStdoutWriter(NetcatWriter):
+class NetcatStdoutWriter(NetcatIOBase):
 
     def __getattr__(self, name):
         return getattr(sys.stdout, name)
@@ -179,7 +170,7 @@ class NetcatStdoutWriter(NetcatWriter):
         return sys.stdout.write(data)
 
 
-class NetcatStderrWriter(NetcatWriter):
+class NetcatStderrWriter(NetcatIOBase):
 
     def __getattr__(self, name):
         return getattr(sys.stderr, name)
@@ -191,20 +182,45 @@ class NetcatStderrWriter(NetcatWriter):
         return sys.stderr.write(data)
 
 
-class NetcatPipeReader(NetcatReader):
+class NetcatPipeIOBase(NetcatIOBase):
+
+    def __init__(self, conn):
+        self.connection = conn
+        super(NetcatPipeIOBase, self).__init__()
+    
+    def poll(self):
+        raise io.UnsupportedOperation
+
+    def send_bytes(self, data):
+        raise io.UnsupportedOperation
+
+    def recv_bytes(self):
+        raise io.UnsupportedOperation
+
+
+class NetcatPipeReader(NetcatPipeIOBase):
+
+    def poll(self):
+        return self.connection.poll()
+
+    def recv_bytes(self):
+        return self.connection.recv_bytes()
 
     def read(self, n):
-        if self._reader.poll():
-            return self._reader.recv_bytes()
+        if self.poll():
+            return self.recv_bytes()
 
 
-class NetcatPipeWriter(NetcatWriter):
+class NetcatPipeWriter(NetcatPipeIOBase):
+
+    def send_bytes(self, data):
+        return self.connection.send_bytes(data)
 
     def write(self, data):
-        self._writer.send_bytes(data)
+        self.send_bytes(data)
 
 
-class NetcatPipe(NetcatIO):
+class NetcatPipeIO(NetcatIO):
     Reader = NetcatPipeReader
     Writer = NetcatPipeWriter
 
@@ -212,25 +228,44 @@ class NetcatPipe(NetcatIO):
         recv_conn, send_conn = multiprocessing.Pipe(False)
         reader = self.Reader(recv_conn)
         writer = self.Writer(send_conn)
-        super(NetcatPipe, self).__init__(reader, writer)
+        super(NetcatPipeIO, self).__init__(reader, writer)
 
 
-class NetcatQueueReader(NetcatReader):
+class NetcatQueueIOBase(NetcatIOBase):
+
+    def __init__(self, q):
+        self.queue = q
+        super(NetcatQueueIOBase, self).__init__()
+    
+    def get_nowait(self):
+        raise io.UnsupportedOperation
+
+    def put(self, data):
+        raise io.UnsupportedOperation
+
+
+class NetcatQueueReader(NetcatQueueIOBase):
+
+    def get_nowait(self):
+        return self.queue.get_nowait()
 
     def read(self, n):
         try:
-            return self._reader.get_nowait()
+            return self.get_nowait()
         except queue.Empty:
             pass
 
 
-class NetcatQueueWriter(NetcatWriter):
+class NetcatQueueWriter(NetcatQueueIOBase):
+
+    def put(self, data):
+        return self.queue.put(data)
 
     def write(self, data):
-        self._writer.put(data)
+        self.put(data)
 
 
-class NetcatQueue(NetcatIO):
+class NetcatQueueIO(NetcatIO):
     Reader = NetcatQueueReader
     Writer = NetcatQueueWriter
 
@@ -238,18 +273,30 @@ class NetcatQueue(NetcatIO):
         q = multiprocessing.Queue()
         reader = self.Reader(q)
         writer = self.Writer(q)
-        super(NetcatQueue, self).__init__(reader, writer)
+        super(NetcatQueueIO, self).__init__(reader, writer)
 
 
-class NetcatFileReader(NetcatReader):
+class NetcatFileIOBase(NetcatIOBase):
+    
+    def __init__(self, f):
+        self.file = f
+        try:
+            self._fileno = self.fileno()
+        except (AttributeError, io.UnsupportedOperation):
+            self._fileno = None
+        super(NetcatFileIOBase, self).__init__()
+
+    def fileno(self):
+        return self.file.fileno()
+
+    def poll(self):
+        raise io.UnsupportedOperation
+
+
+class NetcatFileReader(NetcatFileIOBase):
 
     def __init__(self, f):
         super(NetcatFileReader, self).__init__(f)
-        self._file = f
-        try:
-            self._fileno = f.fileno()
-        except (AttributeError, io.UnsupportedOperation):
-            self._fileno = None
         self.__poll_fileno = True
         self.__read_fileno = True
 
@@ -278,7 +325,7 @@ class NetcatFileReader(NetcatReader):
         return os.read(self._fileno, n)
 
     def _read_file(self, n):
-        return self._file.read(n)
+        return self.file.read(n)
 
     def _poll_file(self):
         return True
@@ -290,15 +337,10 @@ class NetcatFileReader(NetcatReader):
         return False
 
 
-class NetcatFileWriter(NetcatWriter):
+class NetcatFileWriter(NetcatFileIOBase):
 
     def __init__(self, f):
         super(NetcatFileWriter, self).__init__(f)
-        self._file = f
-        try:
-            self._fileno = f.fileno()
-        except (AttributeError, io.UnsupportedOperation):
-            self._fileno = None
         self.__write_fileno = True
 
     def write(self, data):
@@ -318,19 +360,16 @@ class NetcatFileWriter(NetcatWriter):
         self.flush()
 
     def _write_file(self, data):
-        self._file.write(data)
+        self.file.write(data)
 
     def _write_fileno(self, data):
         os.write(self._fileno, data)
 
     def flush(self):
-        try:
-            self._file.flush()
-        except AttributeError:
-            pass
+        self.file.flush()
 
 
-class NetcatFile(NetcatIO):
+class NetcatFileIO(NetcatIO):
     Reader = NetcatFileReader
     Writer = NetcatFileWriter
 
@@ -368,7 +407,7 @@ class NetcatContext(object):
         if isinstance(self.stdin, NetcatIO):
             self._stdin = self.stdin.reader
             self.stdin = self.stdin.writer
-        elif isinstance(self.stdin, NetcatReader):
+        elif isinstance(self.stdin, NetcatIOBase):
             self._stdin = self.stdin
             self.stdin = None
         elif self.stdin is sys.stdin:
@@ -378,11 +417,11 @@ class NetcatContext(object):
                 self._stdin = NetcatFileReader(NetcatStdinReader())
             self.stdin = None
         elif self.stdin == PIPE:
-            pipe = NetcatPipe()
+            pipe = NetcatPipeIO()
             self._stdin = pipe.reader
             self.stdin = pipe.writer
         elif self.stdin == QUEUE:
-            q = NetcatQueue()
+            q = NetcatQueueIO()
             self._stdin = q.reader
             self.stdin = q.writer
         else:
@@ -392,18 +431,18 @@ class NetcatContext(object):
         if isinstance(self.stdout, NetcatIO):
             self._stdout = self.stdout.writer
             self.stdout = self.stdout.reader
-        elif isinstance(self.stdout, NetcatWriter):
+        elif isinstance(self.stdout, NetcatIOBase):
             self._stdout = self.stdout
             self.stdout = None
         elif self.stdout is sys.stdout:
             self._stdout = NetcatFileWriter(NetcatStdoutWriter())
             self.stdout = None
         elif self.stdout == PIPE:
-            pipe = NetcatPipe()
+            pipe = NetcatPipeIO()
             self._stdout = pipe.writer
             self.stdout = pipe.reader
         elif self.stdout == QUEUE:
-            q = NetcatQueue()
+            q = NetcatQueueIO()
             self._stdout = q.writer
             self.stdout = q.reader
         else:
@@ -413,18 +452,18 @@ class NetcatContext(object):
         if isinstance(self.stderr, NetcatIO):
             self._stderr = self.stderr.writer
             self.stderr = self.stderr.reader
-        if isinstance(self.stderr, NetcatWriter):
+        if isinstance(self.stderr, NetcatIOBase):
             self._stderr = self.stderr
             self.stderr = None
         elif self.stderr is sys.stderr:
             self._stderr = NetcatFileWriter(NetcatStderrWriter())
             self.stderr = None
         elif self.stderr == PIPE:
-            pipe = NetcatPipe()
+            pipe = NetcatPipeIO()
             self._stderr = pipe.writer
             self.stderr = pipe.reader
         elif self.stderr == QUEUE:
-            q = NetcatQueue()
+            q = NetcatQueueIO()
             self._stderr = q.writer
             self.stderr = q.reader
         elif self.stderr == STDOUT:
@@ -1598,7 +1637,7 @@ class NetcatStopReadWrite(Exception):
     """
 
 
-class NetcatPythonStdinWriter(PythonStdinWriter, NetcatWriter):
+class NetcatPythonStdinWriter(PythonStdinWriter, NetcatIOBase):
 
     def write(self, *args, **kwargs):
         try:
@@ -1607,7 +1646,7 @@ class NetcatPythonStdinWriter(PythonStdinWriter, NetcatWriter):
             raise NetcatStopReadWrite
 
 
-class NetcatPythonStdoutReader(PythonStdoutReader, NetcatReader):
+class NetcatPythonStdoutReader(PythonStdoutReader, NetcatIOBase):
 
     def read(self, *args, **kwargs):
         try:
@@ -1633,24 +1672,31 @@ class NetcatPopen(NonBlockingPopen):
         self.stdout = NetcatProcessReader(self.stdout)
 
 
-class NetcatProcessWriter(NetcatWriter):
+class NetcatProcessIOBase(NetcatIOBase):
+
+    def __init__(self, f):
+        self.file = f
+        super(NetcatProcessIOBase, self).__init__()
+        
+
+class NetcatProcessWriter(NetcatProcessIOBase):
 
     def write(self, data):
         try:
-            self._writer.write(data)
+            self.file.write(data)
         except OSError:
             raise NetcatStopReadWrite
         self.flush()
 
     def flush(self):
-        self._writer.flush()
+        self.file.flush()
 
 
-class NetcatProcessReader(NetcatReader):
+class NetcatProcessReader(NetcatProcessIOBase):
 
     def read(self, n):
         try:
-            return self._reader.read(n)
+            return self.file.read(n)
         except ProcessTerminated:
             raise NetcatStopReadWrite
 
