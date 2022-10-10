@@ -123,9 +123,6 @@ class NetcatReader(object):
     def __init__(self, reader=None):
         self._reader = reader
 
-    def __getattr__(self, name):
-        return getattr(self._reader, name)
-
     def read(self, n):
         return self._reader.read(n)
 
@@ -134,9 +131,6 @@ class NetcatWriter(object):
 
     def __init__(self, writer=None):
         self._writer = writer
-
-    def __getattr__(self, name):
-        return getattr(self._writer, name)
 
     def write(self, data):
         return self._writer.write(data)
