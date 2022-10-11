@@ -65,19 +65,19 @@ class _UnixConsoleInput(_BaseConsoleInput):
 
     def __init__(self, *args, **kwargs):
         super(_UnixConsoleInput, self).__init__(*args, **kwargs)
-        self._stdin = sys.__stdin__
+        #self._stdin = sys.__stdin__
 
     def readline(self):
         # Non-blocking console input for *nix.
-        readables, _, _ = select.select([self._stdin], [], [], 0)
-        if self._stdin in readables:
+        readables, _, _ = select.select([sys.stdin], [], [], 0)
+        if sys.stdin in readables:
             return self._stdin_readline()
 
     def _stdin_readline(self):
         try:
-            return self._stdin.buffer.readline()
+            return sys.stdin.buffer.readline()
         except AttributeError:
-            return self._stdin.readline()
+            return sys.stdin.readline()
 
 
 if _WINDOWS:

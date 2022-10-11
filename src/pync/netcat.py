@@ -187,6 +187,9 @@ class NetcatPipeIOBase(NetcatIOBase):
     def __init__(self, conn):
         self.connection = conn
         super(NetcatPipeIOBase, self).__init__()
+
+    def fileno(self):
+        return self.connection.fileno()
     
     def poll(self):
         raise io.UnsupportedOperation
