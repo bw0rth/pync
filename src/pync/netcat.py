@@ -398,12 +398,12 @@ class NetcatConsoleWriter(NetcatFileWriter):
 class NetcatContext(object):
     D = False
     v = False
-    #stdin = sys.stdin
-    #stdout = sys.stdout
-    #stderr = sys.stderr
-    stdin = None
-    stdout = None
-    stderr = None
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
+    #stdin = None
+    #stdout = None
+    #stderr = None
 
     def __init__(self,
             D=None,
@@ -425,12 +425,12 @@ class NetcatContext(object):
         elif isinstance(self.stdin, NetcatIOBase):
             self._stdin = self.stdin
             self.stdin = None
-        elif self.stdin is None:
-            if sys.stdin.isatty():
+        elif self.stdin is sys.stdin:
+            if self.stdin.isatty():
                 self._stdin = NetcatConsoleInput()
             else:
                 self._stdin = NetcatFileReader(NetcatStdinReader())
-            #self.stdin = None
+            self.stdin = None
         elif self.stdin == PIPE:
             pipe = NetcatPipeIO()
             self._stdin = pipe.reader
@@ -449,9 +449,9 @@ class NetcatContext(object):
         elif isinstance(self.stdout, NetcatIOBase):
             self._stdout = self.stdout
             self.stdout = None
-        elif self.stdout is None:
+        elif self.stdout is sys.stdout:
             self._stdout = NetcatFileWriter(NetcatStdoutWriter())
-            #self.stdout = None
+            self.stdout = None
         elif self.stdout == PIPE:
             pipe = NetcatPipeIO()
             self._stdout = pipe.writer
@@ -470,9 +470,9 @@ class NetcatContext(object):
         if isinstance(self.stderr, NetcatIOBase):
             self._stderr = self.stderr
             self.stderr = None
-        elif self.stderr is None:
+        elif self.stderr is sys.stderr:
             self._stderr = NetcatFileWriter(NetcatStderrWriter())
-            #self.stderr = None
+            self.stderr = None
         elif self.stderr == PIPE:
             pipe = NetcatPipeIO()
             self._stderr = pipe.writer
@@ -2172,12 +2172,12 @@ class Netcat(object):
     UDPClient = NetcatUDPClient
     UDPServer = NetcatUDPServer
 
-    #stdin = sys.stdin
-    #stdout = sys.stdout
-    #stderr = sys.stderr
-    stdin = None
-    stdout = None
-    stderr = None
+    stdin = sys.stdin
+    stdout = sys.stdout
+    stderr = sys.stderr
+    #stdin = None
+    #stdout = None
+    #stderr = None
 
     def __new__(cls, dest='', port=None, l=False, u=False, p=None,
             stdin=None, stdout=None, stderr=None, **kwargs):
