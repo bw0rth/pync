@@ -96,6 +96,14 @@ def _debug(s):
     sys.__stderr__.flush()
 
 
+def _readwrite_close(nc):
+    # For NetcatContext().start() method.
+    try:
+        nc.readwrite()
+    finally:
+        nc.close()
+
+
 class NetcatError(Exception):
     
     def __init__(self, msg, *args):
@@ -515,13 +523,10 @@ class NetcatContext(object):
         self.close()
 
     def start(self, daemon=False):
-        def readwrite():
-            try:
-                self.readwrite()
-            finally:
-                self.close()
-
-        p = multiprocessing.Process(target=readwrite)
+        p = multiprocessing.Process(
+                target=_readwrite_close,
+                args=(self,)
+        )
         if daemon:
             p.daemon = True
         p.start()
