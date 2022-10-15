@@ -192,12 +192,13 @@ class NetcatPipeIOBase(NetcatIOBase):
 
     def __init__(self, conn):
         self.connection = conn
+        self._fileno = self.connection.fileno()
+        if _windows:
+            self._fileno = msvcrt.open_osfhandle(self._fileno, os.O_TEXT)
         super(NetcatPipeIOBase, self).__init__()
 
     def fileno(self):
-        if _windows:
-            return msvcrt.open_osfhandle(self.connection.fileno())
-        return self.connection.fileno()
+        return self._fileno
     
     def poll(self):
         raise io.UnsupportedOperation
