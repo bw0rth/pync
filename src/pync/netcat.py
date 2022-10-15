@@ -514,6 +514,14 @@ class NetcatContext(object):
     def __exit__(self, *args, **kwargs):
         self.close()
 
+    def start(self, daemon=False):
+        p = multiprocessing.Process(target=self.readwrite)
+        if daemon:
+            p.daemon = True
+        p.start()
+        if isinstance(self._stdout, NetcatPipeWriter):
+            self._stdout.close()
+
     def close(self):
         """
         Override to add any cleanup code.
