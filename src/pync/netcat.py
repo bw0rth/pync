@@ -23,6 +23,12 @@ import sys
 import time
 
 try:
+    import msvcrt
+    _windows = True
+except ImportError:
+    _windows = False
+
+try:
     # py2
     import Queue as queue
 except ImportError:
@@ -189,6 +195,8 @@ class NetcatPipeIOBase(NetcatIOBase):
         super(NetcatPipeIOBase, self).__init__()
 
     def fileno(self):
+        if _windows:
+            return msvcrt.open_osfhandle(self.connection.fileno())
         return self.connection.fileno()
     
     def poll(self):
