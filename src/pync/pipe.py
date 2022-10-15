@@ -16,19 +16,7 @@ else:
     ERROR_NO_DATA = 232
 
 
-class NonBlockingPipe(object):
-
-    def __init__(self):
-        self.pin, self.pout = self._create_pipe()
-        if not self.pin.set_nowait():
-            raise RuntimeError('Unable to create non-blocking pipe')
-
-    def _create_pipe(self):
-        rfd, wfd = os.pipe()
-        return _PipeInput(rfd), _PipeOutput(wfd)
-
-
-class _PipeIO(object):
+class PipeIOBase(object):
 
     def __init__(self, fd):
         self._fd = fd
@@ -37,7 +25,7 @@ class _PipeIO(object):
         return self._fd
 
 
-class _WinPipeInput(_PipeIO):
+class WinPipeReader(PipeIOBase):
 
     def read(self, n):
         # https://stackoverflow.com/a/34504971/11106801
@@ -69,7 +57,7 @@ class _WinPipeInput(_PipeIO):
         return not (res == 0)
 
 
-class _UnixPipeInput(_PipeIO):
+class UnixPipeReader(PipeIOBase):
 
     def read(self, n):
         can_read, _, _ = select.select([self._fd], [], [], 0)
@@ -81,13 +69,25 @@ class _UnixPipeInput(_PipeIO):
 
 
 if _WINDOWS:
-    _PipeInput = _WinPipeInput
+    PipeReader = WinPipeReader
 else:
-    _PipeInput = _UnixPipeInput
+    PipeReader = UnixPipeReader
 
 
-class _PipeOutput(_PipeIO):
+class PipeWriter(PipeIOBase):
 
     def write(self, data):
         return os.write(self._fd, data)
+
+
+class NonBlockingPipe(object):
+    Reader = PipeReader
+    Writer = PipeWriter
+
+    def __new__(cls):
+        rfd, wfd = os.pipe()
+        reader, writer = cls.Reader(rfd), cls.Writer(wfd)
+        if not reader.set_nowait():
+            raise RuntimeError('Unable to create non-blocking pipe')
+        return reader, writer
 
