@@ -209,6 +209,9 @@ class NetcatPipeIOBase(NetcatIOBase):
     def recv_bytes(self):
         raise io.UnsupportedOperation
 
+    def close(self):
+        os.close(self.fileno())
+
 
 class NetcatPipeReader(NetcatPipeIOBase):
 
@@ -230,6 +233,8 @@ class NetcatPipeWriter(NetcatPipeIOBase):
 
     def write(self, data):
         self.send_bytes(data)
+        if not data:
+            self.close()
 
 
 class NetcatPipeIO(NetcatIO):
