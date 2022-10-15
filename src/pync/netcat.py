@@ -24,9 +24,9 @@ import time
 
 try:
     import msvcrt
-    _windows = True
+    _mswindows = True
 except ImportError:
-    _windows = False
+    _mswindows = False
 
 try:
     # py2
@@ -193,7 +193,7 @@ class NetcatPipeIOBase(NetcatIOBase):
     def __init__(self, conn):
         self.connection = conn
         self._fileno = self.connection.fileno()
-        if _windows:
+        if _mswindows:
             self._fileno = msvcrt.open_osfhandle(self._fileno, os.O_TEXT)
         super(NetcatPipeIOBase, self).__init__()
 
@@ -401,9 +401,6 @@ class NetcatContext(object):
     stdin = sys.stdin
     stdout = sys.stdout
     stderr = sys.stderr
-    #stdin = None
-    #stdout = None
-    #stderr = None
 
     def __init__(self,
             D=None,
