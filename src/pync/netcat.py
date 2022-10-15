@@ -210,7 +210,7 @@ class NetcatPipeIOBase(NetcatIOBase):
         raise io.UnsupportedOperation
 
     def close(self):
-        os.close(self.fileno())
+        self.connection.close()
 
 
 class NetcatPipeReader(NetcatPipeIOBase):
@@ -232,9 +232,10 @@ class NetcatPipeWriter(NetcatPipeIOBase):
         return self.connection.send_bytes(data)
 
     def write(self, data):
-        self.send_bytes(data)
         if not data:
             self.close()
+            return
+        self.send_bytes(data)
 
 
 class NetcatPipeIO(NetcatIO):
@@ -243,8 +244,8 @@ class NetcatPipeIO(NetcatIO):
 
     def __init__(self):
         recv_conn, send_conn = multiprocessing.Pipe(False)
-        reader = self.Reader(recv_conn)
-        writer = self.Writer(send_conn)
+        reader = self.Reader(recv_conn, self)
+        writer = self.Writer(send_conn, self)
         super(NetcatPipeIO, self).__init__(reader, writer)
 
 
