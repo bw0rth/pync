@@ -761,7 +761,10 @@ class NetcatConnection(NetcatContext):
 
                 # stdin
                 if not stdin_detach:
-                    stdin_data = stdin_read(plen)
+                    try:
+                        stdin_data = stdin_read(plen)
+                    except EOFError:
+                        stdin_data = b''
 
                     # netout
                     if stdin_data:
