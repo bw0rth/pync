@@ -244,8 +244,8 @@ class NetcatPipeIO(NetcatIO):
 
     def __init__(self):
         recv_conn, send_conn = multiprocessing.Pipe(False)
-        reader = self.Reader(recv_conn, self)
-        writer = self.Writer(send_conn, self)
+        reader = self.Reader(recv_conn)
+        writer = self.Writer(send_conn)
         super(NetcatPipeIO, self).__init__(reader, writer)
 
 
