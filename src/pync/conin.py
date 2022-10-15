@@ -23,7 +23,6 @@ class _WinConsoleInput(_BaseConsoleInput):
     def __init__(self, *args, **kwargs):
         super(_WinConsoleInput, self).__init__(*args, **kwargs)
         self.line = b''
-        self._stdout = sys.__stdout__
     
     def readline(self):
         # Non-blocking console input for Windows.
@@ -55,17 +54,13 @@ class _WinConsoleInput(_BaseConsoleInput):
 
     def _stdout_write(self, data):
         try:
-            self._stdout.buffer.write(data)
+            sys.stdout.buffer.write(data)
         except AttributeError:
-            self._stdout.write(data)
-        self._stdout.flush()
+            sys.stdout.write(data)
+        sys.stdout.flush()
 
 
 class _UnixConsoleInput(_BaseConsoleInput):
-
-    def __init__(self, *args, **kwargs):
-        super(_UnixConsoleInput, self).__init__(*args, **kwargs)
-        #self._stdin = sys.__stdin__
 
     def readline(self):
         # Non-blocking console input for *nix.

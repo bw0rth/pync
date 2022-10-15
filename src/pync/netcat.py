@@ -23,6 +23,12 @@ import sys
 import time
 
 try:
+    import msvcrt
+    _mswindows = True
+except ImportError:
+    _mswindows = False
+
+try:
     # py2
     import Queue as queue
 except ImportError:
@@ -88,6 +94,14 @@ QUEUE = -3
 def _debug(s):
     sys.__stderr__.write(s+'\n')
     sys.__stderr__.flush()
+
+
+def _readwrite_close(nc):
+    # For NetcatContext().start() method.
+    try:
+        nc.readwrite()
+    finally:
+        nc.close()
 
 
 class NetcatError(Exception):
@@ -186,10 +200,13 @@ class NetcatPipeIOBase(NetcatIOBase):
 
     def __init__(self, conn):
         self.connection = conn
+        self._fileno = self.connection.fileno()
+        if _mswindows:
+            self._fileno = msvcrt.open_osfhandle(self._fileno, os.O_TEXT)
         super(NetcatPipeIOBase, self).__init__()
 
     def fileno(self):
-        return self.connection.fileno()
+        return self._fileno
     
     def poll(self):
         raise io.UnsupportedOperation
@@ -199,6 +216,9 @@ class NetcatPipeIOBase(NetcatIOBase):
 
     def recv_bytes(self):
         raise io.UnsupportedOperation
+
+    def close(self):
+        self.connection.close()
 
 
 class NetcatPipeReader(NetcatPipeIOBase):
@@ -221,6 +241,8 @@ class NetcatPipeWriter(NetcatPipeIOBase):
 
     def write(self, data):
         self.send_bytes(data)
+        if not data:
+            self.close()
 
 
 class NetcatPipeIO(NetcatIO):
@@ -500,6 +522,18 @@ class NetcatContext(object):
     def __exit__(self, *args, **kwargs):
         self.close()
 
+    def start(self, daemon=False):
+        p = multiprocessing.Process(
+                target=_readwrite_close,
+                args=(self,)
+        )
+        if daemon:
+            p.daemon = True
+        p.start()
+        if isinstance(self._stdout, NetcatPipeWriter):
+            self._stdout.close()
+        return p
+
     def close(self):
         """
         Override to add any cleanup code.
@@ -727,7 +761,10 @@ class NetcatConnection(NetcatContext):
 
                 # stdin
                 if not stdin_detach:
-                    stdin_data = stdin_read(plen)
+                    try:
+                        stdin_data = stdin_read(plen)
+                    except EOFError:
+                        stdin_data = b''
 
                     # netout
                     if stdin_data:
@@ -2163,6 +2200,9 @@ class Netcat(object):
     stdin = sys.stdin
     stdout = sys.stdout
     stderr = sys.stderr
+    #stdin = None
+    #stdout = None
+    #stderr = None
 
     def __new__(cls, dest='', port=None, l=False, u=False, p=None,
             stdin=None, stdout=None, stderr=None, **kwargs):
