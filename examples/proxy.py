@@ -8,8 +8,6 @@ example usage:
 '''
 
 import argparse
-import contextlib
-
 import pync
 
 
@@ -46,9 +44,7 @@ def main():
             stdin=server.stdout,
             stdout=server.stdin,
     )
-
-    with contextlib.closing(client):
-        client.readwrite()
+    client.run()
 
 
 if __name__ == '__main__':
