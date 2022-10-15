@@ -232,10 +232,9 @@ class NetcatPipeWriter(NetcatPipeIOBase):
         return self.connection.send_bytes(data)
 
     def write(self, data):
+        self.send_bytes(data)
         if not data:
             self.close()
-            return
-        self.send_bytes(data)
 
 
 class NetcatPipeIO(NetcatIO):
