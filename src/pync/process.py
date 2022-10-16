@@ -179,12 +179,12 @@ class NonBlockingPopen(object):
         pipe = None
         if stdout == subprocess.PIPE:
             pipe = NonBlockingPipe()
-            stdout = pipe.pout
+            stdout = pipe[1]
 
         self._proc = subprocess.Popen(args, stdout=stdout, **kwargs)
 
         if pipe is not None:
-            self.stdout = ProcessReader(self._proc, pipe.pin)
+            self.stdout = ProcessReader(self._proc, pipe[0])
 
     def __getattr__(self, name):
         return getattr(self._proc, name)

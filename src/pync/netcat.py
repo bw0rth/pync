@@ -522,13 +522,17 @@ class NetcatContext(object):
     def __exit__(self, *args, **kwargs):
         self.close()
 
+    def run(self):
+        try:
+            self.readwrite()
+        finally:
+            self.close()
+
     def start(self, daemon=False):
         p = multiprocessing.Process(
-                target=_readwrite_close,
-                args=(self,)
+                target=self.run,
+                daemon=daemon,
         )
-        if daemon:
-            p.daemon = True
         p.start()
         if isinstance(self._stdout, NetcatPipeWriter):
             self._stdout.close()
