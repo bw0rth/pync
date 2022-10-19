@@ -500,14 +500,6 @@ class NetcatContext(object):
 
         self._init_kwargs(**kwargs)
 
-    @classmethod
-    def from_other(cls, other, *args, **kwargs):
-        obj = cls(*args, **kwargs)
-        obj._stdin, obj.stdin = other._stdin, other.stdin
-        obj._stdout, obj.stdout = other._stdout, other.stdout
-        obj._stderr, obj.stderr = other._stderr, other.stderr
-        return obj
-
     def _init_kwargs(self, **kwargs):
         """
         Override this to parse and initialize
@@ -529,6 +521,12 @@ class NetcatContext(object):
             self.close()
 
     def start(self, daemon=False):
+        try:
+            return self.start_process(daemon=daemon)
+        except:
+            return self.start_thread(daemon=daemon)
+
+    def start_process(self, daemon=False):
         p = multiprocessing.Process(
                 target=self.run,
                 daemon=daemon,
@@ -537,6 +535,14 @@ class NetcatContext(object):
         if isinstance(self._stdout, NetcatPipeWriter):
             self._stdout.close()
         return p
+
+    def start_thread(self, daemon=False):
+        t = threading.Thread(
+                target=self.run,
+                daemon=daemon,
+        )
+        t.start()
+        return t
 
     def close(self):
         """
