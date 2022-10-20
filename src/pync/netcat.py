@@ -521,7 +521,8 @@ class NetcatContext(object):
         finally:
             self.close()
 
-    def start(self, daemon=False):
+    def __start(self, daemon=False):
+        raise NotImplementedError
         try:
             return self.start_process(daemon=daemon)
         except:
