@@ -37,7 +37,7 @@ simple TCP proxy.
               stdin=pync.PIPE,
               stdout=pync.PIPE,
           )
-          server.start(daemon=True)
+          server.start_process(daemon=True)
 
           client = pync.Netcat('host.example.com', 80,
               stdin=server.stdout,
