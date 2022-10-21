@@ -76,14 +76,13 @@ def main():
     nc = Netcat(
             dest=args.dest,
             port=args.port,
-            y=pycode,        # Execute a python interpreter shell upon connection.
-            l=args.l,        # Listen for connections (server mode).
-            v=True,          # Print connection status messages to stderr.
+            y=pycode,
+            l=args.l,
+            v=True,
     )
 
     try:
-        with contextlib.closing(nc):
-            nc.readwrite()
+        nc.run()
     except KeyboardInterrupt:
         print()
 
