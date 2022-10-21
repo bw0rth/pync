@@ -180,9 +180,9 @@ Examples
      - Description
    * - `chat.py <https://github.com/brenw0rth/pync/blob/main/examples/chat.py>`_
      - Simple chat protocol with a custom username
-   * - `upload.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/upload.py>`_
+   * - `upload.py <https://github.com/brenw0rth/pync/tree/main/examples/upload.py>`_
      - Simple file upload (use with caution).
-   * - `download.py <https://github.com/brenw0rth/pync/tree/main/examples/ftransfer/download.py>`_
+   * - `download.py <https://github.com/brenw0rth/pync/tree/main/examples/download.py>`_
      - Simple file download (use with caution).
    * - `proxy.py <https://github.com/brenw0rth/pync/blob/main/examples/proxy.py>`_
      - Simple TCP proxy server
