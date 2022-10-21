@@ -10,7 +10,6 @@ example server:
 '''
 
 import argparse
-import contextlib
 import os
 
 from pync import Netcat
@@ -50,12 +49,11 @@ def main():
         nc = Netcat(
                 dest=args.dest,
                 port=args.port,
-                v=True,          # Verbose
-                l=args.l,        # Listen for connections (server mode).
-                stdout=f,        # Write network data to stdout (f).
+                v=True,
+                l=args.l,
+                stdout=f,
         )
-        with contextlib.closing(nc):
-            nc.readwrite()
+        nc.run()
 
 
 if __name__ == '__main__':
