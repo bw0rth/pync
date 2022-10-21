@@ -10,7 +10,6 @@ example reverse shell:
 '''
 
 import argparse
-import contextlib
 import platform
 
 from pync import Netcat
