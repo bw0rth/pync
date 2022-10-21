@@ -79,14 +79,13 @@ def main():
     nc = Netcat(
             dest=args.dest,
             port=args.port,
-            e=command,       # Execute a command upon connection.
-            l=args.l,        # Listen for connections (server mode).
-            v=True,          # Print connection status messages to stderr.
+            e=command,
+            l=args.l,
+            v=True,
     )
 
     try:
-        with contextlib.closing(nc):
-            nc.readwrite()
+        nc.run()
     except KeyboardInterrupt:
         print()
 
