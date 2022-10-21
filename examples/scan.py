@@ -34,8 +34,7 @@ def main():
             v=True,          # Print connection status messages to stderr.
             z=True,          # Zero I/O mode (connect then close).
     )
-    with nc:
-        nc.readwrite()
+    nc.run()
 
 
 if __name__ == '__main__':
