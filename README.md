@@ -73,7 +73,7 @@ pync(args, stdin, stdout, stderr)
 </details>
 
 ## Description
-Inspired by the [Black Hat Python](https://github.com/EONRaider/blackhat-python3) book,
+Inspired by the [Black Hat Python](https://nostarch.com/black-hat-python2E) book,
 the goal of **pync** is to create an easy to use library that
 provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
