@@ -2,6 +2,8 @@
 shell-script based HTTP clients and servers
 *******************************************
 
-Simple HTTP cllient
-===================
+A Simple HTTP client
+====================
 
+A Simple HTTP Server
+====================
