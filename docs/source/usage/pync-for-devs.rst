@@ -1,6 +1,6 @@
-**************************
-pync For Python Developers
-**************************
+*******************
+pync For Developers
+*******************
 There are two main objects of interest when using
 **pync** in your own Python scripts: the **pync** function
 and the Netcat class.
