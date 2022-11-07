@@ -79,7 +79,7 @@ provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for P
 
 Common uses include:
 * [simple TCP proxies](https://pync.readthedocs.io/en/latest/common/tcp-proxy.html)
-* shell-script based HTTP clients and servers
+* [shell-script based HTTP clients and servers](https://pync.readthedocs.io/en/latest/common/http.html)
 * network daemon testing
 * a SOCKS or HTTP ProxyCommand for ssh(1)
 
