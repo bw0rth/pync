@@ -57,6 +57,7 @@ Inspired by the Black Hat Python book, the goal of **pync** is to create an easy
 Common uses include:
 
 * :doc:`common/tcp-proxy`
+* :doc:`common/http`
 * shell-script based HTTP clients and servers
 * network daemon testing
 * a SOCKS or HTTP ProxyCommand for ssh(1)
