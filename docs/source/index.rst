@@ -58,8 +58,7 @@ Common uses include:
 
 * :doc:`common/tcp-proxy`
 * :doc:`common/http`
-* shell-script based HTTP clients and servers
-* network daemon testing
+* :doc:`common/network-testing`
 * a SOCKS or HTTP ProxyCommand for ssh(1)
 
 Installation
