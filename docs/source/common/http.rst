@@ -5,6 +5,10 @@ shell-script based HTTP clients and servers
 A Simple HTTP client
 ====================
 
+Retrieving the home page of a website can be as
+simple as passing a GET request string to
+**pync**'s stdin stream:
+
 .. tab:: Unix
 
    .. code-block:: sh
