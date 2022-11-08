@@ -35,3 +35,4 @@ First create a text file for the http response (index.http):
 
 .. literalinclude:: ../../data/http_ok.txt
    :linenos:
+   :language: html
