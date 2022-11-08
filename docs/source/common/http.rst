@@ -30,3 +30,8 @@ simple as passing a GET request string to
 
 A Simple HTTP Server
 ====================
+
+First create a text file for the http response (index.http):
+
+.. literalinclude:: ../../data/http_ok.txt
+   :linenos:
