@@ -59,7 +59,7 @@ Common uses include:
 * :doc:`common/tcp-proxy`
 * :doc:`common/http`
 * :doc:`common/network-testing`
-* a SOCKS or HTTP ProxyCommand for ssh(1)
+* :doc:`common/proxy-command`
 
 Installation
 ============
