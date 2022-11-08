@@ -7,4 +7,5 @@ Common Uses
    tcp-proxy
    http
    network-testing
+   proxy-command
 
