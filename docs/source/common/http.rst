@@ -20,6 +20,9 @@ A Simple HTTP client
       
       req = io.BytesIO(b'GET / HTTP/1.1\r\n\r\n')
       pync('host.example.com 80', stdin=req)
+      
+.. note::
+   The response will contain HTTP headers that would need filtering out using another tool.
 
 A Simple HTTP Server
 ====================
