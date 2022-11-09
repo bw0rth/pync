@@ -36,3 +36,11 @@ A Simple HTTP Server
 .. literalinclude:: ../../data/index.html
    :linenos:
    :language: html
+   
+2. Create the server:
+   
+.. tab::Unix
+
+   .. code-block:: sh
+   
+      pync -vlkc "cat index.html" 8000
