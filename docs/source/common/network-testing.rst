@@ -32,3 +32,15 @@ The **-z** flag tells **pync** to close the
 connection immediately (zero input/output)
 while the **-v** flag prints a connection
 success or failure message to the console.
+
+.. tab:: Success
+
+   .. code-block:: sh
+
+      Connection successful!
+
+.. tab:: Failed
+
+   .. code-block:: sh
+
+      Connection failed
