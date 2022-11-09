@@ -7,7 +7,7 @@ Is the server online?
 
 To test whether a server is accepting
 connections, you can combine the **-v** and
-**-z** flags:
+**-z** flags together:
 
 .. tab:: Unix
 
@@ -27,3 +27,8 @@ connections, you can combine the **-v** and
 
       from pync import pync
       pync('-vz host.example.com 80')
+
+The **-z** flag tells **pync** to close the
+connection immediately (zero input/output)
+while the **-v** flag prints a connection
+success or failure message to the console.
