@@ -31,8 +31,8 @@ simple as passing a GET request string to
 A Simple HTTP Server
 ====================
 
-First create a text file for the http response (index.http):
+1. Create the HTML index page to serve (index.html):
 
-.. literalinclude:: ../../data/http_ok.txt
+.. literalinclude:: ../../data/index.html
    :linenos:
    :language: html
