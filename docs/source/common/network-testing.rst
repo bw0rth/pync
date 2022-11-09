@@ -33,14 +33,14 @@ connection immediately (zero input/output)
 while the **-v** flag prints a connection
 success or failure message to the console.
 
-.. tab:: Connection succeeded
+.. tab:: Success
 
    .. code-block:: sh
 
       ...
-      Connection to host.example.com 80 port [tcp/*] succeeded!
+      Connection to host.example.com 80 port [tcp/http] succeeded!
 
-.. tab:: Failed
+.. tab:: Failure
 
    .. code-block:: sh
 
