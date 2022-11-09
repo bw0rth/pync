@@ -31,7 +31,7 @@ connections, you can combine the **-v** and
 The **-z** flag tells **pync** to close the
 connection immediately (zero input/output)
 while the **-v** flag prints a connection
-success or failure message to the console.
+success or failure message to the console:
 
 .. tab:: Success
 
