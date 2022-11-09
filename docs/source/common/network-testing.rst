@@ -46,3 +46,6 @@ success or failure message to the console:
 
       ...
       pync: connect to host.example.com port 80 (tcp) failed: Connection refused
+
+See :doc:`../usage/port-scanning` for testing
+multiple ports on a machine.
