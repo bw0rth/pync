@@ -44,3 +44,22 @@ A Simple HTTP Server
    .. code-block:: sh
    
       pync -vlkc "cat index.html" 8000
+      
+.. tab:: Windows
+
+   .. code-block:: sh
+   
+      py -m pync -vlkc "type index.html" 8000
+      
+.. tab:: Python
+
+   .. code-block:: python
+   
+      import platform
+      from pync import pync
+      
+      cat = 'cat'
+      if platform.system() == 'Windows':
+          cat = 'type'
+          
+      pync('-vlkc "{cat} index.html" 8000'.format(cat=cat))
