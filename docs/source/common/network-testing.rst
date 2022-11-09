@@ -33,14 +33,16 @@ connection immediately (zero input/output)
 while the **-v** flag prints a connection
 success or failure message to the console.
 
-.. tab:: Success
+.. tab:: Connection succeeded
 
    .. code-block:: sh
 
-      Connection successful!
+      ...
+      Connection to host.example.com 80 port [tcp/*] succeeded!
 
 .. tab:: Failed
 
    .. code-block:: sh
 
-      Connection failed
+      ...
+      pync: connect to host.example.com port 80 (tcp) failed: Connection refused
