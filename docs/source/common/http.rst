@@ -31,25 +31,25 @@ simple as passing a GET request string to
 A Simple HTTP Server
 ====================
 
-1. Create the HTML index page to serve (index.html):
+1. Create a file that contains the HTTP response (index.http):
 
-.. literalinclude:: ../../data/index.html
+.. literalinclude:: ../../data/index.http
    :linenos:
    :language: html
    
-2. Listen for connections on port 8000 and serve the index.html file:
+2. Listen for connections on port 8000 and serve the index.http file:
    
 .. tab:: Unix
 
    .. code-block:: sh
    
-      pync -vlkc "cat index.html" 8000
+      pync -vlkc "cat index.http" 8000
       
 .. tab:: Windows
 
    .. code-block:: sh
    
-      py -m pync -vlkc "type index.html" 8000
+      py -m pync -vlkc "type index.http" 8000
       
 .. tab:: Python
 
@@ -62,4 +62,4 @@ A Simple HTTP Server
       if platform.system() == 'Windows':
           cat = 'type'
           
-      pync('-vlkc "{cat} index.html" 8000'.format(cat=cat))
+      pync('-vlkc "{cat} index.http" 8000'.format(cat=cat))
