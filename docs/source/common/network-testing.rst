@@ -6,8 +6,8 @@ Is the server online?
 =====================
 
 To test whether a server is accepting
-connections, you can use the -z flag to turn
-zero input/output mode on:
+connections, you can combine the **-v** and
+**-z** flags:
 
 .. tab:: Unix
 
