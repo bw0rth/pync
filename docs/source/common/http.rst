@@ -37,9 +37,9 @@ A Simple HTTP Server
    :linenos:
    :language: html
    
-2. Create the server:
+2. Listen for connections on port 8000 and serve the index.html file:
    
-.. tab::Unix
+.. tab:: Unix
 
    .. code-block:: sh
    
