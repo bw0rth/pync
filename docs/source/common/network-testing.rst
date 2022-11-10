@@ -75,14 +75,14 @@ to test how it responds to certain requests.
 
    .. code-block:: python
 
-   from pync import pync
-   pync('host.example.com 80')
+      from pync import pync
+      pync('host.example.com 80')
 
 2. Once connected, send a HTTP GET request
-   and hit enter a couple of times:
+   by typing the following and hitting enter
+   a couple of times:
 
 .. code-block:: sh
 
-   GET / HTTP/1.1
-
    ...
+   GET / HTTP/1.1
