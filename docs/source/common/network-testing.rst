@@ -92,5 +92,4 @@ of the requested web page (index.html in
 this case):
 
 .. literalinclude:: ../../data/index.http
-   :linenos:
    :language: html
