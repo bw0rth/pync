@@ -84,5 +84,4 @@ to test how it responds to certain requests.
 
 .. code-block:: sh
 
-   ...
    GET / HTTP/1.1
