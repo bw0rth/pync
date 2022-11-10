@@ -54,25 +54,35 @@ by passing a range of port numbers. See
 What is the server saying?
 ==========================
 
-It can also be useful to test how a server
-responds to certain requests.
+It can also be useful to interact with a server
+to test how it responds to certain requests.
 
-For example, you can send a HTTP GET request
-to the server to view all the HTTP headers in
-the response:
+1. Connect to the server:
 
 .. tab:: Unix
 
    .. code-block:: sh
 
-      printf "GET / HTTP/1.1\r\n\r\n" | pync host.example.com 80
+      pync host.example.com 80
+
+.. tab:: Windows
+
+   .. code-block:: sh
+
+      py -m pync host.example.com 80
 
 .. tab:: Python
 
    .. code-block:: python
 
-      import io
-      from pync import pync
-      
-      http_get = io.BytesIO(b'GET / HTTP/1.1\r\n\r\n')
-      pync('host.example.com 80', stdin=http_get)
+   from pync import pync
+   pync('host.example.com 80')
+
+2. Once connected, send a HTTP GET request
+   and hit enter a couple of times:
+
+.. code-block:: sh
+
+   GET / HTTP/1.1
+
+   ...
