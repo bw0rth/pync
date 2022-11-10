@@ -83,18 +83,27 @@ web page (if it exists).
       from pync import pync
       pync('host.example.com 80')
 
-2. Once connected, send a HTTP GET request
-   by typing the following and hitting enter
-   a couple of times:
+2. Once connected, send a GET request for the
+   home page by typing the following and
+   hitting enter a couple of times:
 
 .. code-block:: sh
 
    GET / HTTP/1.1
 
 If all goes well, the server should respond
-with a HTTP 200 OK along with the contents
-of the requested web page (index.html in
-this case):
+with a HTTP 200 OK status along with the
+contents of the requested web page
+(index.html in this case):
 
-.. literalinclude:: ../../data/index.http
-   :language: html
+HTTP/1.1 200 OK
+Server: host.example.com
+Content-Type: text/html; charset=UTF-8
+...
+
+<!doctype html>
+<html>
+  <body>
+    <h1>Example Web Page!</h1>
+  </body>
+</html>
