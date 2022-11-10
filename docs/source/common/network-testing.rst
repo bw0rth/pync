@@ -56,3 +56,23 @@ What is the server saying?
 
 It can also be useful to test how a server
 responds to certain requests.
+
+For example, you can send a HTTP GET request
+to the server to view all the HTTP headers in
+the response:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+
+      printf "GET / HTTP/1.1\r\n\r\n" | pync host.example.com 80
+
+.. tab:: Python
+
+   .. code-block:: python
+
+      import io
+      from pync import pync
+      
+      http_get = io.BytesIO(b'GET / HTTP/1.1\r\n\r\n')
+      pync('host.example.com 80', stdin=http_get)
