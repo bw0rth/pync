@@ -57,7 +57,7 @@ What is the server saying?
 It can also be useful to interact with a server
 to test how it responds to certain requests.
 
-1. Connect to the server:
+1. Connect to a web server:
 
 .. tab:: Unix
 
@@ -89,4 +89,4 @@ to test how it responds to certain requests.
 If all goes well, the server should respond
 with a HTTP 200 OK along with the contents
 of the requested web page (index.html in
-this case).
+this case):
