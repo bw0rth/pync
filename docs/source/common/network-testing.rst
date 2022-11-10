@@ -57,6 +57,11 @@ How is the server behaving?
 It can also be useful to interact with a server
 to test how it responds to certain requests.
 
+For example, a web server should respond to
+a HTTP GET request by sending back a HTTP
+status code and the contents of the requested
+web page (if it exists).
+
 1. Connect to a web server:
 
 .. tab:: Unix
