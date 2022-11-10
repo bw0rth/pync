@@ -85,3 +85,6 @@ to test how it responds to certain requests.
 .. code-block:: sh
 
    GET / HTTP/1.1
+
+If all goes well, the server should respond
+with a HTTP 200 OK.
