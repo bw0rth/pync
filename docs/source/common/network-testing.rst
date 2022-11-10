@@ -96,14 +96,16 @@ with a HTTP 200 OK status along with the
 contents of the requested web page
 (index.html in this case):
 
-HTTP/1.1 200 OK
-Server: host.example.com
-Content-Type: text/html; charset=UTF-8
-...
+.. code-block:: sh
 
-<!doctype html>
-<html>
-  <body>
-    <h1>Example Web Page!</h1>
-  </body>
-</html>
+   HTTP/1.1 200 OK
+   Server: host.example.com
+   Content-Type: text/html; charset=UTF-8
+   ...
+
+   <!doctype html>
+   <html>
+     <body>
+       <h1>Example Web Page!</h1>
+     </body>
+   </html>
