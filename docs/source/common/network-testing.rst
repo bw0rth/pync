@@ -51,8 +51,8 @@ You can also scan multiple ports on a machine
 by passing a range of port numbers. See
 :doc:`../usage/port-scanning` for more.
 
-What is the server saying?
-==========================
+How is the server behaving?
+===========================
 
 It can also be useful to interact with a server
 to test how it responds to certain requests.
