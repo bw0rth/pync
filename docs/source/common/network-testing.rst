@@ -90,3 +90,7 @@ If all goes well, the server should respond
 with a HTTP 200 OK along with the contents
 of the requested web page (index.html in
 this case):
+
+.. literalinclude:: ../../data/index.http
+   :linenos:
+   :language: html
