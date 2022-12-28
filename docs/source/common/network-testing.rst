@@ -51,8 +51,8 @@ You can also scan multiple ports on a machine
 by passing a range of port numbers. See
 :doc:`../usage/port-scanning` for more.
 
-How is the server behaving?
-===========================
+How is the server responding?
+=============================
 
 It can also be useful to interact with a server
 to test how it responds to certain requests.
@@ -92,9 +92,9 @@ web page (if it exists).
    GET / HTTP/1.1
 
 If all goes well, the server should respond
-with a HTTP 200 OK status along with the
-contents of the requested web page
-(index.html in this case):
+with a HTTP 200 OK status along with any HTTP
+headers and the contents of the requested web
+page (index.html in this case):
 
 .. code-block:: sh
 
