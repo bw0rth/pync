@@ -27,7 +27,8 @@ simple TCP proxy.
 
    .. code-block:: python
       :linenos:
-
+      
+      # proxy.py
       import pync
       
       
@@ -48,3 +49,28 @@ simple TCP proxy.
               
       if __name__ == '__main__':
           main()
+          
+This would create a proxy server on port 8000 that
+will forward any request made to it to the destination
+server (host.example.com in this case).
+
+To test this out, connect to the proxy server on port
+8000 and send a HTTP GET request:
+
+.. tab:: Unix
+
+   .. code-block:: sh
+   
+      echo "GET / HTTP/1.0" | pync localhost 8000
+      
+.. tab:: Python
+
+   .. code-block:: python
+      :linenos:
+      
+      # http_get.py
+      from io import BytesIO
+      from pync import pync
+      
+      http_get = BytesIO(b'GET / HTTP/1.0')
+      pync('localhost 8000', stdin=http_get)
