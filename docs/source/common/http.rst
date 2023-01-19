@@ -1,5 +1,5 @@
 *******************************************
-shell-script based HTTP clients and servers
+python-script based HTTP clients and servers
 *******************************************
 
 A Simple HTTP client
