@@ -61,7 +61,7 @@ To test this out, connect to the proxy server on port
 
    .. code-block:: sh
    
-      echo "GET / HTTP/1.0" | pync localhost 8000
+      echo "GET / HTTP/1.1\r\n\r\n" | pync localhost 8000
       
 .. tab:: Python
 
@@ -72,5 +72,5 @@ To test this out, connect to the proxy server on port
       from io import BytesIO
       from pync import pync
       
-      http_get = BytesIO(b'GET / HTTP/1.0')
+      http_get = BytesIO(b'GET / HTTP/1.1\r\n\r\n')
       pync('localhost 8000', stdin=http_get)
