@@ -9,21 +9,13 @@ Retrieving the home page of a website can be as
 simple as passing a GET request string to
 **pync**'s stdin stream:
 
-.. tab:: Unix
-
-   .. code-block:: sh
-      
-      printf "GET / HTTP/1.1\r\n\r\n" | pync host.example.com 80
-
-.. tab:: Python
-
-   .. code-block:: python
+.. code-block:: python
    
-      import io
-      from pync import pync
-      
-      http_get = io.BytesIO(b'GET / HTTP/1.1\r\n\r\n')
-      pync('host.example.com 80', stdin=http_get)
+   import io
+   from pync import pync
+     
+   http_get = io.BytesIO(b'GET / HTTP/1.1\r\n\r\n')
+   pync('host.example.com 80', stdin=http_get)
       
 .. note::
    The response will contain HTTP headers that would need filtering out using another tool.
@@ -38,28 +30,14 @@ A Simple HTTP Server
    :language: html
    
 2. Listen for connections on port 8000 and serve the index.http file:
-   
-.. tab:: Unix
 
-   .. code-block:: sh
+.. code-block:: python
    
-      pync -vlkc "cat index.http" 8000
+   import platform
+   from pync import pync
       
-.. tab:: Windows
-
-   .. code-block:: sh
-   
-      py -m pync -vlkc "type index.http" 8000
-      
-.. tab:: Python
-
-   .. code-block:: python
-   
-      import platform
-      from pync import pync
-      
-      cat = 'cat'
-      if platform.system() == 'Windows':
-          cat = 'type'
+   cat = 'cat'
+   if platform.system() == 'Windows':
+       cat = 'type'
           
-      pync('-vlkc "{cat} index.http" 8000'.format(cat=cat))
+   pync('-vlkc "{cat} index.http" 8000'.format(cat=cat))
