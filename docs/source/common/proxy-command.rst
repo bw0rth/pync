@@ -2,10 +2,27 @@
 a SOCKS or HTTP ProxyCommand for ssh(1)
 ***************************************
 
+It's possible to tunnel **pync**'s traffic through a proxy
+server by specifying it's address with the -x argument:
 
-SOCKS
-=====
+.. code-block:: sh
 
+    pync -x proxy_dest[:proxy_port] dest port
 
-HTTP
-====
+By passing this command to the SSH ProxyCommand argument,
+you can create an SSH client that tunnels it's connection through
+a proxy server.
+
+For example, to create an SSH client that connects to a SOCKS v5 proxy
+you can run the following command:
+
+.. code-block:: sh
+
+    ssh -o ProxyCommand "pync -x localhost:8000 %h %p" user@host
+
+The default proxy type is SOCKS v5. You can also tunnel the traffic
+through an HTTP proxy by setting the -X argument to "connect":
+
+.. code-block:: sh
+
+    ssh -o ProxyCommand "pync -X connect -x localhost:8000 %h %p" user@host
