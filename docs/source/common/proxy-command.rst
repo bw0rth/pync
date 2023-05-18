@@ -9,7 +9,7 @@ server by specifying it's address with the -x argument:
 
     pync -x proxy_addr[:proxy_port] dest port
 
-By passing this command to the SSH ProxyCommand argument,
+By passing this command to the SSH ProxyCommand option,
 you can create an SSH client that tunnels it's connection through
 a proxy server.
 
