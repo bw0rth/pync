@@ -18,8 +18,8 @@ integer exit status value once finished.
 You can pass your own file-like objects to these keyword arguments
 to control where the data gets read from and written to.
 
-Send a GET request to an HTTP server
-------------------------------------
+Using the pync function to send an HTTP GET request
+--------------------------------------------------
 
 .. code-block:: python
 
@@ -51,8 +51,8 @@ and handles any exceptions that may occur, printing them to stderr.
 If you would like more control over exception handling or maybe you'd
 like to customize your own Netcat, you can use the Netcat class.
 
-Send a GET request to an HTTP server
-------------------------------------
+Using the Netcat class to send an HTTP GET request
+--------------------------------------------------
 
 .. code-block:: python
 
