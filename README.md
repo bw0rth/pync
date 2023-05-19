@@ -123,7 +123,7 @@ py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
 | -C             | Send CRLF as line-ending
 | [-c](https://pync.readthedocs.io/en/latest/options/exec.html) string | specify shell commands to exec after connect (use with caution).
 | -D             | Enable the debug socket option
-| -d             | Detach from stdin
+| [-d](https://pync.readthedocs.io/en/latest/options/detach-stdin.html)             | Detach from stdin
 | [-e](https://pync.readthedocs.io/en/latest/options/exec.html) filename | specify filename to exec after connect (use with caution).
 | [-h](https://pync.readthedocs.io/en/latest/options/help.html), [--help](https://pync.readthedocs.io/en/latest/options/help.html) | show available options and exit.
 | -I length      | TCP receive buffer length
