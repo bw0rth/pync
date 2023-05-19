@@ -110,7 +110,7 @@ Options
      - specify shell commands to exec after connect (use with caution).
    * - -D
      - Enable the debug socket option
-   * - -d
+   * - `-d <https://pync.readthedocs.io/en/latest/options/detach-stdin.html>`_
      - Detach from stdin
    * - `-e <https://pync.readthedocs.io/en/latest/options/exec.html>`_ filename
      - specify filename to exec after connect (use with caution).
