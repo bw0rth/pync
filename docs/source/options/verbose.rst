@@ -71,7 +71,7 @@ console indicating that the connection was successful:
    <br>
 
 | You can also create a simple port scanner by combining :doc:`-v <verbose>` with the :doc:`-z <zero-io>` option.
-| See :doc:`../examples/port-scanning` for more.
+| See :doc:`../usage/port-scanning` for more.
 
 .. raw:: html
 
@@ -82,5 +82,5 @@ console indicating that the connection was successful:
 
 * :doc:`listen`
 * :doc:`zero-io`
-* :doc:`../examples/port-scanning`
+* :doc:`../usage/port-scanning`
 
