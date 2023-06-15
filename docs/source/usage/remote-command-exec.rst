@@ -3,8 +3,6 @@ Remote Command Execution
 ========================
 
 .. warning::
-   | * Please be CAREFUL and RESPONSIBLE with this
-     functionality.
    | * Please DO NOT use this functionality
      for evil purposes.
 
