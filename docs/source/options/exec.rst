@@ -1,5 +1,5 @@
 ========================
-[-e]xecuting [-c]ommands
+-e: specify filename to exec after connect
 ========================
 
 .. warning::
