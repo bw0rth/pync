@@ -3,8 +3,6 @@ Port Scanning
 =============
 
 .. warning::
-   | * Please be CAREFUL and RESPONSIBLE with this
-       functionality.
    | * Please DO NOT scan machines without
        the owners permission first.
 
