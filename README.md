@@ -39,9 +39,9 @@
 
 ```sh
 pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
-     [-i interval] [-O length] [-P proxy_username] [-p source_port]
+     [-i interval] [-O length] [-P proxyuser] [-p source_port]
      [-q seconds] [-s source] [-T toskeyword] [-w timeout]
-     [-X proxy_protocol] [-x proxy_address[:port]]
+     [-X proto] [-x addr[:port]]
      [-Y pyfile] [-y pycode] [dest] [port]
 ```
 </details>
@@ -64,9 +64,9 @@ py -m pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
 ```python
 from pync import pync
 args = '''[-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
-          [-i interval] [-O length] [-P proxy_username] [-p source_port]
+          [-i interval] [-O length] [-P proxyuser] [-p source_port]
           [-q seconds] [-s source] [-T toskeyword] [-w timeout]
-          [-X proxy_protocol] [-x proxy_address[:port]]
+          [-X proto] [-x addr[:port]]
           [-Y pyfile] [-y pycode] [dest] [port]'''
 pync(args, stdin, stdout, stderr)
 ```

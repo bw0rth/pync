@@ -1222,11 +1222,11 @@ class NetcatClient(NetcatIterator):
         return protocols[self.X]
 
     @property
-    def proxy_address(self):
+    def x_addr(self):
         return self.x.split(':', 1)[0]
 
     @property
-    def proxy_port(self):
+    def x_port(self):
         defaults = {
                 '5': 1080,
                 '4': 1080,
@@ -1286,8 +1286,8 @@ class NetcatClient(NetcatIterator):
             self._conn_refused(port)
         except socks.ProxyError as e:
             if e.socket_err and e.socket_err.errno == errno.ECONNREFUSED:
-                self._conn_refused(self.proxy_port,
-                        dest=self.proxy_address,
+                self._conn_refused(self.x_port,
+                        dest=self.x_addr,
                 )
             raise NetcatProxyError(e)
         except socket.error as e:
@@ -1333,12 +1333,12 @@ class NetcatClient(NetcatIterator):
     def _client_init(self):
         if self.x:
             # proxy socket
-            addrinfo = self._getaddrinfo(self.proxy_address, self.proxy_port)
+            addrinfo = self._getaddrinfo(self.x_addr, self.x_port)
             s = socks.socksocket(self.address_family, self.socket_type)
             s.set_proxy(
                     proxy_type=self.X_proto,
-                    addr=self.proxy_address,
-                    port=self.proxy_port,
+                    addr=self.x_addr,
+                    port=self.x_port,
                     username=self.P,
             )
             return s
@@ -1876,7 +1876,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         self.add_argument('-P',
                 group='client arguments',
                 help='Username for proxy authentication',
-                metavar='proxy_username',
+                metavar='proxyuser',
         )
 
         self.add_argument('-p',
@@ -1937,7 +1937,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         self.add_argument('-x',
                 group='client arguments',
                 help='Specify proxy address and port',
-                metavar='proxy_address[:port]',
+                metavar='addr[:port]',
         )
 
         self.add_argument('-Y',
