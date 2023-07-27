@@ -1017,7 +1017,7 @@ class NetcatIterator(NetcatContext):
         return self.next_connection()
 
     @property
-    def tos(self):
+    def T_keyword(self):
         ''' Returns IP TOS integer value. '''
         T = self.T
         if T in TOSKEYWORDS:
@@ -1049,7 +1049,7 @@ class NetcatIterator(NetcatContext):
         if self.D:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_DEBUG, 1)
         if self.T:
-            sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, self.tos)
+            sock.setsockopt(socket.IPPROTO_IP, socket.IP_TOS, self.T_keyword)
         if self.I:
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, self.I)
         if self.O:
@@ -1779,7 +1779,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
     usage = ("%(prog)s [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]"
             "\n\t    [-i interval] [-O length] [-P proxyuser] [-p source_port]"
-            "\n\t    [-q seconds] [-s source] [-T toskeyword] [-w timeout]"
+            "\n\t    [-q seconds] [-s source] [-T keyword] [-w timeout]"
             "\n\t    [-X proto] [-x addr[:port]]"
             "\n\t    [-Y pyfile] [-y pycode] [dest] [port]"
     )
@@ -1906,7 +1906,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
 
         self.add_argument('-T',
                 help='Set IP Type of Service',
-                metavar='toskeyword',
+                metavar='keyword',
                 type=self.toskeyword,
         )
 
