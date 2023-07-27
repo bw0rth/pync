@@ -6,14 +6,11 @@ pync - arbitrary TCP and UDP connections and listens (Netcat for Python).
 
 from __future__ import unicode_literals
 import argparse
-import contextlib
 import errno
 import io
 import itertools
-import logging
 import multiprocessing
 import os
-import platform
 import random
 import select
 import shlex
@@ -2221,6 +2218,10 @@ class Netcat(object):
         stdin = stdin or cls.stdin
         stdout = stdout or cls.stdout
         stderr = stderr or cls.stderr
+
+        # if stdin is byte string...
+        if isinstance(stdin, bytes):
+            stdin = io.BytesIO(stdin)
 
         kwargs.update(dict(
             stdin=stdin,
