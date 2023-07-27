@@ -1213,7 +1213,7 @@ class NetcatClient(NetcatIterator):
             self.flags = socket.AI_NUMERICHOST
 
     @property
-    def proxy_protocol(self):
+    def X_proto(self):
         protocols = {
                 '5': socks.SOCKS5,
                 '4': socks.SOCKS4,
@@ -1336,7 +1336,7 @@ class NetcatClient(NetcatIterator):
             addrinfo = self._getaddrinfo(self.proxy_address, self.proxy_port)
             s = socks.socksocket(self.address_family, self.socket_type)
             s.set_proxy(
-                    proxy_type=self.proxy_protocol,
+                    proxy_type=self.X_proto,
                     addr=self.proxy_address,
                     port=self.proxy_port,
                     username=self.P,
@@ -1778,9 +1778,9 @@ class NetcatPortAction(argparse.Action):
 class NetcatArgumentParser(GroupingArgumentParser):
     prog = 'Netcat'
     usage = ("%(prog)s [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]"
-            "\n\t    [-i interval] [-O length] [-P proxy_username] [-p source_port]"
+            "\n\t    [-i interval] [-O length] [-P proxyuser] [-p source_port]"
             "\n\t    [-q seconds] [-s source] [-T toskeyword] [-w timeout]"
-            "\n\t    [-X proxy_protocol] [-x proxy_address[:port]]"
+            "\n\t    [-X proto] [-x addr[:port]]"
             "\n\t    [-Y pyfile] [-y pycode] [dest] [port]"
     )
     description = 'arbitrary TCP and UDP connections and listens (Netcat for Python).'
@@ -1929,7 +1929,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
         self.add_argument('-X',
                 group='client arguments',
                 help='Proxy protocol: "4", "5" (SOCKS) or "connect"',
-                metavar='proxy_protocol',
+                metavar='proto',
                 choices=['5', '4', 'connect'],
                 default='5',
         )
