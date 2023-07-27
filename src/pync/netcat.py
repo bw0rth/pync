@@ -675,7 +675,7 @@ class NetcatConnection(NetcatContext):
         raise NotImplementedError
 
     @property
-    def timeout(self):
+    def w_timeout(self):
         return self.w
 
     def _getpeername(self, sock):
@@ -738,7 +738,7 @@ class NetcatConnection(NetcatContext):
 
         last_io, plen = time_now(), self.plen
         carriage_return, quit_eof = self.C, self.q
-        i, timeout = self.i, self.timeout
+        i, timeout = self.i, self.w_timeout
 
         net_send, net_recv = self.send, self.recv
         net_shutdown_rd, net_shutdown_wr = self.shutdown_rd, self.shutdown_wr
@@ -1245,7 +1245,7 @@ class NetcatClient(NetcatIterator):
         return port
 
     @property
-    def timeout(self):
+    def w_timeout(self):
         return self.w
 
     def iter_connections(self):
@@ -1353,8 +1353,8 @@ class NetcatClient(NetcatIterator):
         sock.bind((self.s, self.p))
 
     def _client_connect(self, sock, addr):
-        if self.timeout:
-            sock.settimeout(self.timeout)
+        if self.w_timeout:
+            sock.settimeout(self.w_timeout)
         sock.connect(addr)
         sock.settimeout(None)
 
@@ -1388,7 +1388,7 @@ class NetcatUDPClient(NetcatClient):
         for i in compat.range(2):
             sock.sendall(b'X')
 
-        timeout = self.timeout
+        timeout = self.w_timeout
 
         if timeout is None:
             timeout = self.udp_scan_timeout
