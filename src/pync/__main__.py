@@ -8,7 +8,7 @@ from . import pync
 
 def main():
     args = sys.argv[1:]
-    return pync(args)
+    return pync(args).returncode
 
 
 if __name__ == '__main__':

@@ -89,19 +89,6 @@ STDOUT = subprocess.STDOUT
 QUEUE = -3
 
 
-def _debug(s):
-    sys.__stderr__.write(s+'\n')
-    sys.__stderr__.flush()
-
-
-def _readwrite_close(nc):
-    # For NetcatContext().start() method.
-    try:
-        nc.readwrite()
-    finally:
-        nc.close()
-
-
 class NetcatError(Exception):
     
     def __init__(self, msg, *args):
@@ -138,6 +125,9 @@ class NetcatIOBase(object):
     def write(self, data):
         raise io.UnsupportedOperation
 
+    def flush(self):
+        pass
+
 
 class NetcatIO(NetcatIOBase):
     Reader = None
@@ -156,6 +146,9 @@ class NetcatIO(NetcatIOBase):
 
     def write(self, data):
         return self.writer.write(data)
+
+    def flush(self):
+        return self.writer.flush()
 
 
 class NetcatStdinReader(NetcatIOBase):
@@ -241,6 +234,9 @@ class NetcatPipeWriter(NetcatPipeIOBase):
         self.send_bytes(data)
         if not data:
             self.close()
+
+    def flush(self):
+        pass
 
 
 class NetcatPipeIO(NetcatIO):
@@ -475,7 +471,7 @@ class NetcatContext(object):
         if isinstance(self.stderr, NetcatIO):
             self._stderr = self.stderr.writer
             self.stderr = self.stderr.reader
-        if isinstance(self.stderr, NetcatIOBase):
+        elif isinstance(self.stderr, NetcatIOBase):
             self._stderr = self.stderr
             self.stderr = None
         elif self.stderr is sys.stderr:
@@ -2272,6 +2268,22 @@ class Netcat(object):
         stdout = stdout or cls.stdout
         stderr = stderr or cls.stderr
 
+        _stdin, _stdout, _stderr = stdin, stdout, stderr
+
+        if stdout == PIPE:
+            _stdout = NetcatPipeIO()
+            stdout = _stdout.writer
+        elif stdout == QUEUE:
+            _stdout = NetcatQueueIO()
+            stdout = _stdout.writer
+
+        if stderr == PIPE:
+            _stderr = NetcatPipeIO()
+            stderr = _stderr.writer
+        elif stderr == QUEUE:
+            _stderr = NetcatQueueIO()
+            stderr = _stderr.writer
+
         try:
             # Assume args is a string and try to split it.
             args = shlex.split(args)
@@ -2286,9 +2298,9 @@ class Netcat(object):
         kwargs.update(vars(args))
 
         kwargs.update(dict(
-            stdin=stdin,
-            stdout=stdout,
-            stderr=stderr,
+            stdin=_stdin,
+            stdout=_stdout,
+            stderr=_stderr,
         ))
 
         return cls(**kwargs)
@@ -2347,8 +2359,24 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     _stdout = stdout or Netcat.stdout
     _stderr = stderr or Netcat.stderr
 
-    exit = argparse.Namespace()
-    exit.status = 1
+    class PyncResult(argparse.Namespace):
+        pass
+
+    result = PyncResult()
+    result.returncode = 1
+    result.args = args
+    result.stdout = None
+    result.stderr = None
+
+    stderr_writer = _stderr
+    if _stderr == PIPE:
+        _stderr = NetcatPipeIO()
+        stderr_writer = _stderr.writer
+        result.stderr = _stderr.reader
+    elif _stderr == QUEUE:
+        _stderr = NetcatQueueIO()
+        stderr_writer = _stderr.writer
+        result.stderr = _stderr.reader
 
 
     class PyncTCPClient(Netcat.TCPClient):
@@ -2356,14 +2384,14 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
         def _conn_succeeded(self, port):
             super(PyncTCPClient, self)._conn_succeeded(port)
-            exit.status = 0
+            result.returncode = 0
 
 
     class PyncTCPServer(Netcat.TCPServer):
 
         def _listening(self):
             super(PyncTCPServer, self)._listening()
-            exit.status = 0
+            result.returncode = 0
 
 
     class PyncUDPClient(Netcat.UDPClient):
@@ -2371,14 +2399,14 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
         
         def _conn_succeeded(self, port):
             super(PyncUDPClient, self)._conn_succeeded(port)
-            exit.status = 0
+            result.returncode = 0
 
 
     class PyncUDPServer(Netcat.UDPServer):
 
         def _listening(self):
             super(PyncUDPServer, self)._listening()
-            exit.status = 0
+            result.returncode = 0
 
 
     class PyncArgumentParser(Netcat.ArgumentParser):
@@ -2386,7 +2414,7 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
         def print_help(self, *args, **kwargs):
             super(PyncArgumentParser, self).print_help(*args, **kwargs)
-            exit.status = 0
+            result.returncode = 0
 
 
     class PyncNetcat(Netcat):
@@ -2403,17 +2431,18 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
 
 
     try:
-        with PyncNetcat.from_args(args) as nc:
-            nc.readwrite()
+        nc = PyncNetcat.from_args(args)
+        result.stdout = nc.stdout
+        result.stderr = nc.stderr
+        nc.run()
     except NetcatError as e:
-        _stderr.write('pync: {}\n'.format(e))
-        exit.status = 1
+        stderr_writer.write('pync: {}\n'.format(e))
+        result.returncode = 1
     except KeyboardInterrupt:
-        _stderr.write('\n')
-        exit.status = 130
+        stderr_writer.write('\n')
+        result.returncode = 130
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.
-        return exit.status
+        pass
 
-    return exit.status
-
+    return result
