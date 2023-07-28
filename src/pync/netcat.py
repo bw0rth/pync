@@ -119,7 +119,7 @@ class NetcatProxyError(NetcatError):
 
 class NetcatIOBase(object):
 
-    def read(self, n):
+    def read(self, n=None):
         raise io.UnsupportedOperation
 
     def write(self, data):
@@ -141,7 +141,7 @@ class NetcatIO(NetcatIOBase):
         if self.writer is None and self.Writer is not None:
             self.writer = self.Writer()
 
-    def read(self, n):
+    def read(self, n=None):
         return self.reader.read(n)
 
     def write(self, data):
@@ -159,7 +159,7 @@ class NetcatStdinReader(NetcatIOBase):
     def __eq__(self, other):
         return other == sys.stdin
 
-    def read(self, n):
+    def read(self, n=None):
         return sys.stdin.read(n)
 
 
@@ -220,7 +220,7 @@ class NetcatPipeReader(NetcatPipeIOBase):
     def recv_bytes(self):
         return self.connection.recv_bytes()
 
-    def read(self, n):
+    def read(self, n=None):
         if self.poll():
             return self.recv_bytes()
 
@@ -268,7 +268,7 @@ class NetcatQueueReader(NetcatQueueIOBase):
     def get_nowait(self):
         return self.queue.get_nowait()
 
-    def read(self, n):
+    def read(self, n=None):
         try:
             return self.get_nowait()
         except queue.Empty:
@@ -319,7 +319,7 @@ class NetcatFileReader(NetcatFileIOBase):
         self.__poll_fileno = True
         self.__read_fileno = True
 
-    def read(self, n):
+    def read(self, n=None):
         if self.poll():
             if self.__read_fileno:
                 try:
