@@ -119,7 +119,7 @@ class NetcatProxyError(NetcatError):
 
 class NetcatIOBase(object):
 
-    def read(self, n=None):
+    def read(self, size=None):
         raise io.UnsupportedOperation
 
     def write(self, data):
@@ -141,8 +141,8 @@ class NetcatIO(NetcatIOBase):
         if self.writer is None and self.Writer is not None:
             self.writer = self.Writer()
 
-    def read(self, n=None):
-        return self.reader.read(n)
+    def read(self, size=None):
+        return self.reader.read(size)
 
     def write(self, data):
         return self.writer.write(data)
@@ -159,8 +159,8 @@ class NetcatStdinReader(NetcatIOBase):
     def __eq__(self, other):
         return other == sys.stdin
 
-    def read(self, n=None):
-        return sys.stdin.read(n)
+    def read(self, size=None):
+        return sys.stdin.read(size)
 
 
 class NetcatStdoutWriter(NetcatIOBase):
@@ -220,7 +220,7 @@ class NetcatPipeReader(NetcatPipeIOBase):
     def recv_bytes(self):
         return self.connection.recv_bytes()
 
-    def read(self, n=None):
+    def read(self, size=None):
         if self.poll():
             return self.recv_bytes()
 
@@ -268,7 +268,7 @@ class NetcatQueueReader(NetcatQueueIOBase):
     def get_nowait(self):
         return self.queue.get_nowait()
 
-    def read(self, n=None):
+    def read(self, size=None):
         try:
             return self.get_nowait()
         except queue.Empty:
@@ -319,18 +319,18 @@ class NetcatFileReader(NetcatFileIOBase):
         self.__poll_fileno = True
         self.__read_fileno = True
 
-    def read(self, n=None):
+    def read(self, size=None):
         if self.poll():
             if self.__read_fileno:
                 try:
-                    return self._read_fileno(n)
+                    return self._read_fileno(size)
                 except OSError as e:
                     if e.errno != errno.EBADF:
                         raise
                 except TypeError:
                     pass
                 self.__read_fileno = False
-            return self._read_file(n)
+            return self._read_file(size)
 
     def poll(self):
         if self.__poll_fileno:
@@ -340,11 +340,11 @@ class NetcatFileReader(NetcatFileIOBase):
                 self.__poll_fileno = False
         return self._poll_file()
 
-    def _read_fileno(self, n):
-        return os.read(self._fileno, n)
+    def _read_fileno(self, size):
+        return os.read(self._fileno, size)
 
-    def _read_file(self, n):
-        return self.file.read(n)
+    def _read_file(self, size):
+        return self.file.read(size)
 
     def _poll_file(self):
         return True
