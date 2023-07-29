@@ -18,8 +18,8 @@ sys.path.insert(0, os.path.abspath('../../src'))
 # -- Project information -----------------------------------------------------
 
 project = 'pync'
-copyright = '2022, Brendon Worthington'
-author = 'Brendon Worthington'
+copyright = '2022, brenw0rth'
+author = 'brenw0rth'
 
 
 # -- General configuration ---------------------------------------------------
