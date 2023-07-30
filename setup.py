@@ -11,7 +11,7 @@ if os.name == 'nt' and sys.version_info < (3, 0):
 setuptools.setup(
     name='pync',
     version='0.23.0',
-    author='Brendon Worthington',
+    author='bw0rth',
     description='arbitrary TCP and UDP connections and listens (Netcat for Python).',
     package_dir={'': 'src'},
     packages=setuptools.find_packages(where='src'),
