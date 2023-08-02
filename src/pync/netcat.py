@@ -2377,8 +2377,8 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         stderr_io = NetcatQueueIO()
 
     if stderr_io is not None:
-        stderr_writer = stderr_io.writer
-        stderr_reader = stderr_io.reader
+        _stderr = stderr_io.writer
+        result.stderr = stderr_io.reader
 
 
     class PyncTCPClient(Netcat.TCPClient):
