@@ -2215,10 +2215,6 @@ class Netcat(object):
         stdout = stdout or cls.stdout
         stderr = stderr or cls.stderr
 
-        # if stdin is byte string...
-        if isinstance(stdin, bytes):
-            stdin = io.BytesIO(stdin)
-
         kwargs.update(dict(
             stdin=stdin,
             stdout=stdout,
