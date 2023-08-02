@@ -2361,14 +2361,27 @@ def pync(args, stdin=None, stdout=None, stderr=None,
            pync('localhost 8000', stdout=f)
     """
     _stdin = stdin or Netcat.stdin
-    _stdout = stdout or Netcat.stdout
-    _stderr = stderr or Netcat.stderr
+
+    stdout_writer = stdout or Netcat.stdout
+    stdout_reader = None
+
+    stderr_writer = stderr or Netcat.stderr
+    stderr_reader = None
 
     result = CompletedNetcat()
     result.returncode = 1
     result.args = args
     result.stdout = None
     result.stderr = None
+
+    stdout_io = None
+    if stdout_writer == PIPE:
+        stdout_io = NetcatPipeIO()
+    elif stdout_writer == QUEUE:
+        stdout_io = NetcatQueueIO()
+    if stdout_io is not None:
+        stdout_writer = stdout_io.writer
+        stdout_reader = stdout_io.reader
 
     stderr_io = None
     if _stderr == PIPE:
