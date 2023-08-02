@@ -2440,23 +2440,42 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         UDPServer = PyncUDPServer
 
         stdin = _stdin
-        stdout = _stdout
-        stderr = _stderr
+        stdout = stdout_writer
+        stderr = stderr_writer
+
+
+    def consume_output():
+        out_err = list()
+        for reader in (stdout_reader, stderr_reader):
+            if reader is not None:
+                out = b''
+                data = reader.read()
+                while data:
+                    out += data
+                    data = reader.read()
+                out_err.append(out)
+            else:
+                out_err.append(None)
+        return out_err
 
 
     try:
         nc = PyncNetcat.from_args(args)
-        result.stdout = nc.stdout
-        result.stderr = nc.stderr
-        nc.run()
+    except SystemExit:
+        # ArgumentParser may raise SystemExit when error or help.
+        result.stdout, result.stderr = consume_output()
+        return result
+
+    try:
+        nc.readwrite()
     except NetcatError as e:
         stderr_writer.write('pync: {}\n'.format(e))
         result.returncode = 1
     except KeyboardInterrupt:
-        stderr_writer.write('\n')
+        stderr_writer.write(b'\n')
         result.returncode = 130
-    except SystemExit:
-        # ArgumentParser may raise SystemExit when error or help.
-        pass
+    finally:
+        result.stdout, result.stderr = consume_output()
+        nc.close()
 
     return result
