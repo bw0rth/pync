@@ -2384,14 +2384,13 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         stdout_reader = stdout_io.reader
 
     stderr_io = None
-    if _stderr == PIPE:
+    if stderr_writer == PIPE:
         stderr_io = NetcatPipeIO()
-    elif _stderr == QUEUE:
+    elif stderr_writer == QUEUE:
         stderr_io = NetcatQueueIO()
-
     if stderr_io is not None:
-        _stderr = stderr_io.writer
-        result.stderr = stderr_io.reader
+        stderr_writer = stderr_io.writer
+        stderr_reader = stderr_io.reader
 
 
     class PyncTCPClient(Netcat.TCPClient):
