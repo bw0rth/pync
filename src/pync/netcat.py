@@ -2306,7 +2306,8 @@ class Netcat(object):
         return cls(**kwargs)
 
 
-def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
+def pync(args, stdin=None, stdout=None, stderr=None,
+         input=None, capture_output=False, Netcat=Netcat):
     """
     Create and run a Netcat instance.
     This is similar to running **pync** from the command-line.
@@ -2359,24 +2360,26 @@ def pync(args, stdin=None, stdout=None, stderr=None, Netcat=Netcat):
     _stdout = stdout or Netcat.stdout
     _stderr = stderr or Netcat.stderr
 
-    class PyncResult(argparse.Namespace):
+    class CompletedNetcat(argparse.Namespace):
         pass
 
-    result = PyncResult()
+    result = CompletedNetcat()
     result.returncode = 1
     result.args = args
     result.stdout = None
     result.stderr = None
 
     stderr_writer = _stderr
+    stderr_io = None
+
     if _stderr == PIPE:
-        _stderr = NetcatPipeIO()
-        stderr_writer = _stderr.writer
-        result.stderr = _stderr.reader
+        stderr_io = NetcatPipeIO()
     elif _stderr == QUEUE:
-        _stderr = NetcatQueueIO()
-        stderr_writer = _stderr.writer
-        result.stderr = _stderr.reader
+        stderr_io = NetcatQueueIO()
+
+    if stderr_io is not None:
+        stderr_writer = stderr_io.writer
+        stderr_reader = stderr_io.reader
 
 
     class PyncTCPClient(Netcat.TCPClient):
