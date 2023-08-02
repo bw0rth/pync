@@ -2370,9 +2370,7 @@ def pync(args, stdin=None, stdout=None, stderr=None,
     result.stdout = None
     result.stderr = None
 
-    stderr_writer = _stderr
     stderr_io = None
-
     if _stderr == PIPE:
         stderr_io = NetcatPipeIO()
     elif _stderr == QUEUE:
