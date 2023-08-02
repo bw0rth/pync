@@ -2080,7 +2080,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 # pync -lp 8000 localhost 8001
                 pass
             else:
-                self.print_usage()
+                self.print_usage(file=self.stderr)
                 self.exit()
         else:
             # Client mode.
@@ -2091,7 +2091,7 @@ class NetcatArgumentParser(GroupingArgumentParser):
                 # pync -p 1234 localhost 8000
                 pass
             else:
-                self.print_usage()
+                self.print_usage(file=self.stderr)
                 self.exit()
 
         kwargs = dict()
