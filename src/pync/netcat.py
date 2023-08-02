@@ -2306,6 +2306,10 @@ class Netcat(object):
         return cls(**kwargs)
 
 
+class CompletedNetcat(argparse.Namespace):
+    pass
+
+
 def pync(args, stdin=None, stdout=None, stderr=None,
          input=None, capture_output=False, Netcat=Netcat):
     """
@@ -2359,9 +2363,6 @@ def pync(args, stdin=None, stdout=None, stderr=None,
     _stdin = stdin or Netcat.stdin
     _stdout = stdout or Netcat.stdout
     _stderr = stderr or Netcat.stderr
-
-    class CompletedNetcat(argparse.Namespace):
-        pass
 
     result = CompletedNetcat()
     result.returncode = 1
