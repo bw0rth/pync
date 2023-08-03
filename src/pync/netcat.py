@@ -514,6 +514,27 @@ class NetcatContext(object):
         finally:
             self.close()
 
+    def communicate(self, input=None):
+        self.readwrite()
+
+        stdout = None
+        if self.stdout:
+            stdout = b''
+            data = self.stdout.read()
+            while data:
+                stdout += data
+                data = self.stdout.read()
+
+        stderr = None
+        if self.stderr:
+            stderr = b''
+            data = self.stderr.read()
+            while data:
+                stderr += data
+                data = self.stderr.read()
+
+        return stdout, stderr
+
     def __start(self, daemon=False):
         raise NotImplementedError
         try:
@@ -2463,7 +2484,7 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         return result
 
     try:
-        nc.readwrite()
+        result.stdout, result.stderr = nc.communicate(input=input)
     except NetcatError as e:
         stderr_writer.write('pync: {}\n'.format(e))
         result.returncode = 1
