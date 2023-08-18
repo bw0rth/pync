@@ -515,23 +515,28 @@ class NetcatContext(object):
             self.close()
 
     def communicate(self, input=None):
+        if self.stdin:
+            self.stdin.write(input)
+
         self.readwrite()
 
         stdout = None
         if self.stdout:
             stdout = b''
-            data = self.stdout.read()
-            while data:
-                stdout += data
+            while True:
                 data = self.stdout.read()
+                if not data:
+                    break
+                stdout += data
 
         stderr = None
         if self.stderr:
             stderr = b''
-            data = self.stderr.read()
-            while data:
-                stderr += data
+            while True:
                 data = self.stderr.read()
+                if not data:
+                    break
+                stderr += data
 
         return stdout, stderr
 
@@ -2377,37 +2382,37 @@ def pync(args, stdin=None, stdout=None, stderr=None,
        with open('file.out', 'wb') as f:
            pync('localhost 8000', stdout=f)
     """
-    _stdin = stdin or Netcat.stdin
-
-    stdout_writer = stdout or Netcat.stdout
-    stdout_reader = None
-
-    stderr_writer = stderr or Netcat.stderr
-    stderr_reader = None
-
     result = CompletedNetcat()
     result.returncode = 1
     result.args = args
     result.stdout = None
     result.stderr = None
 
-    stdout_io = None
-    if stdout_writer == PIPE:
-        stdout_io = NetcatPipeIO()
-    elif stdout_writer == QUEUE:
-        stdout_io = NetcatQueueIO()
-    if stdout_io is not None:
-        stdout_writer = stdout_io.writer
-        stdout_reader = stdout_io.reader
+    stdin_io = stdin or Netcat.stdin
+    if input is not None:
+        stdin_io = PIPE
 
-    stderr_io = None
-    if stderr_writer == PIPE:
+    if stdin_io == PIPE:
+        stdin_io = NetcatPipeIO()
+    elif stdin_io == QUEUE:
+        stdin_io = NetcatQueueIO()
+
+    stdout_io = stdout or Netcat.stdout
+    stderr_io = stderr or Netcat.stderr
+    if capture_output:
+        stdout_io = stderr_io = PIPE
+        result.stdout = b''
+        result.stderr = b''
+    
+    if stdout_io == PIPE:
+        stdout_io = NetcatPipeIO()
+    elif stdout_io == QUEUE:
+        stdout_io = NetcatQueueIO()
+
+    if stderr_io == PIPE:
         stderr_io = NetcatPipeIO()
-    elif stderr_writer == QUEUE:
+    elif stderr_io == QUEUE:
         stderr_io = NetcatQueueIO()
-    if stderr_io is not None:
-        stderr_writer = stderr_io.writer
-        stderr_reader = stderr_io.reader
 
 
     class PyncTCPClient(Netcat.TCPClient):
@@ -2456,43 +2461,56 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         UDPClient = PyncUDPClient
         UDPServer = PyncUDPServer
 
-        stdin = _stdin
-        stdout = stdout_writer
-        stderr = stderr_writer
+        stdin = stdin_io
+        stdout = stdout_io
+        stderr = stderr_io
+
+
+    def consume_stdout(buf=b''):
+        if stdout_io is not None:
+            while True:
+                data = stdout_io.read()
+                if not data:
+                    break
+                buf += data
+        return buf
+
+
+    def consume_stderr(buf=b''):
+        if stderr_io is not None:
+            while True:
+                data = stderr_io.read()
+                if not data:
+                    break
+                buf += data
+        return buf
 
 
     def consume_output():
-        out_err = list()
-        for reader in (stdout_reader, stderr_reader):
-            if reader is not None:
-                out = b''
-                data = reader.read()
-                while data:
-                    out += data
-                    data = reader.read()
-                out_err.append(out)
-            else:
-                out_err.append(None)
-        return out_err
+        return consume_stdout(), consume_stderr()
 
 
     try:
         nc = PyncNetcat.from_args(args)
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.
-        result.stdout, result.stderr = consume_output()
+        if capture_output:
+            result.stdout, result.stderr = consume_output()
         return result
 
     try:
-        result.stdout, result.stderr = nc.communicate(input=input)
+        error = True
+        result.stdout, result.stderr = nc.communicate(input)
+        error = False
     except NetcatError as e:
-        stderr_writer.write('pync: {}\n'.format(e))
+        stderr_io.write('pync: {}\n'.format(e))
         result.returncode = 1
     except KeyboardInterrupt:
-        stderr_writer.write(b'\n')
+        stderr_io.write(b'\n')
         result.returncode = 130
     finally:
-        result.stdout, result.stderr = consume_output()
+        if error and capture_output:
+            result.stdout, result.stderr = consume_output()
         nc.close()
 
     return result
