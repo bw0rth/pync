@@ -119,6 +119,18 @@ class NetcatProxyError(NetcatError):
 
 class NetcatIOBase(object):
 
+    def readable(self):
+        return False
+
+    def writable(self):
+        return False
+
+    def seekable(self):
+        return False
+
+    def closed(self):
+        return False
+
     def read(self, size=None):
         raise io.UnsupportedOperation
 
@@ -214,6 +226,9 @@ class NetcatPipeIOBase(NetcatIOBase):
 
 class NetcatPipeReader(NetcatPipeIOBase):
 
+    def readable(self):
+        return True
+
     def poll(self):
         return self.connection.poll()
 
@@ -226,6 +241,9 @@ class NetcatPipeReader(NetcatPipeIOBase):
 
 
 class NetcatPipeWriter(NetcatPipeIOBase):
+
+    def writable(self):
+        return True
 
     def send_bytes(self, data):
         return self.connection.send_bytes(data)
@@ -2389,30 +2407,34 @@ def pync(args, stdin=None, stdout=None, stderr=None,
     result.stderr = None
 
     stdin_io = stdin or Netcat.stdin
+    stdout_io = stdout or Netcat.stdout
+    stderr_io = stderr or Netcat.stderr
+
     if input is not None:
         stdin_io = PIPE
 
-    if stdin_io == PIPE:
-        stdin_io = NetcatPipeIO()
-    elif stdin_io == QUEUE:
-        stdin_io = NetcatQueueIO()
-
-    stdout_io = stdout or Netcat.stdout
-    stderr_io = stderr or Netcat.stderr
     if capture_output:
         stdout_io = stderr_io = PIPE
-        result.stdout = b''
-        result.stderr = b''
-    
-    if stdout_io == PIPE:
-        stdout_io = NetcatPipeIO()
-    elif stdout_io == QUEUE:
-        stdout_io = NetcatQueueIO()
 
-    if stderr_io == PIPE:
-        stderr_io = NetcatPipeIO()
-    elif stderr_io == QUEUE:
-        stderr_io = NetcatQueueIO()
+    capture_stdout = False
+    if stdout_io in (PIPE, QUEUE):
+        capture_stdout = True
+        stdout_io = NetcatPipeIO() if stdout_io == PIPE else NetcatQueueIO()
+        result.stdout = b''
+
+    capture_stderr = False
+    if stderr_io in (PIPE, QUEUE):
+        capture_stderr = True
+        stderr_io = NetcatPipeIO() if stderr_io == PIPE else NetcatQueueIO()
+        stderr_writer = io.TextIOWrapper(stderr_io.writer, encoding='utf-8')
+        result.stderr = b''
+    else:
+        stderr_writer = stderr_io
+
+
+    err_write = stderr_io.write
+    if hasattr(stderr_io, 'buffer'):
+        err_write = stderr_io.buffer.write
 
 
     class PyncTCPClient(Netcat.TCPClient):
@@ -2467,22 +2489,24 @@ def pync(args, stdin=None, stdout=None, stderr=None,
 
 
     def consume_stdout(buf=b''):
-        if stdout_io is not None:
-            while True:
-                data = stdout_io.read()
-                if not data:
-                    break
-                buf += data
+        if not capture_stdout:
+            return
+        while True:
+            data = stdout_io.read()
+            if not data:
+                break
+            buf += data
         return buf
 
 
     def consume_stderr(buf=b''):
-        if stderr_io is not None:
-            while True:
-                data = stderr_io.read()
-                if not data:
-                    break
-                buf += data
+        if not capture_stderr:
+            return
+        while True:
+            data = stderr_io.read()
+            if not data:
+                break
+            buf += data
         return buf
 
 
@@ -2494,8 +2518,7 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         nc = PyncNetcat.from_args(args)
     except SystemExit:
         # ArgumentParser may raise SystemExit when error or help.
-        if capture_output:
-            result.stdout, result.stderr = consume_output()
+        result.stdout, result.stderr = consume_output()
         return result
 
     try:
@@ -2503,13 +2526,17 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         result.stdout, result.stderr = nc.communicate(input)
         error = False
     except NetcatError as e:
-        stderr_io.write('pync: {}\n'.format(e))
+        #err_write(b'pync: {}\n'.format(e))
+        stderr_writer.write('pync: {}\n'.format(e))
         result.returncode = 1
     except KeyboardInterrupt:
-        stderr_io.write(b'\n')
+        #err_write(b'\n')
+        print('STDERR WRITER:', repr(stderr_writer))
+        print('STDERR BUFFER:', repr(stderr_writer.buffer))
+        stderr_writer.write('\n')
         result.returncode = 130
     finally:
-        if error and capture_output:
+        if error:
             result.stdout, result.stderr = consume_output()
         nc.close()
 
