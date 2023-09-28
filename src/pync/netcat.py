@@ -535,8 +535,8 @@ class NetcatContext(object):
     def communicate(self, input=None):
         if self.stdin:
             self.stdin.write(input)
-
-        self.readwrite()
+            
+        self.run()
 
         stdout = None
         if self.stdout:
