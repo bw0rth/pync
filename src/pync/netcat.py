@@ -533,28 +533,28 @@ class NetcatContext(object):
             self.close()
 
     def communicate(self, input=None):
-        if self.stdin:
+        if input is not None and self.stdin:
             self.stdin.write(input)
-            
-        self.run()
 
         stdout = None
         if self.stdout:
-            stdout = b''
-            while True:
-                data = self.stdout.read()
-                if not data:
-                    break
-                stdout += data
+            stdout = io.BytesIO()
+            self._stdout = stdout
 
         stderr = None
         if self.stderr:
-            stderr = b''
-            while True:
-                data = self.stderr.read()
-                if not data:
-                    break
-                stderr += data
+            stderr = io.BytesIO()
+            self._stderr = stderr
+        
+        self.readwrite()
+
+        if stdout:
+            stdout.seek(0)
+            stdout = stdout.read()
+        
+        if stderr:
+            stderr.seek(0)
+            stderr = stderr.read()
 
         return stdout, stderr
 
@@ -2419,22 +2419,12 @@ def pync(args, stdin=None, stdout=None, stderr=None,
     capture_stdout = False
     if stdout_io in (PIPE, QUEUE):
         capture_stdout = True
-        stdout_io = NetcatPipeIO() if stdout_io == PIPE else NetcatQueueIO()
-        result.stdout = b''
+        stdout_io = io.BytesIO()
 
     capture_stderr = False
     if stderr_io in (PIPE, QUEUE):
         capture_stderr = True
-        stderr_io = NetcatPipeIO() if stderr_io == PIPE else NetcatQueueIO()
-        stderr_writer = io.TextIOWrapper(stderr_io.writer, encoding='utf-8')
-        result.stderr = b''
-    else:
-        stderr_writer = stderr_io
-
-
-    err_write = stderr_io.write
-    if hasattr(stderr_io, 'buffer'):
-        err_write = stderr_io.buffer.write
+        stderr_io = io.BytesIO()
 
 
     class PyncTCPClient(Netcat.TCPClient):
@@ -2488,56 +2478,29 @@ def pync(args, stdin=None, stdout=None, stderr=None,
         stderr = stderr_io
 
 
-    def consume_stdout(buf=b''):
-        if not capture_stdout:
-            return
-        while True:
-            data = stdout_io.read()
-            if not data:
-                break
-            buf += data
-        return buf
-
-
-    def consume_stderr(buf=b''):
-        if not capture_stderr:
-            return
-        while True:
-            data = stderr_io.read()
-            if not data:
-                break
-            buf += data
-        return buf
-
-
-    def consume_output():
-        return consume_stdout(), consume_stderr()
-
-
+    nc = None
     try:
         nc = PyncNetcat.from_args(args)
     except SystemExit:
-        # ArgumentParser may raise SystemExit when error or help.
-        result.stdout, result.stderr = consume_output()
-        return result
+        pass
+    
+    if nc is not None:
+        try:
+            result.stdout, result.stderr = nc.communicate(input)
+        except NetcatError as e:
+            stderr_io.write('pync: {}\n'.format(e).encode())
+            result.returncode = 1
+        except KeyboardInterrupt:
+            stderr_io.write('\n'.encode())
+            result.returncode = 130
+        finally:
+            nc.close()
 
-    try:
-        error = True
-        result.stdout, result.stderr = nc.communicate(input)
-        error = False
-    except NetcatError as e:
-        #err_write(b'pync: {}\n'.format(e))
-        stderr_writer.write('pync: {}\n'.format(e))
-        result.returncode = 1
-    except KeyboardInterrupt:
-        #err_write(b'\n')
-        print('STDERR WRITER:', repr(stderr_writer))
-        print('STDERR BUFFER:', repr(stderr_writer.buffer))
-        stderr_writer.write('\n')
-        result.returncode = 130
-    finally:
-        if error:
-            result.stdout, result.stderr = consume_output()
-        nc.close()
+    if capture_stdout:
+        stdout_io.seek(0)
+        result.stdout = stdout_io.read()
+    if capture_stderr:
+        stderr_io.seek(0)
+        result.stderr = stderr_io.read()
 
     return result
