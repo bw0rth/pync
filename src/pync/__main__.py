@@ -3,15 +3,15 @@
 import socket
 import sys
 
-from . import pync
+import pync
 
 
 def main():
     args = sys.argv[1:]
-    return pync(args).returncode
+    return pync.run(args).returncode
 
 
 if __name__ == '__main__':
-    status = main()
-    sys.exit(status)
+    returncode = main()
+    sys.exit(returncode)
 
