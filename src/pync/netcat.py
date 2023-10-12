@@ -236,8 +236,11 @@ class NetcatPipeReader(NetcatPipeIOBase):
         return self.connection.recv_bytes()
 
     def read(self, size=None):
-        if self.poll():
-            return self.recv_bytes()
+        try:
+            if self.poll():
+                return self.recv_bytes()
+        except BrokenPipeError:
+            return b''
 
 
 class NetcatPipeWriter(NetcatPipeIOBase):
@@ -535,6 +538,7 @@ class NetcatContext(object):
     def communicate(self, input=None):
         if input is not None and self.stdin:
             self.stdin.write(input)
+            self.stdin.close()
 
         stdout = None
         if self.stdout:
