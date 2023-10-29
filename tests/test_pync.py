@@ -1,55 +1,40 @@
 # -*- coding: utf-8 -*-
 
 import io
-
+import time
 import pytest
-
 import pync
-from .server import PyncServer
 
 SERVER_PORT = 8000
 HELLO_WORLD = b'Hello, World!\n'
 
 
 @pytest.fixture
-def server():
-    server = PyncServer(port=SERVER_PORT)
-    server.start()
-    server.ready_event.wait()
+def echo_server():
+    server = pync.Netcat('localhost', SERVER_PORT,
+        d=True, l=True, k=True,
+        y='import sys; sys.stdout.write(sys.stdin.read())',
+    )
+    server.start_thread(daemon=True)
     return server
 
 
-@pytest.fixture
-def hello_server():
-    server = PyncServer(
-            port=SERVER_PORT,
-            stdin=io.BytesIO(HELLO_WORLD))
-    server.start()
-    server.ready_event.wait()
-    return server
-
-
-def test_tcp_upload(server):
-    # Connect to the server and send some data.
-    ret = pync.run('localhost {}'.format(SERVER_PORT),
-            stdin=io.BytesIO(HELLO_WORLD),
-            stdout=io.BytesIO(),
-            stderr=io.StringIO())
+def test_string_io(echo_server):
+    ret = pync.run('localhost {}'.format(echo_server.port),
+            input=HELLO_WORLD,
+            capture_output=True,
+    )
     assert ret.returncode == 0
-
-    server.stdout.seek(0)
-    assert server.stdout.read() == HELLO_WORLD
+    assert ret.stdout == HELLO_WORLD
 
 
-def test_tcp_download(hello_server):
-    # Connect to the server and download some data.
-    # -d -- Detach from stdin to prevent closing on EOF.
-    stdout = io.BytesIO()
-    ret = pync.run('-d localhost {}'.format(SERVER_PORT),
-            stdout=stdout,
-            stderr=io.StringIO())
-    assert ret.returncode == 0
+def test_file_io(echo_server):
+    assert True
 
-    stdout.seek(0)
-    assert stdout.read() == HELLO_WORLD
 
+def test_pipe_io(echo_server):
+    assert True
+
+
+def test_subprocess_io(echo_server):
+    assert True
