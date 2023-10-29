@@ -60,7 +60,7 @@ class PyncServer(threading.Thread):
         args = '-l localhost {}'.format(self.port)
         if self.d:
             args = '-d ' + args
-        pync.pync(args,
+        pync.run(args,
                 stdin=self.stdin,
                 stdout=self.stdout,
                 stderr=self.stderr,

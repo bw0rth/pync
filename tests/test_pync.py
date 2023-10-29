@@ -4,7 +4,7 @@ import io
 
 import pytest
 
-from pync import pync
+import pync
 from .server import PyncServer
 
 SERVER_PORT = 8000
@@ -31,11 +31,11 @@ def hello_server():
 
 def test_tcp_upload(server):
     # Connect to the server and send some data.
-    ret = pync('localhost {}'.format(SERVER_PORT),
+    ret = pync.run('localhost {}'.format(SERVER_PORT),
             stdin=io.BytesIO(HELLO_WORLD),
             stdout=io.BytesIO(),
             stderr=io.StringIO())
-    assert ret == 0
+    assert ret.returncode == 0
 
     server.stdout.seek(0)
     assert server.stdout.read() == HELLO_WORLD
@@ -45,10 +45,10 @@ def test_tcp_download(hello_server):
     # Connect to the server and download some data.
     # -d -- Detach from stdin to prevent closing on EOF.
     stdout = io.BytesIO()
-    ret = pync('-d localhost {}'.format(SERVER_PORT),
+    ret = pync.run('-d localhost {}'.format(SERVER_PORT),
             stdout=stdout,
             stderr=io.StringIO())
-    assert ret == 0
+    assert ret.returncode == 0
 
     stdout.seek(0)
     assert stdout.read() == HELLO_WORLD
