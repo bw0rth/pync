@@ -71,13 +71,13 @@ Use Python's pip command to install **pync** straight from GitHub:
 
    .. code-block:: sh
         
-      python -m pip install https://github.com/brenw0rth/pync/archive/main.zip
+      python -m pip install https://github.com/bw0rth/pync/archive/main.zip
 
 .. tab:: Windows
 
    .. code-block:: sh
 
-      py -m pip install https://github.com/brenw0rth/pync/archive/main.zip
+      py -m pip install https://github.com/bw0rth/pync/archive/main.zip
       
 Usage
 =====
@@ -178,26 +178,26 @@ Examples
    
    * - Example
      - Description
-   * - `chat.py <https://github.com/brenw0rth/pync/blob/main/examples/chat.py>`_
+   * - `chat.py <https://github.com/bw0rth/pync/blob/main/examples/chat.py>`_
      - Simple chat protocol with a custom username
-   * - `upload.py <https://github.com/brenw0rth/pync/tree/main/examples/upload.py>`_
+   * - `upload.py <https://github.com/bw0rth/pync/tree/main/examples/upload.py>`_
      - Simple file upload (use with caution).
-   * - `download.py <https://github.com/brenw0rth/pync/tree/main/examples/download.py>`_
+   * - `download.py <https://github.com/bw0rth/pync/tree/main/examples/download.py>`_
      - Simple file download (use with caution).
-   * - `proxy.py <https://github.com/brenw0rth/pync/blob/main/examples/proxy.py>`_
+   * - `proxy.py <https://github.com/bw0rth/pync/blob/main/examples/proxy.py>`_
      - Simple TCP proxy server
-   * - `pyshell.py <https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py>`_
+   * - `pyshell.py <https://github.com/bw0rth/pync/blob/main/examples/pyshell.py>`_
      - Reverse or bind python interpreter shell (use with caution).
-   * - `scan.py <https://github.com/brenw0rth/pync/blob/main/examples/scan.py>`_
+   * - `scan.py <https://github.com/bw0rth/pync/blob/main/examples/scan.py>`_
      - Simple TCP connect port scanner
-   * - `shell.py <https://github.com/brenw0rth/pync/blob/main/examples/shell.py>`_
+   * - `shell.py <https://github.com/bw0rth/pync/blob/main/examples/shell.py>`_
      - Reverse or bind remote system shell (use with caution).
 
 See Also
 ========
 .. toctree::
    
-   GitHub Repository <https://github.com/brenw0rth/pync>
+   GitHub Repository <https://github.com/bw0rth/pync>
 
 Caveats
 =======
