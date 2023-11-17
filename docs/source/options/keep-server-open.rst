@@ -36,13 +36,13 @@ Creating a Date/Time Server
       
       # datetime_server.py
       import platform
-      from pync import pync
+      import pync
 
       command = 'date'
       if platform.system() == 'Windows':
           command = 'time /t && date /t'
 
-      pync('-kle {} localhost 8000'.format(command))
+      pync.run('-kle {} localhost 8000'.format(command))
 
 2. To test this, connect to the server on a separate console:
 
@@ -62,8 +62,8 @@ Creating a Date/Time Server
 
    .. code-block:: python
       
-      from pync import pync
-      pync('localhost 8000')
+      import pync
+      pync.run('localhost 8000')
 
 By setting the **-k** option on the server, you should be able to keep connecting
 to it to get the current time and date.

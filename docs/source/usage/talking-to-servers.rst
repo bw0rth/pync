@@ -43,11 +43,11 @@ You can send a GET request to a web server to receive the home page.
 
       # http_get.py
       import io
-      from pync import pync
+      import pync
       # BytesIO turns our request into a file-like
       # object for the pync function.
       request = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
-      pync('host.example.com 80', stdin=request)
+      pync.run('host.example.com 80', stdin=request)
 
 Talking to a mail server
 -------------------------
@@ -77,9 +77,9 @@ You could then send this template to the server like so:
    .. code-block:: python
 
       # smtp.py
-      from pync import pync
+      import pync
       with open('email_template.txt', 'rb') as f:
-          pync('-C smtp.example.com 25', stdin=f)
+          pync.run('-C smtp.example.com 25', stdin=f)
 
 | SMTP typically requires lines to be terminated with a carriage return (CR)
   line feed (LF) sequence (\\r\\n).

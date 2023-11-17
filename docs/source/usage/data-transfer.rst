@@ -31,12 +31,12 @@ Downloading Files
    .. code-block:: python
 
       # server.py
-      from pync import pync
+      import pync
 
       # Be sure to open files in binary mode
       # for the pync function.
       with open('file.in', 'rb') as f:
-          pync('-l localhost 8000', stdin=f)
+          pync.run('-l localhost 8000', stdin=f)
 
 2. On a separate console, connect to the server to
    download the file:
@@ -58,12 +58,12 @@ Downloading Files
    .. code-block:: python
 
       # client.py
-      from pync import pync
+      import pync
 
       # Be sure to open files in binary mode
       # for the pync function.
       with open('file.out', 'wb') as f:
-          pync('localhost 8000', stdout=f)
+          pync.run('localhost 8000', stdout=f)
 
 During the file transfer, there won't be any progress
 indication. The connection will close automatically after
@@ -93,12 +93,12 @@ You can also upload files by swapping the client/server roles.
    .. code-block:: python
 
       # server.py
-      from pync import pync
+      import pync
 
       # Be sure to open files in binary mode
       # for the pync function.
       with open('file.out', 'wb') as f:
-          pync('-l localhost 8000', stdout=f)
+          pync.run('-l localhost 8000', stdout=f)
 
 2. On a separate console, connect to the server to upload the file:
 
@@ -119,12 +119,12 @@ You can also upload files by swapping the client/server roles.
    .. code-block:: python
 
       # client.py
-      from pync import pync
+      import pync
 
       # Be sure to open files in binary mode
       # for the pync function.
       with open('file.in', 'rb') as f:
-          pync('localhost 8000', stdin=f)
+          pync.run('localhost 8000', stdin=f)
 
 .. raw:: html
 

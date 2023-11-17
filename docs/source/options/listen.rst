@@ -22,8 +22,8 @@ option to listen for incoming connections:
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-l localhost 8000')
+      import pync
+      pync.run('-l localhost 8000')
 
 If instead you want a UDP server, combine the
 `-l <https://pync.readthedocs.io/en/latest/options/listen.html>`_ and
@@ -45,8 +45,8 @@ If instead you want a UDP server, combine the
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-lu localhost 8000')
+      import pync
+      pync.run('-lu localhost 8000')
 
 .. raw:: html
    

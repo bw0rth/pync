@@ -23,6 +23,6 @@ of the available options:
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-h')
+      import pync
+      pync.run('-h')
 

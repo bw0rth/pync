@@ -40,13 +40,13 @@ along with any arguments.
    .. code-block:: python
 
       import platform
-      from pync import pync
+      import pync
 
       cmd = '/bin/echo Hello'
       if platform.system() == 'Windows':
           cmd = 'echo Hello'
 
-      pync('-vle "{}" localhost 8000')
+      pync.run('-vle "{}" localhost 8000')
 
 2. Connect to the Hello server to see the message:
 
@@ -66,8 +66,8 @@ along with any arguments.
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-v localhost 8000')
+      import pync
+      pync.run('-v localhost 8000')
 
 Running a Command With -c
 =========================
@@ -94,13 +94,13 @@ extra shell features such as pipelines and evironment variable expansion.
    .. code-block:: python
 
       import platform
-      from pync import pync
+      import pync
 
       cmd = '/bin/echo `pwd`'
       if platform.system() == 'Windows':
           cmd = 'echo %cd%'
 
-      pync('-vle "{}" localhost 8000')
+      pync.run('-vle "{}" localhost 8000')
 
 2. Connect to the server to receive the server's
    current working directory:
@@ -121,8 +121,8 @@ extra shell features such as pipelines and evironment variable expansion.
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-v localhost 8000')
+      import pync
+      pync.run('-v localhost 8000')
 
 .. raw:: html
 

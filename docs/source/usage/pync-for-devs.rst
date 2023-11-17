@@ -27,7 +27,7 @@ Using the pync function to send an HTTP GET request
    import io
    import sys
 
-   from pync import pync
+   import pync
 
    # io.BytesIO turns the GET request bytes string into a file-like
    # object for the pync function.
@@ -36,7 +36,7 @@ Using the pync function to send an HTTP GET request
    # pync reads and writes bytes, so be sure to open files in
    # binary mode.
    with open('http.response', 'wb') as response:
-       status = pync('-q -1 host.example.com 80', stdin=request, stdout=response)
+       status = pync.run('-q -1 host.example.com 80', stdin=request, stdout=response)
 
    sys.exit(status)
 

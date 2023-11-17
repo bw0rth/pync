@@ -26,8 +26,8 @@ Example
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-lv localhost 8000')
+      import pync
+      pync.run('-lv localhost 8000')
 
 2. On a separate console, connect to the server:
 
@@ -47,8 +47,8 @@ Example
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-v localhost 8000')
+      import pync
+      pync.run('-v localhost 8000')
 
 You should now be able to see messages printed on each
 console indicating that the connection was successful:

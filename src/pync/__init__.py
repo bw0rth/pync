@@ -44,29 +44,29 @@ def run(args, stdin=None, stdout=None, stderr=None,
     .. code-block:: python
        :caption: Create a local TCP server on port 8000.
        
-       from pync import pync
-       pync('-l localhost 8000')
+       import pync
+       pync.run('-l localhost 8000')
 
     .. code-block:: python
        :caption: Connect to a local TCP server on port 8000.
 
-       from pync import pync
-       pync('localhost 8000')
+       import pync
+       pync.run('localhost 8000')
 
     .. code-block:: python
        :caption: Create a local TCP server to host a file on port 8000.
 
-       from pync import pync
+       import pync
        with open('file.in', 'rb') as f:
-           pync('-l localhost 8000', stdin=f)
+           pync.run('-l localhost 8000', stdin=f)
 
     .. code-block:: python
        :caption: Connect to a local TCP server to download a file on
            port 8000.
 
-       from pync import pync
+       import pync
        with open('file.out', 'wb') as f:
-           pync('localhost 8000', stdout=f)
+           pync.run('localhost 8000', stdout=f)
     """
     result = CompletedNetcat()
     result.returncode = 1

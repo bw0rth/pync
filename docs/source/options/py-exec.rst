@@ -39,8 +39,8 @@ stdin (the network) and writing that same data back to stdout (the network):
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-vly "import sys; sys.stdout.write(sys.stdin.read())" localhost 8000')
+      import pync
+      pync.run('-vly "import sys; sys.stdout.write(sys.stdin.read())" localhost 8000')
 
 To test this server, connect to it and send it a message:
 
@@ -61,10 +61,10 @@ To test this server, connect to it and send it a message:
    .. code-block:: python
 
       import io
-      from pync import pync
+      import pync
 
       hello = io.BytesIO(b'Hello\n')
-      pync('-vq -1 localhost 8000', stdin=hello)
+      pync.run('-vq -1 localhost 8000', stdin=hello)
 
 After receiving the message, the echo server should send it back
 to the client which then would display on the client console.

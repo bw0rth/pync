@@ -35,8 +35,8 @@ A Reverse Python Shell
 
    .. code-block:: python
    
-      from pync import pync
-      pync('-vl localhost 8000')
+      import pync
+      pync.run('-vl localhost 8000')
 
 2. On another console, connect back to the server and
    execute the shell:
@@ -58,8 +58,8 @@ A Reverse Python Shell
    .. code-block:: python
 
       # reverse_pyshell.py
-      from pync import pync
-      pync('-vy "import code; code.interact()" localhost 8000')
+      import pync
+      pync.run('-vy "import code; code.interact()" localhost 8000')
 
 There should now be a prompt on the server console that
 allows you to remotely execute python code on the client machine.
@@ -87,8 +87,8 @@ A Bind Python Shell
    .. code-block:: python
 
       # bind_pyshell.py
-      from pync import pync
-      pync('-vly "import code; code.interact()" localhost 8000')
+      import pync
+      pync.run('-vly "import code; code.interact()" localhost 8000')
 
 2. On another console, connect to the server to
    interact with the shell:
@@ -109,8 +109,8 @@ A Bind Python Shell
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-v localhost 8000')
+      import pync
+      pync.run('-v localhost 8000')
 
 There should now be a prompt on the client console that
 allows you to remotely execute python code on the server machine.
@@ -143,8 +143,8 @@ arbitrary code to be executed remotely.
    .. code-block:: python
 
       # pyexec_server.py
-      from pync import pync
-      pync('-vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000')
+      import pync
+      pync.run('-vlky "import sys; exec(sys.stdin.read(), {})" localhost 8000')
 
 We use the **-k** option here to keep the server open between connections,
 serving one connection after another.
@@ -168,10 +168,10 @@ serving one connection after another.
    .. code-block:: python
 
       import io
-      from pync import pync
+      import pync
 
       pycode = io.BytesIO(b"import sys; sys.stdout.write('Hello\n')")
-      pync('-vq -1 localhost 8000', stdin=pycode)
+      pync.run('-vq -1 localhost 8000', stdin=pycode)
 
 After executing the above, you should be able to see the message "Hello"
 printed on the client machine.

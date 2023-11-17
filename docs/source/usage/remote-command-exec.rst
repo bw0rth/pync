@@ -35,8 +35,8 @@ A Simple Reverse Shell
 
    .. code-block:: python
    
-      from pync import pync
-      pync('-vl localhost 8000')
+      import pync
+      pync.run('-vl localhost 8000')
 
 2. On another console, connect back to the server and
    execute the shell:
@@ -59,13 +59,13 @@ A Simple Reverse Shell
 
       # reverse_shell.py
       import platform
-      from pync import pync
+      import pync
 
       command = '/bin/sh -i'
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-ve "{}" localhost 8000'.format(command))
+      pync.run('-ve "{}" localhost 8000'.format(command))
 
 There should now be a prompt on the server console that
 allows you to remotely execute commands on the client machine.
@@ -93,13 +93,13 @@ A Simple Bind Shell
 
       # bind_shell.py
       import platform
-      from pync import pync
+      import pync
 
       command = '/bin/sh -i'
       if platform.system() == 'Windows':
           command = 'cmd /q'
 
-      pync('-vle "{}" localhost 8000'.format(command))
+      pync.run('-vle "{}" localhost 8000'.format(command))
 
 2. On another console, connect to the server to
    interact with the shell:
@@ -120,8 +120,8 @@ A Simple Bind Shell
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-v localhost 8000')
+      import pync
+      pync.run('-v localhost 8000')
 
 There should now be a prompt on the client console that
 allows you to remotely execute commands on the server machine.

@@ -47,8 +47,8 @@ to send messages back and forth.
    .. code-block:: python
 
       # server.py
-      from pync import pync
-      pync('-l 8000')
+      import pync
+      pync.run('-l 8000')
 
 **pync** is now listening for a connection
 on port 8000.
@@ -73,8 +73,8 @@ on port 8000.
    .. code-block:: python
 
       # client.py
-      from pync import pync
-      pync('localhost 8000')
+      import pync
+      pync.run('localhost 8000')
 
 There should now be a connection between the two consoles
 and anything typed in one console should display in the

@@ -27,8 +27,8 @@ A Client/Server Example
    .. code-block:: python
 
       # server.py
-      from pync import pync
-      pync('-lu localhost 8000')
+      import pync
+      pync.run('-lu localhost 8000')
 
 2. On a separate console, connect to the server:
 
@@ -49,8 +49,8 @@ A Client/Server Example
    .. code-block:: python
 
       # client.py
-      from pync import pync
-      pync('-u localhost 8000')
+      import pync
+      pync.run('-u localhost 8000')
 
 .. raw:: html
 

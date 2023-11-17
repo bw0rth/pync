@@ -36,8 +36,8 @@ a simple port scanner:
    .. code-block:: python
 
       # scan.py
-      from pync import pync
-      pync('-vz host.example.com 20-30 80 443')
+      import pync
+      pync.run('-vz host.example.com 20-30 80 443')
 
 As you can see, you can provide a single port, a list of
 ports or a range of ports to scan.
@@ -77,10 +77,10 @@ by issuing a well known command to the server:
    
       # banner.py
       import io
-      from pync import pync
+      import pync
 
       command = io.BytesIO(b'QUIT')
-      pync('host.example.com 20-30', stdin=command)
+      pync.run('host.example.com 20-30', stdin=command)
 
 For example, if SSH was running on port 22, you might see output
 similar to this::

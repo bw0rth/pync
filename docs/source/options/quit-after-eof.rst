@@ -27,8 +27,8 @@ An Example
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-l localhost 8000')
+      import pync
+      pync.run('-l localhost 8000')
 
 2. Connect to the server with :doc:`-q <quit-after-eof>` set to
    5 seconds.
@@ -53,12 +53,12 @@ An Example
    .. code-block:: python
 
       import io
-      from pync import pync
+      import pync
 
       # io.BytesIO turns our message into a file-like
       # object for the pync function.
       message = io.BytesIO(b'Hello, World!')
-      pync('-q 5 localhost 8000', stdin=message)
+      pync.run('-q 5 localhost 8000', stdin=message)
 
 .. raw:: html
 

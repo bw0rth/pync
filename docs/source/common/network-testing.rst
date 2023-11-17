@@ -25,8 +25,8 @@ connections, you can combine the **-v** and
 
    .. code-block:: python
 
-      from pync import pync
-      pync('-vz host.example.com 80')
+      import pync
+      pync.run('-vz host.example.com 80')
 
 The **-z** flag tells **pync** to close the
 connection immediately (zero input/output)
@@ -80,8 +80,8 @@ web page (if it exists).
 
    .. code-block:: python
 
-      from pync import pync
-      pync('host.example.com 80')
+      import pync
+      pync.run('host.example.com 80')
 
 2. Once connected, send a GET request for the
    home page by typing the following and
