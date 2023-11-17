@@ -42,13 +42,13 @@ Synopsis
 
    .. code-block:: python
    
-      from pync import pync
+      import pync
       args = '''[-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
                 [-i interval] [-O length] [-P proxy_username] [-p source_port]
                 [-q seconds] [-s source] [-T toskeyword] [-w timeout]
                 [-X proxy_protocol] [-x proxy_address[:port]]
                 [-Y pyfile] [-y pycode] [dest] [port]'''
-      pync(args, stdin, stdout, stderr)
+      pync.run(args, stdin, stdout, stderr)
 
 Description
 ===========

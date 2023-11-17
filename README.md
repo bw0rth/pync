@@ -62,13 +62,13 @@ py -m pync [-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
 <summary>Python</summary>
 
 ```python
-from pync import pync
+import pync
 args = '''[-46bCDdhklnruvz] [-c string] [-e filename] [-I length]
           [-i interval] [-O length] [-P proxyuser] [-p source_port]
           [-q seconds] [-s source] [-T keyword] [-w timeout]
           [-X proto] [-x addr[:port]]
           [-Y pyfile] [-y pycode] [dest] [port]'''
-pync(args, stdin, stdout, stderr)
+pync.run(args, stdin, stdout, stderr)
 ```
 </details>
 
