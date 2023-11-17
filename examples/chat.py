@@ -11,7 +11,9 @@ Then connect to the chat server:
 
 import argparse
 import sys
-from pync import pync, NetcatConsoleInput
+
+import pync
+from pync import NetcatConsoleInput
 
 
 try:
@@ -112,7 +114,8 @@ def main():
         username = input('Enter username: ')
 
     chat = ChatProtocol(username)
-    return pync(pync_args, stdin=chat.stdin, stdout=chat.stdout)
+    result = pync.run(pync_args, stdin=chat.stdin, stdout=chat.stdout)
+    return result.returncode
 
 
 if __name__ == '__main__':
