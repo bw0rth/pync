@@ -1,6 +1,6 @@
-========================
+==========================================
 -e: specify filename to exec after connect
-========================
+==========================================
 
 .. warning::
    | Please BE CAREFUL with this functionality as it could expose your system to attackers.

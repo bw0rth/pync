@@ -19,7 +19,7 @@ You can pass your own file-like objects to these keyword arguments
 to control where the data gets read from and written to.
 
 Using the pync function to send an HTTP GET request
---------------------------------------------------
+---------------------------------------------------
 
 .. code-block:: python
 
