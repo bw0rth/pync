@@ -2,5 +2,5 @@
 pync
 ====
 
-.. autofunction:: pync.pync
+.. autofunction:: pync.run
 
