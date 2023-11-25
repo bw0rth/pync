@@ -38,7 +38,6 @@ def main():
     nc = pync.Netcat(
         dest=args.dest,
         port=args.port,
-        k=True,
         l=args.l,
         y='import sys; sys.stdout.write(sys.stdin.read())',
         v=True,
