@@ -1,6 +1,6 @@
-====
-pync
-====
+===
+run
+===
 
 .. autofunction:: pync.run
 
