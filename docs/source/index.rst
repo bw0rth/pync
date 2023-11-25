@@ -52,7 +52,7 @@ Synopsis
 
 Description
 ===========
-Inspired by the Black Hat Python book, the goal of **pync** is to create an easy to use library that provides Netcat-like functionality for Python developers.
+Inspired by the Black Hat Python book, the goal of **pync** was to create an easy to use library that provides Netcat-like functionality for Python developers.
 
 Common uses include:
 
@@ -184,6 +184,8 @@ Examples
      - Simple file upload (use with caution).
    * - `download.py <https://github.com/bw0rth/pync/tree/main/examples/download.py>`_
      - Simple file download (use with caution).
+   * - `echo.py <https://github.com/bw0rth/pync/tree/main/examples/echo.py>`_
+     - Echo client/server
    * - `proxy.py <https://github.com/bw0rth/pync/blob/main/examples/proxy.py>`_
      - Simple TCP proxy server
    * - `pyshell.py <https://github.com/bw0rth/pync/blob/main/examples/pyshell.py>`_

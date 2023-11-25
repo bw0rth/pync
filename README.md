@@ -1,5 +1,5 @@
 <h1 align="left">
-  <a href="https://github.com/brenw0rth/pync"><img src="identicon.png" alt="pync" width=50></a>
+  <a href="https://github.com/bw0rth/pync"><img src="identicon.png" alt="pync" width=50></a>
   pync
 </h1>
 
@@ -7,17 +7,17 @@
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/Made%20with-Python-1f425f.svg">
   </a>
-  <a href="https://gitHub.com/brenw0rth/pync/stargazers/">
-    <img src="https://badgen.net/github/stars/brenw0rth/pync">
+  <a href="https://gitHub.com/bw0rth/pync/stargazers/">
+    <img src="https://badgen.net/github/stars/bw0rth/pync">
   </a>
-  <a href="https://gitHub.com/brenw0rth/pync/network/members">
-    <img src="https://badgen.net/github/forks/brenw0rth/pync">
+  <a href="https://gitHub.com/bw0rth/pync/network/members">
+    <img src="https://badgen.net/github/forks/bw0rth/pync">
   </a>
 
   </br>
 
-  <a href="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml">
-    <img src="https://github.com/brenw0rth/pync/actions/workflows/python-package.yml/badge.svg">
+  <a href="https://github.com/bw0rth/pync/actions/workflows/python-package.yml">
+    <img src="https://github.com/bw0rth/pync/actions/workflows/python-package.yml/badge.svg">
   </a>
   <a href="https://readthedocs.org/projects/pync/">
     <img src="https://readthedocs.org/projects/pync/badge/?version=latest">
@@ -25,8 +25,8 @@
 
   </br>
 
-  <a href="https://github.com/brenw0rth/pync/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/brenw0rth/pync">
+  <a href="https://github.com/bw0rth/pync/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/bw0rth/pync">
   </a>
 </p>
 
@@ -159,13 +159,14 @@ py -m pip install https://github.com/bw0rth/pync/archive/main.zip
 ## Examples
 | Example | Description
 | :------ | :----------
-| [chat.py](https://github.com/brenw0rth/pync/blob/main/examples/chat.py) | Simple chat protocol with a custom username
-| [upload.py](https://github.com/brenw0rth/pync/blob/main/examples/upload.py) | Simple file upload (use with caution).
-| [download.py](https://github.com/brenw0rth/pync/blob/main/examples/download.py) | Simple file download (use with caution).
-| [proxy.py](https://github.com/brenw0rth/pync/blob/main/examples/proxy.py) | Simple TCP proxy server
-| [pyshell.py](https://github.com/brenw0rth/pync/blob/main/examples/pyshell.py) | Reverse or bind python interpreter shell (use with caution).
-| [scan.py](https://github.com/brenw0rth/pync/blob/main/examples/scan.py) | Simple TCP connect port scanner
-| [shell.py](https://github.com/brenw0rth/pync/blob/main/examples/shell.py) | Reverse or bind remote system shell (use with caution).
+| [chat.py](https://github.com/bw0rth/pync/blob/main/examples/chat.py) | Simple chat protocol with a custom username
+| [upload.py](https://github.com/bw0rth/pync/blob/main/examples/upload.py) | Simple file upload (use with caution).
+| [download.py](https://github.com/bw0rth/pync/blob/main/examples/download.py) | Simple file download (use with caution).
+| [echo.py](https://github.com/bw0rth/pync/blob/main/examples/echo.py) | Echo client/server
+| [proxy.py](https://github.com/bw0rth/pync/blob/main/examples/proxy.py) | Simple TCP proxy server
+| [pyshell.py](https://github.com/bw0rth/pync/blob/main/examples/pyshell.py) | Reverse or bind python interpreter shell (use with caution).
+| [scan.py](https://github.com/bw0rth/pync/blob/main/examples/scan.py) | Simple TCP connect port scanner
+| [shell.py](https://github.com/bw0rth/pync/blob/main/examples/shell.py) | Reverse or bind remote system shell (use with caution).
 
 ## See Also
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
