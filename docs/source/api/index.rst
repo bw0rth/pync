@@ -4,7 +4,7 @@ API Reference
 
 .. toctree::
 
-   pync
+   run
    Netcat
    clients
    servers
