@@ -11,11 +11,8 @@ simple as passing a GET request string to
 
 .. code-block:: python
    
-   import io
    import pync
-   
-   http_get = io.BytesIO(b'GET / HTTP/1.1\r\n\r\n')
-   pync.run('host.example.com 80', stdin=http_get)
+   pync.run('host.example.com 80', input=b'GET / HTTP/1.1\r\n\r\n')
       
 .. note::
    The response will contain HTTP headers that would need filtering out using another tool.
