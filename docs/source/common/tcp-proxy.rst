@@ -67,10 +67,7 @@ To test this out, connect to the proxy server on port
 
    .. code-block:: python
       :linenos:
-      
+
       # http_get.py
-      from io import BytesIO
       import pync
-      
-      http_get = BytesIO(b'GET / HTTP/1.1\r\n\r\n')
-      pync.run('localhost 8000', stdin=http_get)
+      pync.run('localhost 8000', input=b'GET / HTTP/1.1\r\n\r\n')
