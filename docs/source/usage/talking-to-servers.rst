@@ -42,12 +42,8 @@ You can send a GET request to a web server to receive the home page.
    .. code-block:: python
 
       # http_get.py
-      import io
       import pync
-      # BytesIO turns our request into a file-like
-      # object for the pync function.
-      request = io.BytesIO(b'GET / HTTP/1.0\r\n\r\n')
-      pync.run('host.example.com 80', stdin=request)
+      pync.run('host.example.com 80', input=b'GET / HTTP/1.0\r\n\r\n')
 
 Talking to a mail server
 -------------------------
