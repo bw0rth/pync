@@ -76,11 +76,8 @@ by issuing a well known command to the server:
    .. code-block:: python
    
       # banner.py
-      import io
       import pync
-
-      command = io.BytesIO(b'QUIT')
-      pync.run('host.example.com 20-30', stdin=command)
+      pync.run('host.example.com 20-30', input=b'QUIT')
 
 For example, if SSH was running on port 22, you might see output
 similar to this::
