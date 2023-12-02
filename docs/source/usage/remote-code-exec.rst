@@ -167,11 +167,10 @@ serving one connection after another.
 
    .. code-block:: python
 
-      import io
       import pync
 
-      pycode = io.BytesIO(b"import sys; sys.stdout.write('Hello\n')")
-      pync.run('-vq -1 localhost 8000', stdin=pycode)
+      pycode = b"import sys; sys.stdout.write('Hello\n')"
+      pync.run('-vq -1 localhost 8000', input=pycode)
 
 After executing the above, you should be able to see the message "Hello"
 printed on the client machine.
