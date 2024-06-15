@@ -74,7 +74,7 @@ pync.run(args, stdin, stdout, stderr)
 
 ## Description
 Inspired by the [Black Hat Python](https://nostarch.com/black-hat-python2E) book,
-the goal of **pync** was to create an easy to use library that
+the goal of **pync** is to create an easy to use library that
 provides [Netcat](https://en.wikipedia.org/wiki/Netcat)-like functionality for Python developers.</br>
 
 Common uses include:
