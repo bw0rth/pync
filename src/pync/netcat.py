@@ -2173,6 +2173,15 @@ class Netcat(object):
     :param p: The source port number to bind to.
     :type p: int, optional
 
+    :param stdin: A file-like object to read outgoing network data from.
+    :type stdin: file, optional
+    
+    :param stdout: A file-like object to write incoming network data to.
+    :type stdout: file, optional
+    
+    :param stderr: A file-like object to write error/verbose/debug messages to.
+    :type stderr: file, optional
+
     :param kwargs: All other keyword arguments get passed to the underlying
         Netcat class.
 
@@ -2192,7 +2201,7 @@ class Netcat(object):
        nc.readwrite()
        nc.close()
 
-    Alternatively, you can also call the run method that handles the abov
+    Alternatively, you can also call the run method that handles the above
     for you:
     
     .. code-block:: python
