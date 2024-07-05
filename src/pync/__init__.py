@@ -15,6 +15,7 @@ from .netcat import (
         NetcatPythonProcess,
         NetcatError,
         CompletedNetcat,
+        readwrite,
 )
 
 
