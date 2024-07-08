@@ -2375,3 +2375,8 @@ class Netcat(object):
 
 class CompletedNetcat(argparse.Namespace):
     pass
+
+
+def readwrite(net_sock, *args, **kwargs):
+    with NetcatConnection(net_sock, *args, **kwargs) as nc:
+        nc.readwrite()
