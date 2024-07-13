@@ -104,4 +104,4 @@ network, opens up a range of other possibilities:
 :SEE ALSO:
 
 * :doc:`../options/listen`
-* https://en.wikipedia.org/wiki/Client%E2%80%93server_model
+* https://en.wikipedia.org/wiki/Client-server_model
