@@ -167,6 +167,7 @@ py -m pip install https://github.com/bw0rth/pync/archive/main.zip
 | [pyshell.py](https://github.com/bw0rth/pync/blob/main/examples/pyshell.py) | Reverse or bind python interpreter shell (use with caution).
 | [scan.py](https://github.com/bw0rth/pync/blob/main/examples/scan.py) | Simple TCP connect port scanner
 | [shell.py](https://github.com/bw0rth/pync/blob/main/examples/shell.py) | Reverse or bind remote system shell (use with caution).
+| [sock.py](https://github.com/bw0rth/pync/blob/main/examples/sock.py) | Using sockets with pync
 
 ## See Also
 * [Netcat man page](https://helpmanual.io/man1/netcat/)
