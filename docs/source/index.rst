@@ -163,7 +163,7 @@ Options
 
 API Reference
 =============
-* :doc:`api/run`
+* :doc:`pync.run <api/run>`
 * :doc:`api/Netcat`
 * :doc:`api/clients`
 * :doc:`api/servers`
