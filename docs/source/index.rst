@@ -194,6 +194,8 @@ Examples
      - Simple TCP connect port scanner
    * - `shell.py <https://github.com/bw0rth/pync/blob/main/examples/shell.py>`_
      - Reverse or bind remote system shell (use with caution).
+   * - `sock.py <https://github.com/bw0rth/pync/blob/main/examples/sock.py>`_
+     - Using sockets with pync
 
 See Also
 ========
