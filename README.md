@@ -150,7 +150,7 @@ py -m pip install https://github.com/bw0rth/pync/archive/main.zip
 | port           | The port number to connect or bind to
 
 ## API Reference
-* [pync](https://pync.readthedocs.io/en/latest/api/run.html)
+* [pync.run](https://pync.readthedocs.io/en/latest/api/run.html)
 * [Netcat](https://pync.readthedocs.io/en/latest/api/Netcat.html)
 * [Clients](https://pync.readthedocs.io/en/latest/api/clients.html)
 * [Servers](https://pync.readthedocs.io/en/latest/api/servers.html)
