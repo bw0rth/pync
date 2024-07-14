@@ -2373,12 +2373,6 @@ class Netcat(object):
         return cls(**kwargs)
 
 
-class CompletedNetcat(argparse.Namespace):
-    """
-    This class is for use inside the :func:`pync.run` function.
-    """
-
-
 def readwrite(net_sock, *args, **kwargs):
     with NetcatConnection(net_sock, *args, **kwargs) as nc:
         nc.readwrite()

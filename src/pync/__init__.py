@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import argparse
 import io
 
 from .netcat import (
@@ -14,9 +15,14 @@ from .netcat import (
         NetcatConsoleInput,
         NetcatPythonProcess,
         NetcatError,
-        CompletedNetcat,
         readwrite,
 )
+
+
+class CompletedNetcat(argparse.Namespace):
+    """
+    This class gets returned from the :func:`pync.run` function.
+    """
 
 
 def run(args, stdin=None, stdout=None, stderr=None,
@@ -37,7 +43,7 @@ def run(args, stdin=None, stdout=None, stderr=None,
     :param stderr: A file-like object to write error/verbose/debug messages to.
     :type stderr: file, optional
 
-    :return: A CompletedNetcat instance.
+    :return: A :class:`CompletedNetcat` instance.
     :rtype: :class:`pync.CompletedNetcat`
 
     :Examples:
