@@ -3,8 +3,8 @@ Remote Command Execution
 ========================
 
 .. warning::
-   | * Please DO NOT use this functionality
-     for evil purposes.
+   | - Please BE CAREFUL not to expose your system with this functionality.
+   | - Please DO NOT use this functionality for evil purposes.
 
 The **-e** option allows you to execute a process and have that process' stdin/stdout/stderr
 be connected to the network socket.
@@ -136,4 +136,5 @@ allows you to remotely execute commands on the server machine.
 * :doc:`../options/exec`
 * :doc:`../options/listen`
 * :doc:`../options/verbose`
+* :doc:`../usage/remote-code-exec`
 

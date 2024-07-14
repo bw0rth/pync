@@ -3,8 +3,7 @@ Port Scanning
 =============
 
 .. warning::
-   | * Please DO NOT scan machines without
-       the owners permission first.
+   | - Please DO NOT scan machines without permission.
 
 Sometimes it's useful to know which ports are open and what services a
 target machine is running.

@@ -1,12 +1,12 @@
-=========================
-Executing P[-Yy]thon Code
-=========================
+=============================================
+-y: specify python code to exec after connect
+=============================================
 
 .. warning::
-   | * Please be CAREFUL and RESPONSIBLE with this functionality.
-   | * Please DO NOT use this functionality for evil purposes.
+   | - Please BE CAREFUL not to expose your system with this functionality.
+   | - Please DO NOT use this functionality for evil purposes.
 
-**pync** can execute python code in a separate process and connect the
+**pync** can execute Python code in a separate process and connect the
 process' stdin/stdout/stderr to the network socket.
 
 Any data that comes in from the network will go to the process' stdin, and
@@ -14,6 +14,9 @@ any data that comes out from the process' stdout/stderr will be sent out to the 
 
 There are two options that can provide this functionality, the lowercase **-y** option
 and the uppercase **-Y** option.
+
+This section focuses on the **-y** option to execute code given as a string.
+To execute code from a specified file path, see :doc:`../options/py-file-exec`.
 
 Executing Python Code With -y
 =============================
@@ -93,6 +96,7 @@ to execute.
 
 :SEE ALSO:
 
+* :doc:`../options/py-file-exec`
 * :doc:`../options/quit-after-eof`
 * :doc:`../options/verbose`
 * :doc:`../usage/remote-code-exec`

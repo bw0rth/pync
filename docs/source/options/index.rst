@@ -13,6 +13,7 @@ Options
    quit-after-eof
    udp
    verbose
-   py-exec
+   py-code-exec
+   py-file-exec
    zero-io
 

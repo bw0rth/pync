@@ -2,7 +2,7 @@
 Data Transfer
 =============
 .. warning::
-   | * Please DO NOT transfer any sensitive
+   | - Please DO NOT transfer any sensitive
        data using the following methods.
 
 To build on the previous client/server example, we can

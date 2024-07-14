@@ -1,9 +1,10 @@
-========================
+=====================
 Remote Code Execution
-========================
+=====================
+
 .. warning::
-   | Please BE CAREFUL with this functionality as it could expose your system to attackers.
-   | Also, please DO NOT use this functionality for evil purposes.
+   | - Please BE CAREFUL not to expose your system with this functionality.
+   | - Please DO NOT use this functionality for evil purposes.
 
 The **-y** option allows you to execute a string of python code in a separate
 process and have the process' stdin/stdout/stderr be connected to the network
@@ -194,7 +195,9 @@ When finished, hit Ctrl+C on the server console to stop the server.
 
 :SEE ALSO:
 
-* :doc:`../options/py-exec`
+* :doc:`../options/py-code-exec`
+* :doc:`../options/py-file-exec`
 * :doc:`../options/listen`
 * :doc:`../options/verbose`
+* :doc:`../usage/remote-command-exec`
 

@@ -150,9 +150,9 @@ Options
      - Proxy protocol: "4", "5" (SOCKS) or "connect"
    * - -x proxy_address[:port]
      - Specify proxy address and port
-   * - `-Y <https://pync.readthedocs.io/en/latest/options/py-exec.html>`_ pyfile
+   * - `-Y <https://pync.readthedocs.io/en/latest/options/py-file-exec.html>`_ pyfile
      - specify python file to exec after connect (use with caution).
-   * - `-y <https://pync.readthedocs.io/en/latest/options/py-exec.html>`_ pycode
+   * - `-y <https://pync.readthedocs.io/en/latest/options/py-code-exec.html>`_ pycode
      - specify python code to exec after connect (use with caution).
    * - `-z <https://pync.readthedocs.io/en/latest/options/zero-io.html>`_
      - Zero-I/O mode [used for scanning]
