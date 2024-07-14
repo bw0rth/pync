@@ -37,8 +37,8 @@ def run(args, stdin=None, stdout=None, stderr=None,
     :param stderr: A file-like object to write error/verbose/debug messages to.
     :type stderr: file, optional
 
-    :return: Error status code depending on success (0) or failure (>0).
-    :rtype: int
+    :return: A CompletedNetcat instance.
+    :rtype:`CompletedNetcat <pync.CompletedNetcat>`
 
     :Examples:
 
