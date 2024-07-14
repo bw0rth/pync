@@ -129,3 +129,4 @@ dmypy.json
 # ignore backup dirs
 *backup/
 
+*.code-workspace
