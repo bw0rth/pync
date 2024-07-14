@@ -38,7 +38,7 @@ def run(args, stdin=None, stdout=None, stderr=None,
     :type stderr: file, optional
 
     :return: A CompletedNetcat instance.
-    :rtype:`CompletedNetcat <pync.CompletedNetcat>`
+    :rtype: CompletedNetcat
 
     :Examples:
 
