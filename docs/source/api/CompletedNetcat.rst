@@ -1,0 +1,5 @@
+===============
+CompletedNetcat
+===============
+
+.. autoclass:: pync.CompletedNetcat
