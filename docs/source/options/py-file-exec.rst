@@ -16,7 +16,7 @@ There are two options that can provide this functionality, the lowercase **-y** 
 and the uppercase **-Y** option.
 
 This section focuses on the **-Y** option to execute code from a specified file path.
-To execute code from a string, see :doc:`../options/py-code-exec`.
+To execute code from a given string, see :doc:`../options/py-code-exec`.
 
 Executing Python Files With -Y
 ==============================

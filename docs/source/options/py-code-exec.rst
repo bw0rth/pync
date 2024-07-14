@@ -84,11 +84,6 @@ the message back from the echo server.
    sys module would be better since it works on both versions of
    python.
 
-Executing Python Files With -Y
-==============================
-The uppercase **-Y** option takes the full pathname of a python file
-to execute.
-
 .. raw:: html
 
    <br>
