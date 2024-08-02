@@ -46,9 +46,7 @@ def run(args, stdin=None, stdout=None, stderr=None,
     :param input: A byte string to use instead of stdin.
     :type input: bytes, optional
 
-    :param capture_output: If set to True, capture output and return it as a
-    file-like object via the :attr:`pync.CompletedNetcat.stdout` attribute.
-    Defaults to "False".
+    :param capture_output: If set to True, capture output and return it as a file-like object via the :attr:`pync.CompletedNetcat.stdout` attribute. jDefaults to "False".
     :type capture_output: bool, optional
 
     :return: A :class:`CompletedNetcat` instance.
