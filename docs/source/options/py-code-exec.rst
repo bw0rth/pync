@@ -77,13 +77,6 @@ doesn't quit immediately after EOF on stdin (after sending the "Hello" message).
 Otherwise, there's a chance the client would quit before receiving
 the message back from the echo server.
 
-.. note::
-   You could just as well use the builtin print and input functions
-   for this but because print and input (raw_input on python 2) are
-   different on python 2 and python 3 I just decided using the
-   sys module would be better since it works on both versions of
-   python.
-
 .. raw:: html
 
    <br>
