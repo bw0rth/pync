@@ -47,7 +47,7 @@ success or failure message to the console:
       ...
       pync: connect to host.example.com port 80 (tcp) failed: Connection refused
 
-You can also scan multiple ports on a machine
+You can also test multiple ports on a machine
 by passing a range of port numbers. See
 :doc:`../usage/port-scanning` for more.
 
@@ -109,3 +109,15 @@ page (index.html in this case):
        <h1>Example Web Page!</h1>
      </body>
    </html>
+
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/verbose`
+* :doc:`../options/zero-io`
+* :doc:`http`
+* :doc:`../usage/talking-to-servers`
