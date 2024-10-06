@@ -38,3 +38,16 @@ A Simple HTTP Server
        cat = 'type'
    
    pync.run('-vlkc "{cat} index.http" 8000'.format(cat=cat))
+
+.. raw:: html
+
+   <br>
+   <hr>
+
+:SEE ALSO:
+
+* :doc:`../options/verbose`
+* :doc:`../options/listen`
+* :doc:`../options/keep-server-open`
+* :doc:`../options/exec`
+* :doc:`../usage/remote-command-exec`
