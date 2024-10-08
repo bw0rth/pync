@@ -95,7 +95,7 @@ def run(args, stdin=None, stdout=None, stderr=None,
        
        import pync
        response = pync.run('localhost 8000', capture_output=True)
-       print(response.stdout)
+       print(response.stdout.decode())
     """
     result = CompletedNetcat()
     result.returncode = 1
