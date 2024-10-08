@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 import io
 
 from .netcat import (
@@ -18,11 +17,30 @@ from .netcat import (
         readwrite,
 )
 
+    
+class CompletedNetcat(object):
+    """
+    A Netcat instance that has finished running.
+    This is returned by the :func:`pync.run` function.
 
-class CompletedNetcat(argparse.Namespace):
+    :param args: The args string given to run the Netcat instance.
+    :type args: str
+    
+    :param returncode: The exit code of the Netcat instance.
+    :type returncode: int
+
+    :param stdout: The standard output (None if not captured).
+    :type stdout: file, optional
+    
+    :param stderr: The standard error (None if not captured).
+    :type stderr: file, optional
     """
-    This class gets returned from the :func:`pync.run` function.
-    """
+    
+    def __init__(self, args, returncode, stdout=None, stderr=None):
+        self.args = args
+        self.returncode = returncode
+        self.stdout = stdout
+        self.stderr = stderr
 
 
 def run(args, stdin=None, stdout=None, stderr=None,
@@ -94,14 +112,10 @@ def run(args, stdin=None, stdout=None, stderr=None,
        :caption: Connect to a local TCP server and capture output to a byte string.
        
        import pync
-       response = pync.run('localhost 8000', capture_output=True)
-       print(response.stdout.decode())
+       result = pync.run('localhost 8000', capture_output=True)
+       print(result.stdout.decode())
     """
-    result = CompletedNetcat()
-    result.returncode = 1
-    result.args = args
-    result.stdout = None
-    result.stderr = None
+    result = CompletedNetcat(args, returncode=1)
 
     stdin_io = stdin or Netcat.stdin
     stdout_io = stdout or Netcat.stdout
