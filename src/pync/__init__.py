@@ -49,6 +49,9 @@ def run(args, stdin=None, stdout=None, stderr=None,
     :param capture_output: If set to True, capture output and return it as a file-like object via the :attr:`pync.CompletedNetcat.stdout` attribute. jDefaults to "False".
     :type capture_output: bool, optional
 
+    :param Netcat: The class to use for the Netcat instance.
+    :type Netcat: :class:`pync.Netcat`
+
     :return: A :class:`CompletedNetcat` instance.
     :rtype: :class:`pync.CompletedNetcat`
 
