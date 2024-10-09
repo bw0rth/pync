@@ -114,6 +114,15 @@ def run(args, stdin=None, stdout=None, stderr=None,
        import pync
        result = pync.run('localhost 8000', capture_output=True)
        print(result.stdout.decode())
+
+    .. code-block:: python
+       :caption: Run pync and return the exit code.
+
+       import sys
+       import pync
+       
+       result = pync.run(...)
+       sys.exit(result.returncode)
     """
     result = CompletedNetcat(args, returncode=1)
 
