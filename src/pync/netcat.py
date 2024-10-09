@@ -2240,29 +2240,15 @@ class Netcat(object):
        from pync import Netcat
        with Netcat(dest='localhost', port=8000, u=True) as nc:
            nc.readwrite()
-
+           
     .. code-block:: python
-       :caption: Any other keyword arguments get passed to the underlying Netcat class.
+       :caption: Set the source port number to bind to with the "p" option.
 
        from pync import Netcat
-       # Use the "k" option to keep the server open between connections.
        nc = Netcat(
-           dest='localhost', port=8000,
-           l=True, k=True,
-       )
-       nc.run()
-
-    .. code-block:: python
-       :caption: Pass a list of ports to connect to one after the other.
-
-       # Simple port scan example.
-       from pync import Netcat
-       # Use the "z" option to turn Zero i_o on (connect then close).
-       # Use the "v" option to turn verbose output on to see connection success or failure.
-       ports = [8000, 8003, 8002]
-       nc = Netcat(
-           dest='localhost', port=ports,
-           z=True, v=True,
+           dest='localhost',
+           port=8000,
+           p=8888,
        )
        nc.run()
     """
