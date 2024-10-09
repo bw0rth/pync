@@ -2260,7 +2260,7 @@ class Netcat(object):
            nc.run()
 
     .. code-block:: python
-       :caption: Create a TCP server and send a byte string.
+       :caption: Create a TCP server and send the contents of a byte string.
        
        from io import BytesIO
        from pync import Netcat
