@@ -2245,11 +2245,29 @@ class Netcat(object):
        :caption: Set the source port number to bind to with the "p" option.
 
        from pync import Netcat
-       nc = Netcat(
-           dest='localhost',
-           port=8000,
-           p=8888,
-       )
+       nc = Netcat(dest='localhost', port=8000, p=8888)
+       nc.run()
+
+    .. code-block:: python
+       :caption: Create a TCP server and send the contents of "hello.txt".
+       
+       from pync import Netcat
+       
+       # Netcat expects to read bytes from stdin so be sure
+       # to open files in binary mode.
+       with open('hello.txt', 'rb') as f:
+           nc = Netcat(dest='localhost', port=8000, l=True, stdin=f)
+           nc.run()
+
+    .. code-block:: python
+       :caption: Create a TCP server and send a byte string.
+       
+       from io import BytesIO
+       from pync import Netcat
+       
+       # Netcat expects to read bytes from a file-like object.
+       b = BytesIO(b'Hello, World!')
+       nc = Netcat(dest='localhost', port=8000, l=True, stdin=b)
        nc.run()
     """
     ArgumentParser = NetcatArgumentParser
