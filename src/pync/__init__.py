@@ -34,6 +34,23 @@ class CompletedNetcat(object):
     
     :param stderr: The standard error (None if not captured).
     :type stderr: file, optional
+
+    :Examples:
+    
+    .. code-block:: python
+       :caption: Capture the response from a server as a byte string.
+       
+       import pync
+       result = pync.run('localhost 8000', capture_output=True)
+       print(result.stdout.decode())
+
+    .. code-block:: python
+       :caption: Run pync and return the exit code.
+       
+       import sys
+       import pync
+       result = pync.run(...)
+       sys.exit(result.returncode)
     """
     
     def __init__(self, args, returncode, stdout=None, stderr=None):
